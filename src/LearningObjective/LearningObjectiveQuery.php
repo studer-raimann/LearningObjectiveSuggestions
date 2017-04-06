@@ -1,6 +1,9 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective;
 
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+
 require_once('./Modules/Course/classes/class.ilCourseObjective.php');
+require_once('./Modules/Course/classes/class.ilObjCourse.php');
 
 /**
  * Class LearningObjectiveList
@@ -9,25 +12,60 @@ require_once('./Modules/Course/classes/class.ilCourseObjective.php');
  */
 class LearningObjectiveQuery {
 
+	/**
+	 * @var ConfigProvider
+	 */
+	protected $config;
 
 	/**
-	 * Get all learning objectives of a given course
+	 * @param ConfigProvider $config
+	 */
+	public function __construct(ConfigProvider $config) {
+		$this->config = $config;
+	}
+
+
+	/**
+	 * Get all learning objectives
 	 *
-	 * @param \ilObjCourse $course
 	 * @return LearningObjective[]
 	 */
-	public function getByCourse(\ilObjCourse $course) {
+	public function getAll() {
 		static $cache = array();
-		if (isset($cache[$course->getId()])) {
-			return $cache[$course->getId()];
+		$ref_id = $this->config->get('ref_id_course');
+		if (isset($cache[$ref_id])) {
+			return $cache[$ref_id];
 		}
 		$objectives = array();
+		$course = new \ilObjCourse($ref_id);
 		$ids = \ilCourseObjective::_getObjectiveIds($course->getId());
 		foreach ($ids as $id) {
 			$objectives[] = new LearningObjective(new \ilCourseObjective($course, $id));
 		}
-		$cache[$course->getId()] = $objectives;
+		$cache[$ref_id] = $objectives;
 		return $objectives;
+	}
+
+	/**
+	 * Get the learning objectives belonging to the main section
+	 */
+	public function getMain() {
+		$main = json_decode($this->config->get('learning_objectives_main'), true);
+		return array_filter($this->getAll(), function($objective) use ($main) {
+			/** @var $objective LearningObjective */
+			return (in_array($objective->getId(), $main));
+		});
+	}
+
+	/**
+	 * Get the learning objectives belonging to the extended section
+	 */
+	public function getExtended() {
+		$extended = json_decode($this->config->get('learning_objectives_extended'), true);
+		return array_filter($this->getAll(), function($objective) use ($extended) {
+			/** @var $objective LearningObjective */
+			return (in_array($objective->getId(), $extended));
+		});
 	}
 
 }

@@ -13,17 +13,10 @@ class User {
 	protected $user;
 
 	/**
-	 * @var StudyProgramQuery
-	 */
-	protected $study_program_query;
-
-	/**
 	 * @param \ilObjUser $user
-	 * @param StudyProgramQuery $study_program_query
 	 */
-	public function __construct(\ilObjUser $user, StudyProgramQuery $study_program_query) {
+	public function __construct(\ilObjUser $user) {
 		$this->user = $user;
-		$this->study_program_query = $study_program_query;
 	}
 
 	/**
@@ -34,10 +27,10 @@ class User {
 	}
 
 	/**
-	 * @return StudyProgram
+	 * @return string
 	 */
-	public function getStudyProgram() {
-		return $this->study_program_query->getByUser($this);
+	public function getLogin() {
+		return $this->user->getLogin();
 	}
 
 }

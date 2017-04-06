@@ -3,8 +3,12 @@ include_once("./Services/Cron/classes/class.ilCronHookPlugin.php");
 require_once(dirname(__DIR__) . '/vendor/autoload.php');
 
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron\CalculateUserScoresCronJob;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron\CalculateScoresAndSuggestionsCronJob;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron\SendSuggestionsCronJob;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgramQuery;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Log\Log;
+
 
 /**
  * Class ilLearningObjectiveSuggestionsPlugin
@@ -42,8 +46,18 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 		if (static::$cron_instances === null) {
 			global $ilDB;
 			$config = new ConfigProvider();
+			$log = new Log();
+			$cron1 = new CalculateScoresAndSuggestionsCronJob(
+				$ilDB,
+				$config,
+				new StudyProgramQuery($config),
+				new LearningObjectiveQuery($config),
+				$log
+			);
+			$cron2 = new SendSuggestionsCronJob($ilDB, $config, $log);
 			static::$cron_instances = array(
-				CalculateUserScoresCronJob::ID => new CalculateUserScoresCronJob($ilDB, $config, new StudyProgramQuery($config)),
+				$cron1->getId() => $cron1,
+				$cron2->getId() => $cron2,
 			);
 		}
 		return static::$cron_instances;

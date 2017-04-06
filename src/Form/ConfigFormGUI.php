@@ -145,7 +145,7 @@ class ConfigFormGUI extends \ilPropertyFormGUI {
 		if ($objectives !== null) {
 			return $objectives;
 		}
-		$objectives = $this->objective_query->getByCourse(new \ilObjCourse($this->config->get('ref_id_course')));
+		$objectives = $this->objective_query->getAll();
 		return $objectives;
 	}
 

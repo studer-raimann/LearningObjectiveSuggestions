@@ -1,12 +1,12 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Score;
+<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Suggestion;
 
 /**
- * Class UserScore
+ * Class LearningObjectiveSuggestion
  *
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective
  */
-class UserScore extends \ActiveRecord {
+class LearningObjectiveSuggestion extends \ActiveRecord {
 
 	/**
 	 * @var int
@@ -25,6 +25,7 @@ class UserScore extends \ActiveRecord {
 	 * @db_has_field    true
 	 * @db_fieldtype    integer
 	 * @db_length       8
+	 * @db_index        true
 	 */
 	protected $user_id;
 
@@ -34,6 +35,7 @@ class UserScore extends \ActiveRecord {
 	 * @db_has_field    true
 	 * @db_fieldtype    integer
 	 * @db_length       8
+	 * @db_index        true
 	 */
 	protected $course_obj_id;
 
@@ -43,17 +45,18 @@ class UserScore extends \ActiveRecord {
 	 * @db_has_field    true
 	 * @db_fieldtype    integer
 	 * @db_length       8
+	 * @db_index        true
 	 */
 	protected $objective_id;
 
 	/**
-	 * @var float
+	 * @var int
 	 *
 	 * @db_has_field    true
-	 * @db_fieldtype    float
+	 * @db_fieldtype    integer
 	 * @db_length       8
 	 */
-	protected $score;
+	protected $sort;
 
 	/**
 	 * @var string
@@ -112,62 +115,20 @@ class UserScore extends \ActiveRecord {
 		return $this->id;
 	}
 
-
 	/**
 	 * @return int
 	 */
-	public function getUserId() {
-		return $this->user_id;
+	public function getSort() {
+		return $this->sort;
 	}
 
 	/**
-	 * @param int $user_id
+	 * @param int $sort
 	 */
-	public function setUserId($user_id) {
-		$this->user_id = $user_id;
+	public function setSort($sort) {
+		$this->sort = $sort;
 	}
 
-	/**
-	 * @return int
-	 */
-	public function getCourseObjId() {
-		return $this->course_obj_id;
-	}
-
-	/**
-	 * @param int $course_obj_id
-	 */
-	public function setCourseObjId($course_obj_id) {
-		$this->course_obj_id = $course_obj_id;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getObjectiveId() {
-		return $this->objective_id;
-	}
-
-	/**
-	 * @param int $objective_id
-	 */
-	public function setObjectiveId($objective_id) {
-		$this->objective_id = $objective_id;
-	}
-
-	/**
-	 * @return float
-	 */
-	public function getScore() {
-		return $this->score;
-	}
-
-	/**
-	 * @param float $score
-	 */
-	public function setScore($score) {
-		$this->score = $score;
-	}
 
 	/**
 	 * @return string
@@ -212,11 +173,52 @@ class UserScore extends \ActiveRecord {
 		return $this->updated_user_id;
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getUserId() {
+		return $this->user_id;
+	}
+
+	/**
+	 * @param int $user_id
+	 */
+	public function setUserId($user_id) {
+		$this->user_id = $user_id;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getCourseObjId() {
+		return $this->course_obj_id;
+	}
+
+	/**
+	 * @param int $course_obj_id
+	 */
+	public function setCourseObjId($course_obj_id) {
+		$this->course_obj_id = $course_obj_id;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getObjectiveId() {
+		return $this->objective_id;
+	}
+
+	/**
+	 * @param int $objective_id
+	 */
+	public function setObjectiveId($objective_id) {
+		$this->objective_id = $objective_id;
+	}
 
 	/**
 	 * @inheritdoc
 	 */
 	static function returnDbTableName() {
-		return 'alo_user_score';
+		return 'alo_suggestion';
 	}
 }

@@ -2,9 +2,13 @@
 
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjective;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveResult;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Score\UserScore;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Score\UserScoreCalculator;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Log\Log;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Score\LearningObjectiveScore;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Score\LearningObjectiveScoreCalculator;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Suggestion\LearningObjectiveSuggestion;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Suggestion\LearningObjectiveSuggestionGenerator;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgramQuery;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\User;
 
@@ -14,14 +18,11 @@ require_once('./Modules/Course/classes/class.ilCourseObjective.php');
 require_once('./Modules/Course/classes/class.ilObjCourse.php');
 
 /**
- * Class CalculateUserScoresCronJob
+ * Class CalculateScoresAndSuggestionsCronJob
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron
  */
-class CalculateUserScoresCronJob extends \ilCronJob {
-
-
-	const ID = 'alo_calc_user_scores';
+class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 	/**
 	 * @var \ilDB
@@ -39,14 +40,33 @@ class CalculateUserScoresCronJob extends \ilCronJob {
 	protected $study_program_query;
 
 	/**
+	 * @var Log
+	 */
+	protected $log;
+
+	/**
+	 * @var LearningObjectiveQuery
+	 */
+	protected $learning_objective_query;
+
+	/**
 	 * @param \ilDB $db
 	 * @param ConfigProvider $config
 	 * @param StudyProgramQuery $study_program_query
+	 * @param LearningObjectiveQuery $learning_objective_query
+	 * @param Log $log
 	 */
-	public function __construct(\ilDB $db, ConfigProvider $config, StudyProgramQuery $study_program_query) {
+	public function __construct(\ilDB $db,
+	                            ConfigProvider $config,
+	                            StudyProgramQuery $study_program_query,
+								LearningObjectiveQuery $learning_objective_query,
+								Log $log
+	) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->study_program_query = $study_program_query;
+		$this->log = $log;
+		$this->learning_objective_query = $learning_objective_query;
 	}
 
 	/**
@@ -56,6 +76,9 @@ class CalculateUserScoresCronJob extends \ilCronJob {
 		return 'Lernziel-Empfehlungen generieren';
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public function getDescription() {
 		return 'Berechnet die Scores aller Lernziele für Benutzer, welche den Einstiegstest neu bestanden haben. ' .
 			'Zusätzlich werden die empfohlenen Lernziele definiert.';
@@ -66,7 +89,7 @@ class CalculateUserScoresCronJob extends \ilCronJob {
 	 * @inheritdoc
 	 */
 	public function getId() {
-		return static::ID;
+		return 'alo_calc_user_scores';
 	}
 
 
@@ -113,13 +136,26 @@ class CalculateUserScoresCronJob extends \ilCronJob {
 			$user = $this->getUser($row->user_id);
 			$objective_results[] = new LearningObjectiveResult($objective, $user);
 		}
+		$stack = array();
 		foreach ($objective_results as $objective_result) {
 			/** @var LearningObjectiveResult $objective_result */
-			$calculator = new UserScoreCalculator($objective_result, $this->config);
-			$score = $calculator->calculate();
-			$user_score = $this->getUserScore($objective_result);
-			$user_score->setScore($score);
-			$user_score->save();
+			$calculator = new LearningObjectiveScoreCalculator($objective_result, $this->config, $this->study_program_query, $this->log);
+			$score = $this->getLearningObjectiveScore($objective_result);
+			try {
+				$skore = $calculator->calculate();
+				$score->setScore($skore);
+				$score->save();
+				$stack[$objective_result->getUser()->getId()][] = $score;
+			} catch (\Exception $e) {
+				$this->log->write("Exception when trying to calculate the score for {$score}");
+				$this->log->write($e->getMessage());
+				$this->log->write($e->getTraceAsString());
+			}
+		}
+		foreach ($stack as $user_id => $scores) {
+			$generator = new LearningObjectiveSuggestionGenerator($this->config, $this->learning_objective_query, $this->log);
+			$suggested_scores = $generator->generate($scores);
+			$this->createSuggestions($suggested_scores);
 		}
 		$result = new \ilCronJobResult();
 		$result->setStatus(\ilCronJobResult::STATUS_OK);
@@ -129,22 +165,37 @@ class CalculateUserScoresCronJob extends \ilCronJob {
 	}
 
 	/**
-	 * @param LearningObjectiveResult $objective_result
-	 * @return UserScore
+	 * @param LearningObjectiveScore[] $scores
 	 */
-	protected function getUserScore(LearningObjectiveResult $objective_result) {
-		$user_score = UserScore::where(array(
+	protected function createSuggestions(array $scores) {
+		foreach ($scores as $sort => $score) {
+			$suggestion = new LearningObjectiveSuggestion();
+			$suggestion->setCourseObjId($score->getCourseObjId());
+			$suggestion->setObjectiveId($score->getObjectiveId());
+			$suggestion->setUserId($score->getUserId());
+			$suggestion->setSort(++$sort);
+			$suggestion->save();
+		}
+	}
+
+
+	/**
+	 * @param LearningObjectiveResult $objective_result
+	 * @return LearningObjectiveScore
+	 */
+	protected function getLearningObjectiveScore(LearningObjectiveResult $objective_result) {
+		$score = LearningObjectiveScore::where(array(
 			'course_obj_id' => $objective_result->getLearningObjective()->getCourse()->getId(),
 			'objective_id' => $objective_result->getLearningObjective()->getId(),
 			'user_id' => $objective_result->getUser()->getId()
 		))->first();
-		if ($user_score === null) {
-			$user_score = new UserScore();
-			$user_score->setCourseObjId($objective_result->getLearningObjective()->getCourse()->getId());
-			$user_score->setObjectiveId($objective_result->getLearningObjective()->getId());
-			$user_score->setUserId($objective_result->getUser()->getId());
+		if ($score === null) {
+			$score = new LearningObjectiveScore();
+			$score->setCourseObjId($objective_result->getLearningObjective()->getCourse()->getId());
+			$score->setObjectiveId($objective_result->getLearningObjective()->getId());
+			$score->setUserId($objective_result->getUser()->getId());
 		}
-		return $user_score;
+		return $score;
 	}
 
 
@@ -183,15 +234,17 @@ class CalculateUserScoresCronJob extends \ilCronJob {
 	 * @return string
 	 */
 	protected function getSQL() {
+		$obj_id = \ilObject::_lookupObjId($this->config->get('ref_id_course'));
 		return 'SELECT loc_user_results.* FROM loc_user_results
-				LEFT JOIN alo_user_score ON 
+				LEFT JOIN alo_score ON 
 					(
-					alo_user_score.user_id = loc_user_results.user_id 
-					AND alo_user_score.course_obj_id = loc_user_results.course_id 
-					AND alo_user_score.objective_id = loc_user_results.objective_id 
+					alo_score.user_id = loc_user_results.user_id 
+					AND alo_score.course_obj_id = loc_user_results.course_id 
+					AND alo_score.objective_id = loc_user_results.objective_id 
 					AND loc_user_results.type = 1
 					)
-				WHERE alo_user_score.id IS NULL
+				WHERE loc_user_results.course_id = ' . $this->db->quote($obj_id, 'integer') . ' 
+				AND alo_score.id IS NULL
 				ORDER BY loc_user_results.user_id, loc_user_results.course_id';
 	}
 
