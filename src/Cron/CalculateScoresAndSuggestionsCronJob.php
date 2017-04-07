@@ -1,6 +1,6 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjective;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveResult;
@@ -30,7 +30,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 	protected $db;
 
 	/**
-	 * @var ConfigProvider
+	 * @var CourseConfigProvider
 	 */
 	protected $config;
 
@@ -51,16 +51,16 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 	/**
 	 * @param \ilDB $db
-	 * @param ConfigProvider $config
+	 * @param CourseConfigProvider $config
 	 * @param StudyProgramQuery $study_program_query
 	 * @param LearningObjectiveQuery $learning_objective_query
 	 * @param Log $log
 	 */
 	public function __construct(\ilDB $db,
-	                            ConfigProvider $config,
+	                            CourseConfigProvider $config,
 	                            StudyProgramQuery $study_program_query,
-								LearningObjectiveQuery $learning_objective_query,
-								Log $log
+	                            LearningObjectiveQuery $learning_objective_query,
+	                            Log $log
 	) {
 		$this->db = $db;
 		$this->config = $config;

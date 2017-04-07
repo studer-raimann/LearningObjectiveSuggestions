@@ -1,6 +1,6 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Score;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveResult;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Log\Log;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgramQuery;
@@ -18,7 +18,7 @@ class LearningObjectiveScoreCalculator {
 	protected $objective_result;
 
 	/**
-	 * @var ConfigProvider
+	 * @var CourseConfigProvider
 	 */
 	protected $config;
 
@@ -34,13 +34,13 @@ class LearningObjectiveScoreCalculator {
 
 	/**
 	 * @param LearningObjectiveResult $objective_result
-	 * @param ConfigProvider $config
+	 * @param CourseConfigProvider $config
 	 * @param StudyProgramQuery $study_program_query
 	 * @param Log $log
 	 */
 	public function __construct(
 		LearningObjectiveResult $objective_result,
-		ConfigProvider $config,
+		CourseConfigProvider $config,
 		StudyProgramQuery $study_program_query,
 		Log $log)
 	{

@@ -1,6 +1,6 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Suggestion;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Log\Log;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Score\LearningObjectiveScore;
@@ -13,7 +13,7 @@ use SRAG\ILIAS\Plugins\AutoLearningObjectives\Score\LearningObjectiveScore;
 class LearningObjectiveSuggestionGenerator {
 
 	/**
-	 * @var ConfigProvider
+	 * @var CourseConfigProvider
 	 */
 	protected $config;
 
@@ -28,12 +28,12 @@ class LearningObjectiveSuggestionGenerator {
 	protected $log;
 
 	/**
-	 * @param ConfigProvider $config
+	 * @param CourseConfigProvider $config
 	 * @param LearningObjectiveQuery $learning_objective_query
 	 * @param Log $log
 	 */
 	public function __construct(
-		ConfigProvider $config,
+		CourseConfigProvider $config,
 		LearningObjectiveQuery $learning_objective_query,
 		Log $log
 	) {

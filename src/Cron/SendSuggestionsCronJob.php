@@ -1,6 +1,6 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Log\Log;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Notification\InternalMailSender;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Notification\Notification;
@@ -23,7 +23,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	protected $db;
 
 	/**
-	 * @var ConfigProvider
+	 * @var CourseConfigProvider
 	 */
 	protected $config;
 
@@ -34,10 +34,10 @@ class SendSuggestionsCronJob extends \ilCronJob {
 
 	/**
 	 * @param \ilDB $db
-	 * @param ConfigProvider $config
+	 * @param CourseConfigProvider $config
 	 * @param Log $log
 	 */
-	public function __construct(\ilDB $db, ConfigProvider $config, Log $log) {
+	public function __construct(\ilDB $db, CourseConfigProvider $config, Log $log) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->log = $log;

@@ -1,6 +1,6 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Form;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgramQuery;
 
@@ -9,14 +9,14 @@ require_once('./Services/Form/classes/class.ilMultiSelectInputGUI.php');
 require_once('./Modules/Course/classes/class.ilObjCourse.php');
 
 /**
- * Class ConfigFormGUI
+ * Class CourseConfigFormGUI
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\Form
  */
-class ConfigFormGUI extends \ilPropertyFormGUI {
+class CourseConfigFormGUI extends \ilPropertyFormGUI {
 
 	/**
-	 * @var ConfigProvider
+	 * @var CourseConfigProvider
 	 */
 	protected $config;
 
@@ -31,11 +31,11 @@ class ConfigFormGUI extends \ilPropertyFormGUI {
 	protected $study_program_query;
 
 	/**
-	 * @param ConfigProvider $config
+	 * @param CourseConfigProvider $config
 	 * @param LearningObjectiveQuery $objective_query
 	 * @param StudyProgramQuery $study_program_query
 	 */
-	public function __construct(ConfigProvider $config, LearningObjectiveQuery $objective_query, StudyProgramQuery $study_program_query) {
+	public function __construct(CourseConfigProvider $config, LearningObjectiveQuery $objective_query, StudyProgramQuery $study_program_query) {
 		parent::__construct();
 		$this->config = $config;
 		$this->objective_query = $objective_query;
@@ -46,28 +46,21 @@ class ConfigFormGUI extends \ilPropertyFormGUI {
 	protected function init() {
 		$this->setTitle('Konfiguration');
 
-		$item1 = new \ilNumberInputGUI('Ref-ID Kurs', 'ref_id_course');
-		$item1->setInfo('Ref-ID vom Kurs, für welchen die Lernziele gewichtet und empfohlen werden');
-		$item1->setRequired(true);
-		$item1->setValue($this->config->get('ref_id_course'));
+		$udf = new \ilNumberInputGUI('Udf-ID Studienprogramm', 'udf_id_study_program');
+		$udf->setInfo('ID vom UDF Dropdown Feld, welches die Studiengänge enthält');
+		$udf->setRequired(true);
+		$udf->setValue($this->config->get('udf_id_study_program'));
 
-		$item2 = new \ilNumberInputGUI('Udf-ID Studienprogramm', 'udf_id_study_program');
-		$item2->setInfo('ID vom UDF Dropdown Feld, welches die Studiengänge enthält');
-		$item2->setRequired(true);
-		$item2->setValue($this->config->get('udf_id_study_program'));
-
-		if ($this->config->get('ref_id_course') && $this->config->get('udf_id_study_program')) {
-			$item = new \ilCheckboxInputGUI('Mapping der IDs ändern', 'change_mapping_ids');
-			$item->setInfo('Achtung: Das Ändern der IDs wirkt sich auf die gesamte folgende Konfiguration aus (Lernziele, Gewichte etc.)');
-			$item->addSubItem($item1);
-			$item->addSubItem($item2);
+		if ($this->config->get('udf_id_study_program')) {
+			$item = new \ilCheckboxInputGUI('ID Studienprogramm ändern', 'change_mapping_ids');
+			$item->setInfo('Achtung: Das Ändern der ID wirkt sich auf die gesamte folgende Konfiguration aus');
+			$item->addSubItem($udf);
 			$this->addItem($item);
 			$this->addGeneralConfig();
 			$this->addWeightFineConfig();
 			$this->addWeightRoughConfig();
 		} else {
-			$this->addItem($item1);
-			$this->addItem($item2);
+			$this->addItem($udf);
 		}
 
 		$this->addCommandButton('save', 'Speichern');

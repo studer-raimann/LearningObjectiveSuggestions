@@ -1,5 +1,5 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\User;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
 
 require_once('./Services/User/classes/class.ilUserDefinedFields.php');
 require_once('./Services/User/classes/class.ilUserDefinedData.php');
@@ -13,14 +13,14 @@ require_once('./Services/User/classes/class.ilUserDefinedData.php');
 class StudyProgramQuery {
 
 	/**
-	 * @var ConfigProvider
+	 * @var CourseConfigProvider
 	 */
 	protected $config;
 
 	/**
-	 * @param ConfigProvider $config
+	 * @param CourseConfigProvider $config
 	 */
-	public function __construct(ConfigProvider $config) {
+	public function __construct(CourseConfigProvider $config) {
 		$this->config = $config;
 	}
 

@@ -2,7 +2,7 @@
 include_once("./Services/Cron/classes/class.ilCronHookPlugin.php");
 require_once(dirname(__DIR__) . '/vendor/autoload.php');
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron\CalculateScoresAndSuggestionsCronJob;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron\SendSuggestionsCronJob;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
@@ -45,7 +45,7 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 	public static function getCronInstances() {
 		if (static::$cron_instances === null) {
 			global $ilDB;
-			$config = new ConfigProvider();
+			$config = new CourseConfigProvider();
 			$log = new Log();
 			$cron1 = new CalculateScoresAndSuggestionsCronJob(
 				$ilDB,

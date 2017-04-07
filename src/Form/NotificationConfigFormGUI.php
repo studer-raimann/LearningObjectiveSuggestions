@@ -1,6 +1,6 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Form;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
 
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 
@@ -12,14 +12,14 @@ require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 class NotificationConfigFormGUI extends \ilPropertyFormGUI {
 
 	/**
-	 * @var ConfigProvider
+	 * @var CourseConfigProvider
 	 */
 	protected $config;
 
 	/**
-	 * @param ConfigProvider $config
+	 * @param CourseConfigProvider $config
 	 */
-	public function __construct(ConfigProvider $config) {
+	public function __construct(CourseConfigProvider $config) {
 		parent::__construct();
 		$this->config = $config;
 		$this->init();
@@ -50,7 +50,7 @@ class NotificationConfigFormGUI extends \ilPropertyFormGUI {
 		$item->setValue($this->config->get($item->getPostVar()));
 		$this->addItem($item);
 
-		$this->addCommandButton('saveNotification', 'Speichern');
+		$this->addCommandButton('saveNotifications', 'Speichern');
 		$this->addCommandButton('cancel', 'Abbrechen');
 	}
 }

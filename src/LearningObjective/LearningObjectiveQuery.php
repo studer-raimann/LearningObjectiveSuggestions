@@ -1,26 +1,26 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
 
 require_once('./Modules/Course/classes/class.ilCourseObjective.php');
 require_once('./Modules/Course/classes/class.ilObjCourse.php');
 
 /**
- * Class LearningObjectiveList
+ * Class LearningObjectiveQuery
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective
  */
 class LearningObjectiveQuery {
 
 	/**
-	 * @var ConfigProvider
+	 * @var CourseConfigProvider
 	 */
 	protected $config;
 
 	/**
-	 * @param ConfigProvider $config
+	 * @param CourseConfigProvider $config
 	 */
-	public function __construct(ConfigProvider $config) {
+	public function __construct(CourseConfigProvider $config) {
 		$this->config = $config;
 	}
 
@@ -32,12 +32,12 @@ class LearningObjectiveQuery {
 	 */
 	public function getAll() {
 		static $cache = array();
-		$ref_id = $this->config->get('ref_id_course');
+		$ref_id = $this->config->getCourse()->getRefId();
 		if (isset($cache[$ref_id])) {
 			return $cache[$ref_id];
 		}
 		$objectives = array();
-		$course = new \ilObjCourse($ref_id);
+		$course = $this->config->getCourse()->getILIASCourse();
 		$ids = \ilCourseObjective::_getObjectiveIds($course->getId());
 		foreach ($ids as $id) {
 			$objectives[] = new LearningObjective(new \ilCourseObjective($course, $id));
@@ -48,6 +48,8 @@ class LearningObjectiveQuery {
 
 	/**
 	 * Get the learning objectives belonging to the main section
+	 *
+	 * @return LearningObjective[]
 	 */
 	public function getMain() {
 		$main = json_decode($this->config->get('learning_objectives_main'), true);
@@ -59,6 +61,8 @@ class LearningObjectiveQuery {
 
 	/**
 	 * Get the learning objectives belonging to the extended section
+	 *
+	 * @return LearningObjective[]
 	 */
 	public function getExtended() {
 		$extended = json_decode($this->config->get('learning_objectives_extended'), true);
