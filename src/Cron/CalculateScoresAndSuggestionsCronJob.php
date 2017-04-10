@@ -1,7 +1,9 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron;
 
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjective;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveCourse;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveResult;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Log\Log;
@@ -30,14 +32,9 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 	protected $db;
 
 	/**
-	 * @var CourseConfigProvider
+	 * @var ConfigProvider
 	 */
 	protected $config;
-
-	/**
-	 * @var StudyProgramQuery
-	 */
-	protected $study_program_query;
 
 	/**
 	 * @var Log
@@ -45,28 +42,17 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 	protected $log;
 
 	/**
-	 * @var LearningObjectiveQuery
-	 */
-	protected $learning_objective_query;
-
-	/**
 	 * @param \ilDB $db
-	 * @param CourseConfigProvider $config
-	 * @param StudyProgramQuery $study_program_query
-	 * @param LearningObjectiveQuery $learning_objective_query
+	 * @param ConfigProvider $config
 	 * @param Log $log
 	 */
 	public function __construct(\ilDB $db,
-	                            CourseConfigProvider $config,
-	                            StudyProgramQuery $study_program_query,
-	                            LearningObjectiveQuery $learning_objective_query,
+	                            ConfigProvider $config,
 	                            Log $log
 	) {
 		$this->db = $db;
 		$this->config = $config;
-		$this->study_program_query = $study_program_query;
 		$this->log = $log;
-		$this->learning_objective_query = $learning_objective_query;
 	}
 
 	/**
@@ -129,20 +115,36 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 	 * @inheritdoc
 	 */
 	public function run() {
-		$set = $this->db->query($this->getSQL());
+		foreach ($this->config->getCourseRefIds() as $ref_id) {
+			$course = new LearningObjectiveCourse(new \ilObjCourse($ref_id));
+			$this->runFor($course);
+		}
+		$result = new \ilCronJobResult();
+		$result->setStatus(\ilCronJobResult::STATUS_OK);
+		return $result;
+	}
+
+	/**
+	 * @param LearningObjectiveCourse $course
+	 */
+	protected function runFor(LearningObjectiveCourse $course) {
+		$config = new CourseConfigProvider($course);
+		$study_program_query = new StudyProgramQuery($config);
+		$learning_objective_query = new LearningObjectiveQuery($config);
+		$set = $this->db->query($this->getSQL($course));
 		$objective_results = array();
 		while ($row = $this->db->fetchObject($set)) {
-			$objective = $this->getLearningObjective($row->course_id, $row->objective_id);
+			$objective = $this->getLearningObjective($course, $row->objective_id);
 			$user = $this->getUser($row->user_id);
 			$objective_results[] = new LearningObjectiveResult($objective, $user);
 		}
 		$stack = array();
 		foreach ($objective_results as $objective_result) {
 			/** @var LearningObjectiveResult $objective_result */
-			$calculator = new LearningObjectiveScoreCalculator($objective_result, $this->config, $this->study_program_query, $this->log);
+			$calculator = new LearningObjectiveScoreCalculator($config, $study_program_query, $this->log);
 			$score = $this->getLearningObjectiveScore($objective_result);
 			try {
-				$skore = $calculator->calculate();
+				$skore = $calculator->calculate($objective_result);
 				$score->setScore($skore);
 				$score->save();
 				$stack[$objective_result->getUser()->getId()][] = $score;
@@ -153,15 +155,10 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			}
 		}
 		foreach ($stack as $user_id => $scores) {
-			$generator = new LearningObjectiveSuggestionGenerator($this->config, $this->learning_objective_query, $this->log);
+			$generator = new LearningObjectiveSuggestionGenerator($config, $learning_objective_query, $this->log);
 			$suggested_scores = $generator->generate($scores);
 			$this->createSuggestions($suggested_scores);
 		}
-		$result = new \ilCronJobResult();
-		$result->setStatus(\ilCronJobResult::STATUS_OK);
-		$message = sprintf("Der Score für alle Lernziele wurde für %s Benutzer berechnet.", count($objective_results));
-		$result->setMessage($message);
-		return $result;
 	}
 
 	/**
@@ -208,33 +205,33 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		if (isset($cache[$user_id])) {
 			return $cache[$user_id];
 		}
-		$user = new User(new \ilObjUser($user_id), $this->study_program_query);
+		$user = new User(new \ilObjUser($user_id));
 		$cache[$user_id] = $user;
 		return $user;
 	}
 
 	/**
-	 * @param int $course_obj_id
+	 * @param LearningObjectiveCourse $course
 	 * @param int $objective_id
 	 * @return LearningObjective
 	 */
-	protected function getLearningObjective($course_obj_id, $objective_id) {
+	protected function getLearningObjective(LearningObjectiveCourse $course, $objective_id) {
 		static $cache = array();
-		$cache_key = $course_obj_id . $objective_id;
+		$cache_key = $course->getId() . $objective_id;
 		if (isset($cache[$cache_key])) {
 			return $cache[$cache_key];
 		}
-		$objective = new LearningObjective(new \ilCourseObjective(new \ilObjCourse($course_obj_id, false), $objective_id));
+		$objective = new LearningObjective(new \ilCourseObjective($course->getILIASCourse(), $objective_id));
 		$cache[$cache_key] = $objective;
 		return $objective;
 	}
 
 
 	/**
+	 * @param LearningObjectiveCourse $course
 	 * @return string
 	 */
-	protected function getSQL() {
-		$obj_id = \ilObject::_lookupObjId($this->config->get('ref_id_course'));
+	protected function getSQL(LearningObjectiveCourse $course) {
 		return 'SELECT loc_user_results.* FROM loc_user_results
 				LEFT JOIN alo_score ON 
 					(
@@ -243,7 +240,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 					AND alo_score.objective_id = loc_user_results.objective_id 
 					AND loc_user_results.type = 1
 					)
-				WHERE loc_user_results.course_id = ' . $this->db->quote($obj_id, 'integer') . ' 
+				WHERE loc_user_results.course_id = ' . $this->db->quote($course->getId(), 'integer') . ' 
 				AND alo_score.id IS NULL
 				ORDER BY loc_user_results.user_id, loc_user_results.course_id';
 	}

@@ -14,7 +14,7 @@ As an ILIAS administrator, go to "Administration -> Plugins" and install/activat
 
 ## Configuration
 The plugin MUST be configured accordingly before the cronjobs run correctly. Make sure that the
-configuration is correct prior to activate the cron jobs ("Administration -> Cron Jobs")
+configuration is correct prior to activate the cron jobs ("Administration -> General -> Cron Jobs")
 
 ## Cron Jobs
 

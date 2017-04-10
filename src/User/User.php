@@ -33,4 +33,22 @@ class User {
 		return $this->user->getLogin();
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getEmail() {
+		return $this->user->getEmail();
+	}
+
+	/**
+	 * @return string
+	 */
+	function __toString() {
+		return '[' . implode(', ', array(
+				$this->getId(),
+				$this->getLogin(),
+				$this->getEmail(),
+			)) . ']';
+	}
+
 }

@@ -13,11 +13,6 @@ use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgramQuery;
 class LearningObjectiveScoreCalculator {
 
 	/**
-	 * @var LearningObjectiveResult
-	 */
-	protected $objective_result;
-
-	/**
 	 * @var CourseConfigProvider
 	 */
 	protected $config;
@@ -33,33 +28,42 @@ class LearningObjectiveScoreCalculator {
 	protected $study_program_query;
 
 	/**
-	 * @param LearningObjectiveResult $objective_result
 	 * @param CourseConfigProvider $config
 	 * @param StudyProgramQuery $study_program_query
 	 * @param Log $log
 	 */
 	public function __construct(
-		LearningObjectiveResult $objective_result,
 		CourseConfigProvider $config,
 		StudyProgramQuery $study_program_query,
 		Log $log)
 	{
-		$this->objective_result = $objective_result;
 		$this->config = $config;
 		$this->log = $log;
 		$this->study_program_query = $study_program_query;
 	}
 
 	/**
+	 * @param LearningObjectiveResult $objective_result
 	 * @return int
+	 * @throws \ilException
 	 */
-	public function calculate() {
-		// TODO Handle errors? E.g. getStudyProgram returns null --> use constant 1 or abort calculation?
-		$user = $this->objective_result->getUser();
-		$objective = $this->objective_result->getLearningObjective();
-		return (100 - $this->objective_result->getPercentage()) *
-			$this->config->getWeightRough($objective, $this->study_program_query->getByUser($user)) *
-			$this->config->getWeightFine($objective);
+	public function calculate(LearningObjectiveResult $objective_result) {
+		$user = $objective_result->getUser();
+		$objective = $objective_result->getLearningObjective();
+		$weight_fine = $this->config->getWeightFine($objective);
+		$study_program = $this->study_program_query->getByUser($user);
+		if ($study_program === null) {
+			throw new \ilException("No study program assigned to user $user");
+		}
+		$weight_rough = $this->config->getWeightRough($objective, $study_program);
+		if ($weight_rough === null) {
+			$message = "Rough weight is not set for learning objective/study program pair (%s)";
+			throw new \ilException(sprintf($message, $objective->getTitle() . '/' . $study_program->getTitle()));
+		}
+		if ($weight_fine === null) {
+			throw new \ilException(sprintf('Fine weight is not set for learning objective %s', $objective->getTitle()));
+		}
+		return (100 - $objective_result->getPercentage()) * $weight_rough * $weight_fine;
 	}
 
 }

@@ -66,10 +66,9 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 
 	protected function configureCourse() {
 		$this->addTabs('configureCourse');
-		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
 		$this->tabs->setBackTarget('Zurück', $this->ctrl->getLinkTarget($this, 'configure'));
-		$this->tpl->setTitle($course->getTitle());
-		$this->tpl->setTitleIcon('');
+		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
+		$this->initCourseHeader($course);
 		$config = new CourseConfigProvider($course);
 		$form = new CourseConfigFormGUI($config, new LearningObjectiveQuery($config), new StudyProgramQuery($config));
 		$form->setFormAction($this->ctrl->getFormAction($this));
@@ -79,12 +78,19 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 	protected function configureNotifications() {
 		$this->addTabs('configureNotifications');
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
+		$this->initCourseHeader($course);
 		$this->tabs->setBackTarget('Zurück', $this->ctrl->getLinkTarget($this, 'configure'));
-		$this->tpl->setTitle($course->getTitle());
-		$this->tpl->setTitleIcon('');
 		$form = new NotificationConfigFormGUI(new CourseConfigProvider($course));
 		$form->setFormAction($this->ctrl->getFormAction($this));
 		$this->tpl->setContent($form->getHTML());
+	}
+
+	/**
+	 * @param LearningObjectiveCourse $course
+	 */
+	protected function initCourseHeader(LearningObjectiveCourse $course) {
+		$this->tpl->setTitle($course->getTitle());
+		$this->tpl->setTitleIcon(ilUtil::getTypeIconPath('crs', $course->getId(), 'big'));
 	}
 
 	protected function addCourse() {
@@ -146,8 +152,7 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
 		$config = new CourseConfigProvider($course);
 		$this->tabs->setBackTarget('Zurück', $this->ctrl->getLinkTarget($this, 'configure'));
-		$this->tpl->setTitle($course->getTitle());
-		$this->tpl->setTitleIcon('');
+		$this->initCourseHeader($course);
 		$form = new NotificationConfigFormGUI($config);
 		if ($form->checkInput()) {
 			$this->storeConfig($config, $form);
@@ -162,8 +167,7 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$this->addTabs('configureCourse');
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
 		$this->tabs->setBackTarget('Zurück', $this->ctrl->getLinkTarget($this, 'configure'));
-		$this->tpl->setTitle($course->getTitle());
-		$this->tpl->setTitleIcon('');
+		$this->initCourseHeader($course);
 		$config = new CourseConfigProvider($course);
 		$form = new CourseConfigFormGUI($config, new LearningObjectiveQuery($config), new StudyProgramQuery($config));
 		if ($form->checkInput()) {

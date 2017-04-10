@@ -1,6 +1,8 @@
 <?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron;
 
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
+use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveCourse;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Log\Log;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Notification\InternalMailSender;
 use SRAG\ILIAS\Plugins\AutoLearningObjectives\Notification\Notification;
@@ -9,6 +11,7 @@ use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\User;
 require_once('./Services/Cron/classes/class.ilCronJob.php');
 require_once('./Services/Cron/classes/class.ilCronJobResult.php');
 require_once('./Services/User/classes/class.ilObjUser.php');
+require_once('./Modules/Course/classes/class.ilObjCourse.php');
 
 /**
  * Class SendSuggestionsCronJob
@@ -23,7 +26,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	protected $db;
 
 	/**
-	 * @var CourseConfigProvider
+	 * @var ConfigProvider
 	 */
 	protected $config;
 
@@ -34,10 +37,10 @@ class SendSuggestionsCronJob extends \ilCronJob {
 
 	/**
 	 * @param \ilDB $db
-	 * @param CourseConfigProvider $config
+	 * @param ConfigProvider $config
 	 * @param Log $log
 	 */
-	public function __construct(\ilDB $db, CourseConfigProvider $config, Log $log) {
+	public function __construct(\ilDB $db, ConfigProvider $config, Log $log) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->log = $log;
@@ -98,46 +101,75 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	 * @inheritdoc
 	 */
 	public function run() {
-		$set = $this->db->query($this->getSQL());
-		while ($row = $this->db->fetchObject($set)) {
-			$this->send($row->course_obj_id, $row->user_id);
+		foreach ($this->config->getCourseRefIds() as $ref_id) {
+			$course = new LearningObjectiveCourse(new \ilObjCourse($ref_id));
+			$this->runForCourse($course);
 		}
 		$result = new \ilCronJobResult();
 		$result->setStatus(\ilCronJobResult::STATUS_OK);
 		return $result;
 	}
 
+
 	/**
-	 * @param int $course_obj_id
+	 * @param LearningObjectiveCourse $course
+	 */
+	protected function runForCourse(LearningObjectiveCourse $course) {
+		$set = $this->db->query($this->getSQL($course));
+		while ($row = $this->db->fetchObject($set)) {
+			$this->send($course, $row->user_id);
+		}
+	}
+
+	/**
+	 * @param LearningObjectiveCourse $course
 	 * @param int $user_id
 	 */
-	protected function send($course_obj_id, $user_id) {
+	protected function send(LearningObjectiveCourse $course, $user_id) {
 		// Todo Parse template and send actual suggestions
-		$sender = new InternalMailSender();
-		$sender->from(new User(new \ilObjUser($this->config->get('notification_sender_user_id'))))
-			->to(new User(new \ilObjUser($user_id)))
-			->subject($this->config->get('email_subject'))
-			->body($this->config->get('email_body'));
-		if ($sender->send()) {
+		$config = new CourseConfigProvider($course);
+		$mail = new InternalMailSender();
+		$sender = $this->getSendUser($config->get('notification_sender_user_id'));
+		$receiver = new User(new \ilObjUser($user_id));
+		$mail->from($sender)
+			->to($receiver)
+			->subject($config->get('email_subject'))
+			->body($config->get('email_body'));
+		if ($mail->send()) {
 			$notification = new Notification();
 			$notification->setUserId($user_id);
-			$notification->setCourseObjId($course_obj_id);
+			$notification->setCourseObjId($course->getId());
 			$notification->setSentAt(date('Y-m-d H:i:s'));
-			$notification->setSentUserId($this->config->get('notification_sender_user_id'));
+			$notification->setSentUserId($config->get('notification_sender_user_id'));
 			$notification->save();
 		}
 	}
 
 
 	/**
+	 * @param int $user_id
+	 * @return User
+	 */
+	protected function getSendUser($user_id) {
+		static $cache = array();
+		if (isset($cache[$user_id])) {
+			return $cache[$user_id];
+		}
+		$user = new User(new \ilObjUser($user_id));
+		$cache[$user_id] = $user;
+		return $user;
+	}
+
+	/**
+	 * @param LearningObjectiveCourse $course
 	 * @return string
 	 */
-	protected function getSQL() {
-		return 'SELECT alo_suggestion.user_id, alo_suggestion.course_obj_id FROM alo_suggestion
+	protected function getSQL(LearningObjectiveCourse $course) {
+		return 'SELECT alo_suggestion.user_id FROM alo_suggestion
 				LEFT JOIN alo_notification ON 
 					(alo_notification.course_obj_id = alo_suggestion.course_obj_id AND alo_notification.user_id = alo_suggestion.user_id)
-				WHERE alo_notification.sent_at IS NULL
-				GROUP BY alo_suggestion.user_id, alo_suggestion.course_obj_id';
+				WHERE alo_suggestion.course_obj_id = ' . $this->db->quote($course->getId(), 'integer') . ' AND alo_notification.sent_at IS NULL
+				GROUP BY alo_suggestion.user_id';
 	}
 
 }

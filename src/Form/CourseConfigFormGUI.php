@@ -97,11 +97,13 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 		$item = new \ilNumberInputGUI('Min empfohlene Lernziele', 'min_amount_suggestions');
 		$item->setInfo('Minimale Anzahl von Lernziele, welche dem Benutzer empfohlen werden');
 		$item->setValue($this->config->get($item->getPostVar()));
+		$item->setRequired(true);
 		$this->addItem($item);
 
 		$item = new \ilNumberInputGUI('Max empfohlene Lernziele', 'max_amount_suggestions');
 		$item->setInfo('Maximale Anzahl von Lernziele, welche dem Benutzer empfohlen werden');
 		$item->setValue($this->config->get($item->getPostVar()));
+		$item->setRequired(true);
 		$this->addItem($item);
 	}
 
@@ -117,17 +119,18 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 	}
 
 	protected function addWeightRoughConfig() {
-		foreach ($this->getObjectives() as $objective) {
+		foreach ($this->study_program_query->getAll() as $study_program) {
 			$item = new \ilFormSectionHeaderGUI();
-			$item->setTitle('Grobgewichte "' . $objective->getTitle() . '"');
+			$item->setTitle('Grobgewichte "' . $study_program->getTitle() . '"');
 			$this->addItem($item);
-			$objective_id = $objective->getId();
-			foreach ($this->study_program_query->getAll() as $study_program) {
-				$item = new \ilNumberInputGUI($study_program->getTitle(), "weight_rough_{$objective_id}_" . $study_program->getId());
+			foreach ($this->getObjectives() as $objective) {
+				$post_var = 'weight_rough_' . $objective->getId() . '_' . $study_program->getId();
+				$item = new \ilNumberInputGUI($objective->getTitle(), $post_var);
 				$item->setValue($this->config->get($item->getPostVar()));
 				$this->addItem($item);
 			}
 		}
+
 	}
 
 	/**
