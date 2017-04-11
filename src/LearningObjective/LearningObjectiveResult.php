@@ -1,13 +1,13 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\User;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
 require_once('./Modules/Course/classes/Objectives/class.ilLOUserResults.php');
 
 /**
  * Class LearningObjectiveResult
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveResult {
 

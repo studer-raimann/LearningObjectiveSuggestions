@@ -1,5 +1,8 @@
 {
+  "require": {
+    "twig/twig": "1.*"
+  },
   "autoload": {
-    "psr-4": {"SRAG\\ILIAS\\Plugins\\AutoLearningObjectives\\": "src/"}
+    "psr-4": {"SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\": "src/"}
   }
 }

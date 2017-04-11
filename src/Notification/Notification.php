@@ -1,9 +1,9 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Notification;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
 
 /**
  * Class Notification
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\Notification
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
 class Notification extends \ActiveRecord {
 

@@ -1,6 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 
 require_once('./Modules/Course/classes/class.ilCourseObjective.php');
 require_once('./Modules/Course/classes/class.ilObjCourse.php');
@@ -8,7 +8,7 @@ require_once('./Modules/Course/classes/class.ilObjCourse.php');
 /**
  * Class LearningObjectiveQuery
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveQuery {
 
@@ -44,6 +44,18 @@ class LearningObjectiveQuery {
 		}
 		$cache[$ref_id] = $objectives;
 		return $objectives;
+	}
+
+	/**
+	 * @param int $objective_id
+	 * @return LearningObjective
+	 */
+	public function getByObjectiveId($objective_id) {
+		$filtered = array_filter($this->getAll(), function($objective) use ($objective_id) {
+			/** @var $objective LearningObjective */
+			return ($objective->getId() == $objective_id);
+		});
+		return array_pop($filtered);
 	}
 
 	/**

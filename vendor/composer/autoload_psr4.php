@@ -6,5 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'SRAG\\ILIAS\\Plugins\\AutoLearningObjectives\\' => array($baseDir . '/src'),
+    'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\' => array($baseDir . '/src'),
 );

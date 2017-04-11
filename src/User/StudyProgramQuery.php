@@ -1,5 +1,5 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\User;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 
 require_once('./Services/User/classes/class.ilUserDefinedFields.php');
 require_once('./Services/User/classes/class.ilUserDefinedData.php');
@@ -8,7 +8,7 @@ require_once('./Services/User/classes/class.ilUserDefinedData.php');
 /**
  * Class StudyProgramQuery
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\User
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User
  */
 class StudyProgramQuery {
 

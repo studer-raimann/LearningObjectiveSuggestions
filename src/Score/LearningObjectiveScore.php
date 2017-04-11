@@ -1,10 +1,10 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Score;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score;
 
 /**
  * Class LearningObjectiveScore
  *
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveScore extends \ActiveRecord {
 

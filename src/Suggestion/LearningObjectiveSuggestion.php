@@ -1,10 +1,10 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Suggestion;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion;
 
 /**
  * Class LearningObjectiveSuggestion
  *
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveSuggestion extends \ActiveRecord {
 

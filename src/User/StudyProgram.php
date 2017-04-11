@@ -1,9 +1,9 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\User;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
 
 /**
  * Class StudyProgram
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\User
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User
  */
 class StudyProgram {
 

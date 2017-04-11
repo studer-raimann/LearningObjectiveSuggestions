@@ -1,4 +1,4 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Log;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log;
 
 require_once('./Services/Logging/classes/class.ilLog.php');
 

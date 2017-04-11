@@ -1,13 +1,13 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Notification;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\User;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
 require_once('./Services/Mail/classes/class.ilMail.php');
 
 /**
  * Class InternalMailSender
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\Notification
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
 class InternalMailSender {
 
@@ -79,20 +79,28 @@ class InternalMailSender {
 	}
 
 	/**
-	 * @param User $user
+	 * @param User|\ilObjRole $user_or_role
 	 * @return $this
 	 */
-	public function cc(User $user) {
-		$this->cc[] = $user->getLogin();
+	public function cc($user_or_role) {
+		if ($user_or_role instanceof User) {
+			$this->cc[] = $user_or_role->getLogin();
+		} else if ($user_or_role instanceof \ilObjRole) {
+			$this->cc[] = "#_il_role_" . $user_or_role->getId();
+		}
 		return $this;
 	}
 
 	/**
-	 * @param User $user
+	 * @param User|\ilObjRole $user_or_role
 	 * @return $this
 	 */
-	public function bcc(User $user) {
-		$this->bcc[] = $user->getLogin();
+	public function bcc($user_or_role) {
+		if ($user_or_role instanceof User) {
+			$this->cc[] = $user_or_role->getLogin();
+		} else if ($user_or_role instanceof \ilObjRole) {
+			$this->cc[] = "#_il_role_" . $user_or_role->getId();
+		}
 		return $this;
 	}
 

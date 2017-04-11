@@ -1,6 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 
 require_once('./Modules/Course/classes/class.ilCourseObjective.php');
 require_once('./Modules/Course/classes/class.ilObjCourse.php');
@@ -8,7 +8,7 @@ require_once('./Modules/Course/classes/class.ilObjCourse.php');
 /**
  * Class LearningObjectiveCourseQuery
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveCourseQuery {
 

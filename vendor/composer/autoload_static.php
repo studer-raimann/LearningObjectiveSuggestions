@@ -9,14 +9,24 @@ class ComposerStaticInit20237c052b6e05270ce13c7b54d2b268
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
-            'SRAG\\ILIAS\\Plugins\\AutoLearningObjectives\\' => 42,
+            'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\' => 48,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'SRAG\\ILIAS\\Plugins\\AutoLearningObjectives\\' => 
+        'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'T' => 
+        array (
+            'Twig_' => 
+            array (
+                0 => __DIR__ . '/..' . '/twig/twig/lib',
+            ),
         ),
     );
 
@@ -25,6 +35,7 @@ class ComposerStaticInit20237c052b6e05270ce13c7b54d2b268
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit20237c052b6e05270ce13c7b54d2b268::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit20237c052b6e05270ce13c7b54d2b268::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit20237c052b6e05270ce13c7b54d2b268::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

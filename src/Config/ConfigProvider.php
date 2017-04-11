@@ -1,4 +1,4 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Config;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config;
 
 /**
  * Class ConfigProvider
@@ -6,7 +6,7 @@
  * Provides access to global config data
  *
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\Config
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class ConfigProvider {
 

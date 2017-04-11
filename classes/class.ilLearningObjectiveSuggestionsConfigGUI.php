@@ -1,14 +1,15 @@
 <?php
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Form\CourseConfigFormGUI;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Form\NotificationConfigFormGUI;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveCourse;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveCourseQuery;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\LearningObjectiveCourseTableGUI;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgramQuery;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form\CourseConfigFormGUI;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form\NotificationConfigFormGUI;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourseQuery;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\LearningObjectiveCourseTableGUI;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\TwigParser;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
 
 require_once('./Services/Component/classes/class.ilPluginConfigGUI.php');
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
@@ -80,7 +81,7 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
 		$this->initCourseHeader($course);
 		$this->tabs->setBackTarget('Zurück', $this->ctrl->getLinkTarget($this, 'configure'));
-		$form = new NotificationConfigFormGUI(new CourseConfigProvider($course));
+		$form = new NotificationConfigFormGUI(new CourseConfigProvider($course), new TwigParser());
 		$form->setFormAction($this->ctrl->getFormAction($this));
 		$this->tpl->setContent($form->getHTML());
 	}
@@ -153,7 +154,7 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$config = new CourseConfigProvider($course);
 		$this->tabs->setBackTarget('Zurück', $this->ctrl->getLinkTarget($this, 'configure'));
 		$this->initCourseHeader($course);
-		$form = new NotificationConfigFormGUI($config);
+		$form = new NotificationConfigFormGUI($config, new TwigParser());
 		if ($form->checkInput()) {
 			$this->storeConfig($config, $form);
 			ilUtil::sendSuccess('Konfiguration gespeichert', true);

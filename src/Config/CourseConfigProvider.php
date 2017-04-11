@@ -1,8 +1,8 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Config;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjective;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveCourse;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgram;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgram;
 
 /**
  * Class CourseConfigProvider
@@ -10,7 +10,7 @@ use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgram;
  * Provides access to config data depending on the injected course
  *
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\Config
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class CourseConfigProvider {
 
@@ -63,6 +63,21 @@ class CourseConfigProvider {
 		$config->setValue($value);
 		$config->save();
 	}
+
+	/**
+	 * @return int
+	 */
+	public function getMaxSuggestions() {
+		return (int)$this->get('max_amount_suggestions');
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getMinSuggestions() {
+		return (int)$this->get('min_amount_suggestions');
+	}
+
 
 	/**
 	 * @param LearningObjective $learning_objective

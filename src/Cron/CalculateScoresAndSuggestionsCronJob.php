@@ -1,18 +1,18 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjective;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveCourse;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveResult;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Log\Log;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Score\LearningObjectiveScore;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Score\LearningObjectiveScoreCalculator;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Suggestion\LearningObjectiveSuggestion;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Suggestion\LearningObjectiveSuggestionGenerator;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgramQuery;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\User;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveResult;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScoreCalculator;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestionGenerator;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
 require_once('./Services/Cron/classes/class.ilCronJob.php');
 require_once('./Services/Cron/classes/class.ilCronJobResult.php');
@@ -22,7 +22,7 @@ require_once('./Modules/Course/classes/class.ilObjCourse.php');
 /**
  * Class CalculateScoresAndSuggestionsCronJob
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron
  */
 class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
@@ -138,7 +138,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			$user = $this->getUser($row->user_id);
 			$objective_results[] = new LearningObjectiveResult($objective, $user);
 		}
-		$stack = array();
+		$users = array(); // Stores all the users where we might need to create the suggestions
 		foreach ($objective_results as $objective_result) {
 			/** @var LearningObjectiveResult $objective_result */
 			$calculator = new LearningObjectiveScoreCalculator($config, $study_program_query, $this->log);
@@ -147,19 +147,51 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 				$skore = $calculator->calculate($objective_result);
 				$score->setScore($skore);
 				$score->save();
-				$stack[$objective_result->getUser()->getId()][] = $score;
+				$users[] = $objective_result->getUser();
 			} catch (\Exception $e) {
 				$this->log->write("Exception when trying to calculate the score for {$score}");
 				$this->log->write($e->getMessage());
 				$this->log->write($e->getTraceAsString());
 			}
 		}
-		foreach ($stack as $user_id => $scores) {
+		foreach ($users as $user) {
+			// Do not create suggestions if they already exist
+			if ($this->existSuggestions($course, $user)) {
+				continue;
+			}
 			$generator = new LearningObjectiveSuggestionGenerator($config, $learning_objective_query, $this->log);
+			$scores = $this->getScores($course, $user);
 			$suggested_scores = $generator->generate($scores);
 			$this->createSuggestions($suggested_scores);
 		}
 	}
+
+	/**
+	 * @param LearningObjectiveCourse $course
+	 * @param User $user
+	 * @return LearningObjectiveScore[]
+	 */
+	protected function getScores(LearningObjectiveCourse $course, User $user) {
+		return LearningObjectiveScore::where(array(
+			'user_id' => $user->getId(),
+			'course_obj_id' => $course->getId()
+		))->get();
+	}
+
+	/**
+	 * Checks if there already exist computed suggestions for the given course/user pair
+	 *
+	 * @param LearningObjectiveCourse $course
+	 * @param User $user
+	 * @return bool
+	 */
+	protected function existSuggestions(LearningObjectiveCourse $course, User $user) {
+		return LearningObjectiveSuggestion::where(array(
+			'user_id' => $user->getId(),
+			'course_obj_id' => $course->getId(),
+		))->hasSets();
+	}
+
 
 	/**
 	 * @param LearningObjectiveScore[] $scores

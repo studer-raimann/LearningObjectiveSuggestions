@@ -1,9 +1,9 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
 /**
  * Class LearningObjectiveCourse
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveCourse {
 

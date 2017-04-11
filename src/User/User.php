@@ -1,9 +1,9 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\User;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
 
 /**
  * Class User
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\User
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User
  */
 class User {
 
@@ -38,6 +38,20 @@ class User {
 	 */
 	public function getEmail() {
 		return $this->user->getEmail();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFirstname() {
+		return $this->user->getFirstname();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLastname() {
+		return $this->user->getLastname();
 	}
 
 	/**

@@ -1,8 +1,8 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Form;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgramQuery;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
 
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Services/Form/classes/class.ilMultiSelectInputGUI.php');
@@ -11,7 +11,7 @@ require_once('./Modules/Course/classes/class.ilObjCourse.php');
 /**
  * Class CourseConfigFormGUI
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\Form
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form
  */
 class CourseConfigFormGUI extends \ilPropertyFormGUI {
 
@@ -134,7 +134,7 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 	}
 
 	/**
-	 * @return \SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjective[]
+	 * @return \SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective[]
 	 */
 	protected function getObjectives() {
 		static $objectives = null;

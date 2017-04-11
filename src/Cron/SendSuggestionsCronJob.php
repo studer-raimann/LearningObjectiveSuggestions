@@ -1,22 +1,23 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveCourse;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Log\Log;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Notification\InternalMailSender;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Notification\Notification;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\User;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\InternalMailSender;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
 require_once('./Services/Cron/classes/class.ilCronJob.php');
 require_once('./Services/Cron/classes/class.ilCronJobResult.php');
 require_once('./Services/User/classes/class.ilObjUser.php');
 require_once('./Modules/Course/classes/class.ilObjCourse.php');
+require_once('./Services/AccessControl/classes/class.ilObjRole.php');
 
 /**
  * Class SendSuggestionsCronJob
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron
  */
 class SendSuggestionsCronJob extends \ilCronJob {
 
@@ -135,6 +136,9 @@ class SendSuggestionsCronJob extends \ilCronJob {
 			->to($receiver)
 			->subject($config->get('email_subject'))
 			->body($config->get('email_body'));
+		if ($role_id = $config->get('notification_cc_role_id')) {
+			$mail->cc($this->getRole((int) $role_id));
+		}
 		if ($mail->send()) {
 			$notification = new Notification();
 			$notification->setUserId($user_id);
@@ -145,6 +149,19 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		}
 	}
 
+	/**
+	 * @param int $role_id
+	 * @return \ilObjRole
+	 */
+	protected function getRole($role_id) {
+		static $cache = array();
+		if (isset($cache[$role_id])) {
+			return $cache[$role_id];
+		}
+		$role = new \ilObjRole((int) $role_id);
+		$cache[$role_id] = $role;
+		return $role;
+	}
 
 	/**
 	 * @param int $user_id

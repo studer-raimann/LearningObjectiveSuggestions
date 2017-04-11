@@ -2,13 +2,10 @@
 include_once("./Services/Cron/classes/class.ilCronHookPlugin.php");
 require_once(dirname(__DIR__) . '/vendor/autoload.php');
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\ConfigProvider;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Config\CourseConfigProvider;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron\CalculateScoresAndSuggestionsCronJob;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Cron\SendSuggestionsCronJob;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveQuery;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\User\StudyProgramQuery;
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\Log\Log;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron\CalculateScoresAndSuggestionsCronJob;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron\SendSuggestionsCronJob;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
 
 
 /**
@@ -62,7 +59,6 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 		return static::$cron_instances;
 	}
 
-
 	/**
 	 * @return array
 	 */
@@ -91,4 +87,17 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 	public function getPluginName() {
 		return 'LearningObjectiveSuggestions';
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	protected function afterUninstall() {
+		global $ilDB;
+		$ilDB->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore::returnDbTableName(), false);
+		$ilDB->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion::returnDbTableName(), false);
+		$ilDB->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfig::returnDbTableName(), false);
+		$ilDB->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\Config::returnDbTableName(), false);
+		$ilDB->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion::returnDbTableName(), false);
+	}
+
 }

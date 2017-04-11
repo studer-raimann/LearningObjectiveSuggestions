@@ -1,6 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\AutoLearningObjectives\Config;
+<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config;
 
-use SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective\LearningObjectiveCourse;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 
 require_once('./Services/Table/classes/class.ilTable2GUI.php');
 require_once('./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php');
@@ -8,7 +8,7 @@ require_once('./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvan
 /**
  * Class LearningObjectiveCourseTableGUI
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\AutoLearningObjectives\LearningObjective
+ * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 
