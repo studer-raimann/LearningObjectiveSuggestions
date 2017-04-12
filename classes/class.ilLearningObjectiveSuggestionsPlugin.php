@@ -6,6 +6,7 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron\CalculateScoresAndSuggestionsCronJob;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron\SendSuggestionsCronJob;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\TwigParser;
 
 
 /**
@@ -50,7 +51,7 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 				$config,
 				$log
 			);
-			$cron2 = new SendSuggestionsCronJob($ilDB, $config, $log);
+			$cron2 = new SendSuggestionsCronJob($ilDB, $config, new TwigParser(), $log);
 			static::$cron_instances = array(
 				$cron1->getId() => $cron1,
 				$cron2->getId() => $cron2,
@@ -97,7 +98,7 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 		$ilDB->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion::returnDbTableName(), false);
 		$ilDB->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfig::returnDbTableName(), false);
 		$ilDB->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\Config::returnDbTableName(), false);
-		$ilDB->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion::returnDbTableName(), false);
+		$ilDB->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification::returnDbTableName(), false);
 	}
 
 }

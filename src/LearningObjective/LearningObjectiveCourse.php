@@ -1,5 +1,7 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
+require_once('./Services/Link/classes/class.ilLink.php');
+
 /**
  * Class LearningObjectiveCourse
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
@@ -47,4 +49,20 @@ class LearningObjectiveCourse {
 	public function getRefId() {
 		return $this->course->getRefId();
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getLink() {
+		return \ilLink::_getStaticLink($this->getRefId(), 'crs');
+	}
+
+
+	function __toString() {
+		return '[' . implode(', ', array(
+				$this->getRefId(),
+				$this->getTitle()
+			)) . ']';
+	}
+
 }

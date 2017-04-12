@@ -9,7 +9,7 @@ require_once('./Services/Mail/classes/class.ilMail.php');
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
-class InternalMailSender {
+class InternalMail {
 
 	/**
 	 * @var User
@@ -86,7 +86,7 @@ class InternalMailSender {
 		if ($user_or_role instanceof User) {
 			$this->cc[] = $user_or_role->getLogin();
 		} else if ($user_or_role instanceof \ilObjRole) {
-			$this->cc[] = "#_il_role_" . $user_or_role->getId();
+			$this->cc[] = "#" . $user_or_role->getTitle();
 		}
 		return $this;
 	}
@@ -99,7 +99,7 @@ class InternalMailSender {
 		if ($user_or_role instanceof User) {
 			$this->cc[] = $user_or_role->getLogin();
 		} else if ($user_or_role instanceof \ilObjRole) {
-			$this->cc[] = "#_il_role_" . $user_or_role->getId();
+			$this->cc[] = "#" . $user_or_role->getTitle();
 		}
 		return $this;
 	}
@@ -108,12 +108,12 @@ class InternalMailSender {
 	 * @return bool
 	 */
 	public function send() {
-		$mailer = new \ilMail($this->sender->getLogin());
+		$mailer = new \ilMail($this->sender->getId());
 		$mailer->setSaveInSentbox(true);
 		return !$mailer->sendMail(
 			$this->receiver->getLogin(),
-			$this->cc,
-			$this->bcc,
+			implode(',', $this->cc),
+			implode(',', $this->bcc),
 			$this->subject,
 			$this->body,
 			array(),

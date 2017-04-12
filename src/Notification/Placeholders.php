@@ -22,7 +22,7 @@ class Placeholders {
 			'user.getEmail' => 'E-Mail',
 			'course.getTitle' => 'Kurs-Titel',
 			'course.getLink' => 'Link zum Kurs',
-			'objectives' => 'Lernziele mit Titel sowie Link zum Kurs'
+			'objectives' => 'Liste der empfohlenen Lernziele'
 		);
 	}
 
@@ -45,12 +45,11 @@ class Placeholders {
 	 * @return string
 	 */
 	protected function renderObjectives(array $objectives) {
-		$out = '';
-		foreach ($objectives as $objective) {
-			$out .= $objective->getTitle() . "\n";
-			$out .= "Link zum verlinkten Kurs\n\n";
-		}
-		return $out;
+		$titles = array_map(function ($objective) {
+			/** @var LearningObjective $objective */
+			return ($objective) ? $objective->getTitle() : '';
+		}, $objectives);
+		return implode("\n", $titles);
 	}
 
 }

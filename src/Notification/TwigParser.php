@@ -43,7 +43,7 @@ class TwigParser implements Parser {
 			return $instance;
 		}
 		$loader = new \Twig_Loader_Array();
-		$twig = new \Twig_Environment($loader);
+		$twig = new \Twig_Environment($loader, array('autoescape' => false));
 		$instance = $twig;
 		return $twig;
 	}

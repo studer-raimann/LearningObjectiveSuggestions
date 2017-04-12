@@ -1,5 +1,7 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
+require_once('./Modules/Course/classes/class.ilCourseObjectiveMaterials.php');
+
 /**
  * Class LearningObjective
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
@@ -54,4 +56,10 @@ class LearningObjective {
 		return $this->objective->getDescription();
 	}
 
+	/**
+	 * @return array
+	 */
+	public function getRefIdsOfAssignedObjects() {
+		return \ilCourseObjectiveMaterials::_getAssignedMaterials($this->getId());
+	}
 }

@@ -55,7 +55,7 @@ class LearningObjectiveSuggestionGenerator {
 		$max = $this->config->getMaxSuggestions();
 		// Basic check: If for some reason we do not have enough scores to satisfy the min condition, return early
 		if (count($scores) <= $min) {
-			return $scores;
+			return $this->sortDescByScore($scores);
 		}
 		$main_objective_ids = array_map(function($objective) {
 			/** @var $objective LearningObjective */
@@ -77,11 +77,11 @@ class LearningObjectiveSuggestionGenerator {
 			}
 		}
 		// Start algorithm
-		$suggested = array();
+		$suggestions = array();
 		$count_main = $main_stack->count();
 		$count_extended = $extended_stack->count();
 		while (
-			count($suggested) < $max &&
+			count($suggestions) < $max &&
 			!($main_stack->isEmpty() && $extended_stack->isEmpty())
 		) {
 			/** @var LearningObjectiveScore $main */
@@ -90,33 +90,33 @@ class LearningObjectiveSuggestionGenerator {
 			$extended = $extended_stack->peek();
 			// Handle the case if stacks are already empty
 			if ($main && !$extended) {
-				$suggested[] = $main_stack->pop();
+				$suggestions[] = $main_stack->pop();
 				continue;
 			}
 			if (!$main && $extended) {
-				$suggested[] = $extended_stack->pop();
+				$suggestions[] = $extended_stack->pop();
 				continue;
 			}
 			// Both stacks still contain scores: We pick the one with the higher score
 			if ($main->getScore() > $extended->getScore()) {
-				$suggested[] = $main_stack->pop();
+				$suggestions[] = $main_stack->pop();
 			} else if ($extended->getScore() > $main->getScore()) {
-				$suggested[] = $extended_stack->pop();
+				$suggestions[] = $extended_stack->pop();
 			} else {
 				// Equal score --> pick from main
-				$suggested[] = $main_stack->pop();
+				$suggestions[] = $main_stack->pop();
 			}
 		}
 		// Check that we have chosen at least one score from both stacks
 		$chosen_main = ($main_stack->count() < $count_main);
 		$chosen_extended = ($extended_stack->count() < $count_extended);
 		if (!$chosen_extended) {
-			$suggested[count($suggested) - 1] = $extended_stack->pop();
+			$suggestions[count($suggestions) - 1] = $extended_stack->pop();
 		} else if (!$chosen_main) {
-			$suggested[count($suggested) - 1] = $main_stack->pop();
+			$suggestions[count($suggestions) - 1] = $main_stack->pop();
 		}
-		// TODO Maybe truncate suggestions that have a zero score?
-		return $this->sortDescByScore($suggested);
+		// TODO Remove zero scores?
+		return $this->sortDescByScore($suggestions);
 	}
 
 	/**

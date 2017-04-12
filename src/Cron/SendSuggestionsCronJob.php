@@ -2,10 +2,16 @@
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
-use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\InternalMailSender;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\InternalMail;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Parser;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Placeholders;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Sender;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
 require_once('./Services/Cron/classes/class.ilCronJob.php');
@@ -37,13 +43,20 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	protected $log;
 
 	/**
+	 * @var Parser
+	 */
+	protected $parser;
+
+	/**
 	 * @param \ilDB $db
 	 * @param ConfigProvider $config
+	 * @param Parser $parser
 	 * @param Log $log
 	 */
-	public function __construct(\ilDB $db, ConfigProvider $config, Log $log) {
+	public function __construct(\ilDB $db, ConfigProvider $config, Parser $parser, Log $log) {
 		$this->db = $db;
 		$this->config = $config;
+		$this->parser = $parser;
 		$this->log = $log;
 	}
 
@@ -118,56 +131,41 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	protected function runForCourse(LearningObjectiveCourse $course) {
 		$set = $this->db->query($this->getSQL($course));
 		while ($row = $this->db->fetchObject($set)) {
-			$this->send($course, $row->user_id);
+			$this->send($course, $this->getUser($row->user_id));
 		}
 	}
 
 	/**
 	 * @param LearningObjectiveCourse $course
-	 * @param int $user_id
+	 * @param User $user
 	 */
-	protected function send(LearningObjectiveCourse $course, $user_id) {
-		// Todo Parse template and send actual suggestions
+	protected function send(LearningObjectiveCourse $course, User $user) {
 		$config = new CourseConfigProvider($course);
-		$mail = new InternalMailSender();
-		$sender = $this->getSendUser($config->get('notification_sender_user_id'));
-		$receiver = new User(new \ilObjUser($user_id));
-		$mail->from($sender)
-			->to($receiver)
-			->subject($config->get('email_subject'))
-			->body($config->get('email_body'));
-		if ($role_id = $config->get('notification_cc_role_id')) {
-			$mail->cc($this->getRole((int) $role_id));
+		$query = new LearningObjectiveQuery($config);
+		$placeholders = new Placeholders();
+		// Note: If we can't parse the mail templates, we fail silently but write to log
+		try {
+			$objectives = $this->getSuggestedLearningObjectives($course, $user, $query);
+			$p = $placeholders->getPlaceholders($course, $user, $objectives);
+			$subject = $this->parser->parse($config->get('email_subject'), $p);
+			$body = $this->parser->parse($config->get('email_body'), $p);
+			$sender = new Sender($course, $user);
+			$sender->subject($subject)->body($body);
+			if (!$sender->send()) {
+				$msg = "Failed to send learning objective suggestions for course %s and User %s";
+				$this->log->write(sprintf($msg, $course->getTitle(), $user->__toString()));
+			}
+		} catch (\Exception $e) {
+			$this->log->write("Error while trying to send learning objective suggestions: " . $e->getMessage());
+			$this->log->write($e->getTraceAsString());
 		}
-		if ($mail->send()) {
-			$notification = new Notification();
-			$notification->setUserId($user_id);
-			$notification->setCourseObjId($course->getId());
-			$notification->setSentAt(date('Y-m-d H:i:s'));
-			$notification->setSentUserId($config->get('notification_sender_user_id'));
-			$notification->save();
-		}
-	}
-
-	/**
-	 * @param int $role_id
-	 * @return \ilObjRole
-	 */
-	protected function getRole($role_id) {
-		static $cache = array();
-		if (isset($cache[$role_id])) {
-			return $cache[$role_id];
-		}
-		$role = new \ilObjRole((int) $role_id);
-		$cache[$role_id] = $role;
-		return $role;
 	}
 
 	/**
 	 * @param int $user_id
 	 * @return User
 	 */
-	protected function getSendUser($user_id) {
+	protected function getUser($user_id) {
 		static $cache = array();
 		if (isset($cache[$user_id])) {
 			return $cache[$user_id];
@@ -176,6 +174,26 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		$cache[$user_id] = $user;
 		return $user;
 	}
+
+	/**
+	 * @param LearningObjectiveCourse $course
+	 * @param User $user
+	 * @param LearningObjectiveQuery $query
+	 * @return LearningObjective[]
+	 */
+	protected function getSuggestedLearningObjectives(LearningObjectiveCourse $course, User $user, LearningObjectiveQuery $query) {
+		$suggestions = LearningObjectiveSuggestion::where(array(
+			'user_id' => $user->getId(),
+			'course_obj_id' => $course->getId(),
+		))->orderBy('sort')->get();
+		$objectives = array();
+		foreach ($suggestions as $suggestion) {
+			/** @var $suggestion LearningObjectiveSuggestion */
+			$objectives[] = $query->getByObjectiveId($suggestion->getObjectiveId());
+		}
+		return $objectives;
+	}
+
 
 	/**
 	 * @param LearningObjectiveCourse $course
