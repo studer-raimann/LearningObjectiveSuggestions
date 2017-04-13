@@ -101,13 +101,16 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 
 	protected function saveCourse() {
 		$form = $this->getAddCourseFormGUI();
-		if ($form->checkInput()) {
+		if ($form->checkInput() && ilObject::_lookupType($form->getInput('ref_id'), true) == 'crs') {
 			$config = new ConfigProvider();
 			$ref_ids = (array) json_decode($config->get('course_ref_ids'), true);
 			$ref_ids[] = $form->getInput('ref_id');
 			$config->set('course_ref_ids', json_encode(array_unique($ref_ids)));
 			ilUtil::sendSuccess('Lernzielorientierter Kurs wurde hinzugefügt und kann nun konfiguriert werden');
 			$this->ctrl->redirect($this, 'configure');
+		}
+		if (ilObject::_lookupType($form->getInput('ref_id'), true) != 'crs') {
+			$form->getItemByPostVar('ref_id')->setAlert('Die eingegebene Ref-ID referenziert kein Kurs-Objekt');
 		}
 		$form->setValuesByPost();
 		$this->tpl->setContent($form->getHTML());

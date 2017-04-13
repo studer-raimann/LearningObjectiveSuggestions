@@ -7,6 +7,7 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Services/Form/classes/class.ilMultiSelectInputGUI.php');
 require_once('./Modules/Course/classes/class.ilObjCourse.php');
+require_once('./Services/User/classes/class.ilUserDefinedFields.php');
 
 /**
  * Class CourseConfigFormGUI
@@ -35,7 +36,9 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 	 * @param LearningObjectiveQuery $objective_query
 	 * @param StudyProgramQuery $study_program_query
 	 */
-	public function __construct(CourseConfigProvider $config, LearningObjectiveQuery $objective_query, StudyProgramQuery $study_program_query) {
+	public function __construct(CourseConfigProvider $config,
+	                            LearningObjectiveQuery $objective_query,
+	                            StudyProgramQuery $study_program_query) {
 		parent::__construct();
 		$this->config = $config;
 		$this->objective_query = $objective_query;
@@ -46,14 +49,20 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 	protected function init() {
 		$this->setTitle('Konfiguration');
 
-		$udf = new \ilNumberInputGUI('Udf-ID Studienprogramm', 'udf_id_study_program');
-		$udf->setInfo('ID vom UDF Dropdown Feld, welches die Studiengänge enthält');
+		$options = array();
+		$definitions = \ilUserDefinedFields::_getInstance()->getDefinitions();
+		foreach ($definitions as $field_id => $data) {
+			$options[$field_id] = $data['field_name'];
+		}
+		$udf = new \ilSelectInputGUI('UDF Studienprogramm', 'udf_id_study_program');
+		$udf->setInfo('UDF Dropdown Feld, welches die Studiengänge enthält');
+		$udf->setOptions($options);
 		$udf->setRequired(true);
 		$udf->setValue($this->config->get('udf_id_study_program'));
 
 		if ($this->config->get('udf_id_study_program')) {
-			$item = new \ilCheckboxInputGUI('ID Studienprogramm ändern', 'change_mapping_ids');
-			$item->setInfo('Achtung: Das Ändern der ID wirkt sich auf die gesamte folgende Konfiguration aus');
+			$item = new \ilCheckboxInputGUI('UDF Studienprogramm ändern', 'change_mapping_ids');
+			$item->setInfo('Achtung: Das Ändern vom UDF wirkt sich auf die gesamte folgende Konfiguration aus');
 			$item->addSubItem($udf);
 			$this->addItem($item);
 			$this->addGeneralConfig();
