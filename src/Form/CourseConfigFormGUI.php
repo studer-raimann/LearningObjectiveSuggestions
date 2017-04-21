@@ -122,6 +122,8 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 		$this->addItem($item);
 		foreach ($this->getObjectives() as $objective) {
 			$item = new \ilNumberInputGUI($objective->getTitle(), 'weight_fine_' . $objective->getId());
+			$item->setRequired(true);
+			$item->allowDecimals(true);
 			$item->setValue($this->config->get($item->getPostVar()));
 			$this->addItem($item);
 		}
@@ -135,6 +137,8 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 			foreach ($this->getObjectives() as $objective) {
 				$post_var = 'weight_rough_' . $objective->getId() . '_' . $study_program->getId();
 				$item = new \ilNumberInputGUI($objective->getTitle(), $post_var);
+				$item->setRequired(true);
+				$item->allowDecimals(true);
 				$item->setValue($this->config->get($item->getPostVar()));
 				$this->addItem($item);
 			}

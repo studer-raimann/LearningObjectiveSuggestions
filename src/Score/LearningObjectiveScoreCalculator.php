@@ -44,7 +44,7 @@ class LearningObjectiveScoreCalculator {
 
 	/**
 	 * @param LearningObjectiveResult $objective_result
-	 * @return int
+	 * @return float
 	 * @throws \ilException
 	 */
 	public function calculate(LearningObjectiveResult $objective_result) {
@@ -63,7 +63,10 @@ class LearningObjectiveScoreCalculator {
 		if ($weight_fine === null) {
 			throw new \ilException(sprintf('Fine weight is not set for learning objective %s', $objective->getTitle()));
 		}
-		return (100 - $objective_result->getPercentage()) * $weight_rough * $weight_fine;
+		$percentage = $objective_result->getPercentage();
+		if ($percentage < 90) {
+			return (100 - $percentage) * (float) $weight_rough + (float) $weight_fine;
+		}
+		return (100 - $percentage) * (float) $weight_rough - (float) $weight_fine;
 	}
-
 }
