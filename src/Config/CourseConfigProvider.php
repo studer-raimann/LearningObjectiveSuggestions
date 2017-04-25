@@ -78,7 +78,6 @@ class CourseConfigProvider {
 		return (int)$this->get('min_amount_suggestions');
 	}
 
-
 	/**
 	 * @param LearningObjective $learning_objective
 	 * @param StudyProgram $study_program
@@ -96,4 +95,17 @@ class CourseConfigProvider {
 		return $this->get('weight_fine_' . $learning_objective->getId());
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getEmailSubjectTemplate() {
+		return (string) $this->get('email_subject');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getEmailBodyTemplate() {
+		return (string) $this->get('email_body');
+	}
 }

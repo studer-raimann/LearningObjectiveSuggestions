@@ -264,7 +264,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 	 * @return string
 	 */
 	protected function getSQL(LearningObjectiveCourse $course) {
-		return 'SELECT loc_user_results.* FROM loc_user_results
+		$sql = 'SELECT loc_user_results.* FROM loc_user_results
 				LEFT JOIN alo_score ON 
 					(
 					alo_score.user_id = loc_user_results.user_id 
@@ -273,8 +273,14 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 					AND loc_user_results.type = 1
 					)
 				WHERE loc_user_results.course_id = ' . $this->db->quote($course->getId(), 'integer') . ' 
-				AND alo_score.id IS NULL
-				ORDER BY loc_user_results.user_id, loc_user_results.course_id';
+				AND alo_score.id IS NULL ';
+		// Only include users that are still member of the course
+		$member_ids = $course->getMemberIds();
+		if (count($member_ids)) {
+			$sql .= ' AND loc_user_results.user_id IN (' . implode(',', $member_ids) .') ';
+		}
+		$sql .= 'ORDER BY loc_user_results.user_id, loc_user_results.course_id';
+		return $sql;
 	}
 
 }

@@ -147,8 +147,8 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		try {
 			$objectives = $this->getSuggestedLearningObjectives($course, $user, $query);
 			$p = $placeholders->getPlaceholders($course, $user, $objectives);
-			$subject = $this->parser->parse($config->get('email_subject'), $p);
-			$body = $this->parser->parse($config->get('email_body'), $p);
+			$subject = $this->parser->parse($config->getEmailSubjectTemplate(), $p);
+			$body = $this->parser->parse($config->getEmailBodyTemplate(), $p);
 			$sender = new Sender($course, $user);
 			$sender->subject($subject)->body($body);
 			if (!$sender->send()) {
@@ -200,11 +200,20 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	 * @return string
 	 */
 	protected function getSQL(LearningObjectiveCourse $course) {
-		return 'SELECT alo_suggestion.user_id FROM alo_suggestion
+		$sql = 'SELECT 
+				alo_suggestion.user_id 
+				FROM alo_suggestion
 				LEFT JOIN alo_notification ON 
 					(alo_notification.course_obj_id = alo_suggestion.course_obj_id AND alo_notification.user_id = alo_suggestion.user_id)
-				WHERE alo_suggestion.course_obj_id = ' . $this->db->quote($course->getId(), 'integer') . ' AND alo_notification.sent_at IS NULL
-				GROUP BY alo_suggestion.user_id';
+				WHERE 
+					alo_suggestion.course_obj_id = ' . $this->db->quote($course->getId(), 'integer') . ' 
+					AND alo_notification.sent_at IS NULL ';
+		$member_ids = $course->getMemberIds();
+		if (count($member_ids)) {
+			$sql .= 'AND alo_suggestion.user_id IN (' . implode(',', $member_ids) . ') ';
+		}
+		$sql .= 'GROUP BY alo_suggestion.user_id';
+		return $sql;
 	}
 
 }

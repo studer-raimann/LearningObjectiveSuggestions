@@ -1,6 +1,7 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
 require_once('./Services/Link/classes/class.ilLink.php');
+require_once('./Modules/Course/classes/class.ilCourseParticipants.php');
 
 /**
  * Class LearningObjectiveCourse
@@ -57,6 +58,14 @@ class LearningObjectiveCourse {
 		return \ilLink::_getStaticLink($this->getRefId(), 'crs');
 	}
 
+	/**
+	 * Get the user-IDs of all members of this course
+	 * @return array
+	 */
+	public function getMemberIds() {
+		$participants = \ilCourseParticipants::getInstanceByObjId($this->getId());
+		return $participants->getMembers();
+	}
 
 	function __toString() {
 		return '[' . implode(', ', array(
