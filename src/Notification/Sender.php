@@ -1,6 +1,7 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
 require_once('./Services/AccessControl/classes/class.ilObjRole.php');
@@ -33,12 +34,19 @@ class Sender {
 	protected $user;
 
 	/**
+	 * @var Log
+	 */
+	protected $log;
+
+	/**
 	 * @param LearningObjectiveCourse $course
 	 * @param User $user
+	 * @param Log $log
 	 */
-	public function __construct(LearningObjectiveCourse $course, User $user) {
+	public function __construct(LearningObjectiveCourse $course, User $user, Log $log) {
 		$this->course = $course;
 		$this->user = $user;
+		$this->log = $log;
 	}
 
 	/**
@@ -73,14 +81,17 @@ class Sender {
 		if ($cc_role_id = $config->get('notification_cc_role_id')) {
 			$mail->cc($this->getRole($cc_role_id));
 		}
-		if (!$mail->send()) {
+		try {
+			$mail->send();
+			$notification = $this->getNotification();
+			$notification->setSentUserId($sender->getId());
+			$notification->setSentAt(date('Y-m-d H:i:s'));
+			$notification->save();
+			return true;
+		} catch (\Exception $e) {
+			$this->log->write($e->getMessage());
 			return false;
 		}
-		$notification = $this->getNotification();
-		$notification->setSentUserId($sender->getId());
-		$notification->setSentAt(date('Y-m-d H:i:s'));
-		$notification->save();
-		return true;
 	}
 
 	/**

@@ -106,11 +106,12 @@ class InternalMail {
 
 	/**
 	 * @return bool
+	 * @throws \ilException
 	 */
 	public function send() {
 		$mailer = new \ilMail($this->sender->getId());
 		$mailer->setSaveInSentbox(true);
-		return !$mailer->sendMail(
+		$result = $mailer->sendMail(
 			$this->receiver->getLogin(),
 			implode(',', $this->cc),
 			implode(',', $this->bcc),
@@ -119,6 +120,10 @@ class InternalMail {
 			array(),
 			array('normal')
 		);
+		if ($result) {
+			throw new \ilException("Failed to send mail with error: " . $result);
+		}
+		return true;
 	}
 
 }

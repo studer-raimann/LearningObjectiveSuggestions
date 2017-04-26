@@ -50,72 +50,81 @@ class LearningObjectiveSuggestionGenerator {
 	 * @return LearningObjectiveScore[]
 	 */
 	public function generate(array $scores) {
-		$scores = $this->sortAscByScore($scores);
+		$scores = $this->sortDescByScore($scores);
 		$min = $this->config->getMinSuggestions();
 		$max = $this->config->getMaxSuggestions();
+		$bias = $this->config->getBias();
+		$offset = $this->config->getOffset();
+		$steps = $this->config->getSteps();
+
 		// Basic check: If for some reason we do not have enough scores to satisfy the min condition, return early
 		if (count($scores) <= $min) {
-			return $this->sortDescByScore($scores);
+			return $scores;
 		}
-		$main_objective_ids = array_map(function($objective) {
-			/** @var $objective LearningObjective */
-			return $objective->getId();
-		}, $this->learning_objective_query->getMain());
-		$extended_objective_ids = array_map(function($objective) {
-			/** @var $objective LearningObjective */
-			return $objective->getId();
-		}, $this->learning_objective_query->getExtended());
 
-		// We split the scores in two stacks, each holding the scores based if the objective is marked as main or extended
-		$main_stack = new Stack();
-		$extended_stack = new Stack();
-		foreach ($scores as $score) {
-			if (in_array($score->getObjectiveId(), $main_objective_ids)) {
-				$main_stack->push($score);
-			} else if (in_array($score->getObjectiveId(), $extended_objective_ids)) {
-				$extended_stack->push($score);
-			}
+		// For each learning objective we calculate a target score which determines if a learning objective is suggested
+		$target_scores = array();
+		foreach ($scores as $i => $score) {
+			$pos = $i + 1;
+			$target_scores[] = ($pos == 1) ? $bias : $bias + $offset + ($pos - 2) * $steps;
 		}
+
 		// Start algorithm
+		// ------------------------------------------------------------------------------------------------------------
+
 		$suggestions = array();
-		$count_main = $main_stack->count();
-		$count_extended = $extended_stack->count();
-		while (
-			count($suggestions) < $max &&
-			!($main_stack->isEmpty() && $extended_stack->isEmpty())
-		) {
-			/** @var LearningObjectiveScore $main */
-			/** @var LearningObjectiveScore $extended */
-			$main = $main_stack->peek();
-			$extended = $extended_stack->peek();
-			// Handle the case if stacks are already empty
-			if ($main && !$extended) {
-				$suggestions[] = $main_stack->pop();
-				continue;
-			}
-			if (!$main && $extended) {
-				$suggestions[] = $extended_stack->pop();
-				continue;
-			}
-			// Both stacks still contain scores: We pick the one with the higher score
-			if ($main->getScore() > $extended->getScore()) {
-				$suggestions[] = $main_stack->pop();
-			} else if ($extended->getScore() > $main->getScore()) {
-				$suggestions[] = $extended_stack->pop();
-			} else {
-				// Equal score --> pick from main
-				$suggestions[] = $main_stack->pop();
+		foreach ($scores as $i => $score) {
+			// A suggestion is made if the reached score is equal or above the target score
+			if ($score->getScore() >= $target_scores[$i]) {
+				$suggestions[] = $score;
 			}
 		}
-		// Check that we have chosen at least one score from both stacks
-		$chosen_main = ($main_stack->count() < $count_main);
-		$chosen_extended = ($extended_stack->count() < $count_extended);
-		if (!$chosen_extended) {
-			$suggestions[count($suggestions) - 1] = $extended_stack->pop();
-		} else if (!$chosen_main) {
-			$suggestions[count($suggestions) - 1] = $main_stack->pop();
+
+		// Check for min condition
+		if (count($suggestions) < $min) {
+			$diff = $min - count($suggestions);
+			// Pick the highest scores which is not currently being suggested and append them
+			$candidates = array_filter($scores, function ($score) use ($suggestions) {
+				return (!in_array($score, $suggestions));
+			});
+			for ($i = 0; $i < $diff; $i++) {
+				$score = array_pop($candidates);
+				if ($score) {
+					$suggestions[] = $score;
+				}
+			}
 		}
-		// TODO Remove zero scores?
+
+		// Check for max condition
+		$suggestions = $this->sortDescByScore($suggestions);
+		if (count($suggestions) > $max) {
+			$offset = $max - count($suggestions); // Negative offset!
+			$suggestions = array_values(array_slice($suggestions, $offset));
+		}
+
+		// Check that we have suggested at least one objective from the main and extended section
+		$main_objective_ids = $this->getMainObjectiveIds();
+		$extended_objective_ids = $this->getExtendedObjectiveIds();
+		$main_suggestions = array_filter($suggestions, function ($suggestion) use ($main_objective_ids) {
+			/** @var $suggestion LearningObjectiveScore */
+			return (in_array($suggestion->getObjectiveId(), $main_objective_ids));
+		});
+		$extended_suggestions = array_filter($suggestions, function ($suggestion) use ($extended_objective_ids) {
+			/** @var $suggestion LearningObjectiveScore */
+			return (in_array($suggestion->getObjectiveId(), $extended_objective_ids));
+		});
+		if (count($main_suggestions) == 0 || count($extended_suggestions) == 0) {
+			// Replace suggestion with lowest score either with one from the main or extended section
+			$objective_ids = (count($main_suggestions) == 0) ? $main_objective_ids : $extended_objective_ids;
+			$candidates = array_values(array_filter($scores, function($score) use ($objective_ids) {
+				/** @var $score LearningObjectiveScore */
+				return (in_array($score->getObjectiveId(), $objective_ids));
+			}));
+			if (count($candidates)) {
+				$suggestions[count($suggestions) - 1] = $candidates[0];
+			}
+		}
+
 		return $this->sortDescByScore($suggestions);
 	}
 
@@ -123,24 +132,44 @@ class LearningObjectiveSuggestionGenerator {
 	 * @param LearningObjectiveScore[] $scores
 	 * @return LearningObjectiveScore[]
 	 */
-	protected function sortAscByScore(array $scores) {
+	protected function sortDescByScore(array $scores) {
 		usort($scores, function ($a, $b) {
 			/** @var $a LearningObjectiveScore */
 			/** @var $b LearningObjectiveScore */
 			if ($a->getScore() == $b->getScore()) {
 				return 0;
 			}
-			return ($a->getScore() < $b->getScore()) ? -1 : 1;
+			return ($a->getScore() > $b->getScore()) ? -1 : 1;
 		});
-		return $scores;
+		return array_values($scores);
+	}
+
+//	/**
+//	 * @param array $scores
+//	 * @return LearningObjectiveScore[]
+//	 */
+//	protected function sortAscByScore(array $scores) {
+//		return array_reverse($this->sortDescByScore($scores));
+//	}
+
+	/**
+	 * @return array
+	 */
+	protected function getMainObjectiveIds() {
+		return array_map(function ($objective) {
+			/** @var $objective LearningObjective */
+			return $objective->getId();
+		}, $this->learning_objective_query->getMain());
 	}
 
 	/**
-	 * @param array $scores
-	 * @return LearningObjectiveScore[]
+	 * @return array
 	 */
-	protected function sortDescByScore(array $scores) {
-		return array_reverse($this->sortAscByScore($scores));
+	protected function getExtendedObjectiveIds() {
+		return array_map(function ($objective) {
+			/** @var $objective LearningObjective */
+			return $objective->getId();
+		}, $this->learning_objective_query->getExtended());
 	}
 
 }

@@ -54,7 +54,7 @@ class CourseConfigProvider {
 		$config = CourseConfig::where(array(
 			'cfg_key' => $key,
 			'course_obj_id' => $this->course->getId(),
-			))->first();
+		))->first();
 		if ($config === null) {
 			$config = new CourseConfig();
 			$config->setKey($key);
@@ -96,16 +96,37 @@ class CourseConfigProvider {
 	}
 
 	/**
+	 * @return int
+	 */
+	public function getBias() {
+		return (int)$this->get('bias');
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getOffset() {
+		return (int)$this->get('offset');
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getSteps() {
+		return (int)$this->get('steps');
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getEmailSubjectTemplate() {
-		return (string) $this->get('email_subject');
+		return (string)$this->get('email_subject');
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getEmailBodyTemplate() {
-		return (string) $this->get('email_body');
+		return (string)$this->get('email_body');
 	}
 }

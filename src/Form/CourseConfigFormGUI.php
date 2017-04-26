@@ -114,6 +114,21 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 		$item->setValue($this->config->get($item->getPostVar()));
 		$item->setRequired(true);
 		$this->addItem($item);
+
+		$item = new \ilNumberInputGUI('Bias', 'bias');
+		$item->setValue($this->config->get($item->getPostVar()));
+		$item->setRequired(true);
+		$this->addItem($item);
+
+		$item = new \ilNumberInputGUI('Offset', 'offset');
+		$item->setValue($this->config->get($item->getPostVar()));
+		$item->setRequired(true);
+		$this->addItem($item);
+
+		$item = new \ilNumberInputGUI('Steps', 'steps');
+		$item->setValue($this->config->get($item->getPostVar()));
+		$item->setRequired(true);
+		$this->addItem($item);
 	}
 
 	protected function addWeightFineConfig() {

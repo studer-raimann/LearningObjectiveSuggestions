@@ -149,7 +149,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
 			$p = $placeholders->getPlaceholders($course, $user, $objectives);
 			$subject = $this->parser->parse($config->getEmailSubjectTemplate(), $p);
 			$body = $this->parser->parse($config->getEmailBodyTemplate(), $p);
-			$sender = new Sender($course, $user);
+			$sender = new Sender($course, $user, $this->log);
 			$sender->subject($subject)->body($body);
 			if (!$sender->send()) {
 				$msg = "Failed to send learning objective suggestions for course %s and User %s";
