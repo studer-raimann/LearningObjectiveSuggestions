@@ -65,8 +65,10 @@ class LearningObjectiveScoreCalculator {
 		}
 		$percentage = $objective_result->getPercentage();
 		if ($percentage < 90) {
-			return (100 - $percentage) * (float) $weight_rough + (float) $weight_fine;
+			$score = (100 - $percentage) * (float) $weight_rough + (float) $weight_fine;
+		} else {
+			$score = (100 - $percentage) * (float) $weight_rough - (float) $weight_fine;
 		}
-		return (100 - $percentage) * (float) $weight_rough - (float) $weight_fine;
+		return max($score, 0);
 	}
 }

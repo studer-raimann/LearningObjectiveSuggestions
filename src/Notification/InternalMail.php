@@ -121,7 +121,8 @@ class InternalMail {
 			array('normal')
 		);
 		if ($result) {
-			throw new \ilException("Failed to send mail with error: " . $result);
+			$message = (is_array($result)) ? implode(', ', $result) : $result;
+			throw new \ilException("Failed to send mail with error: " . $message);
 		}
 		return true;
 	}
