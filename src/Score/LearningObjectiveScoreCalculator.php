@@ -50,7 +50,7 @@ class LearningObjectiveScoreCalculator {
 	public function calculate(LearningObjectiveResult $objective_result) {
 		$user = $objective_result->getUser();
 		$objective = $objective_result->getLearningObjective();
-		$weight_fine = $this->config->getWeightFine($objective);
+//		$weight_fine = $this->config->getWeightFine($objective);
 		$study_program = $this->study_program_query->getByUser($user);
 		if ($study_program === null) {
 			throw new \ilException("No study program assigned to user $user");
@@ -60,15 +60,16 @@ class LearningObjectiveScoreCalculator {
 			$message = "Rough weight is not set for learning objective/study program pair (%s)";
 			throw new \ilException(sprintf($message, $objective->getTitle() . '/' . $study_program->getTitle()));
 		}
-		if ($weight_fine === null) {
-			throw new \ilException(sprintf('Fine weight is not set for learning objective %s', $objective->getTitle()));
-		}
+//		if ($weight_fine === null) {
+//			throw new \ilException(sprintf('Fine weight is not set for learning objective %s', $objective->getTitle()));
+//		}
 		$percentage = $objective_result->getPercentage();
-		if ($percentage < 90) {
-			$score = (100 - $percentage) * (float) $weight_rough + (float) $weight_fine;
-		} else {
-			$score = (100 - $percentage) * (float) $weight_rough - (float) $weight_fine;
-		}
-		return max($score, 0);
+		return (100 - $percentage) * (float) $weight_rough;
+		//		if ($percentage < 90) {
+//			$score = (100 - $percentage) * (float) $weight_rough + (float) $weight_fine;
+//		} else {
+//			$score = (100 - $percentage) * (float) $weight_rough - (float) $weight_fine;
+//		}
+//		return max($score, 0);
 	}
 }

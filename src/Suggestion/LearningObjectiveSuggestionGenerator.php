@@ -3,8 +3,12 @@
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveResult;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
+
+require_once('./Services/User/classes/class.ilObjUser.php');
 
 /**
  * Class LearningObjectiveSuggestionGenerator
@@ -96,7 +100,7 @@ class LearningObjectiveSuggestionGenerator {
 		}
 
 		// Check for max condition
-		$suggestions = $this->sortDescByScore($suggestions);
+//		$suggestions = $this->sortDescByScore($suggestions);
 		if (count($suggestions) > $max) {
 			$offset = $max - count($suggestions); // Negative offset!
 			$suggestions = array_values(array_slice($suggestions, $offset));
@@ -125,7 +129,7 @@ class LearningObjectiveSuggestionGenerator {
 			}
 		}
 
-		return $this->sortDescByScore($suggestions);
+		return $suggestions;
 	}
 
 	/**
@@ -133,10 +137,32 @@ class LearningObjectiveSuggestionGenerator {
 	 * @return LearningObjectiveScore[]
 	 */
 	protected function sortDescByScore(array $scores) {
-		usort($scores, function ($a, $b) {
+		if (!count($scores)) {
+			return array();
+		}
+		$learning_objective_query = $this->learning_objective_query;
+		$config = $this->config;
+		/** @var LearningObjectiveScore $score */
+		$score = array_values($scores)[0];
+		$user = $this->getUser($score->getUserId());
+		usort($scores, function ($a, $b) use ($learning_objective_query, $user, $config) {
 			/** @var $a LearningObjectiveScore */
 			/** @var $b LearningObjectiveScore */
 			if ($a->getScore() == $b->getScore()) {
+				// Identical scores.... we use the fine weights to identify the order
+				$objective_a = $learning_objective_query->getByObjectiveId($a->getObjectiveId());
+				$objective_b = $learning_objective_query->getByObjectiveId($b->getObjectiveId());
+				$objective_result_a = new LearningObjectiveResult($objective_a, $user);
+				$objective_result_b = new LearningObjectiveResult($objective_b, $user);
+				$weight_fine_a = $config->getWeightFine($objective_a);
+				$weight_fine_b = $config->getWeightFine($objective_b);
+				if ($objective_result_a->getPercentage() < 90 && $objective_result_b->getPercentage() < 90) {
+					// If the user reached less than 90 percent on both objectives, sort DESC depending on fine weights
+					return ($weight_fine_a > $weight_fine_b) ? -1 : 1;
+				} else if ($objective_result_a->getPercentage() >= 90 && $objective_result_b->getPercentage() >= 90) {
+					// If the user reached more or equal than 90 percent on both objectives, sort ASC depending on fine weights
+					return ($weight_fine_a > $weight_fine_b) ? 1 : -1;
+				}
 				return 0;
 			}
 			return ($a->getScore() > $b->getScore()) ? -1 : 1;
@@ -144,13 +170,19 @@ class LearningObjectiveSuggestionGenerator {
 		return array_values($scores);
 	}
 
-//	/**
-//	 * @param array $scores
-//	 * @return LearningObjectiveScore[]
-//	 */
-//	protected function sortAscByScore(array $scores) {
-//		return array_reverse($this->sortDescByScore($scores));
-//	}
+	/**
+	 * @param int $user_id
+	 * @return User
+	 */
+	protected function getUser($user_id) {
+		static $cache = array();
+		if (isset($cache[$user_id])) {
+			return $cache[$user_id];
+		}
+		$user = new User(new \ilObjUser($user_id));
+		$cache[$user_id] = $user;
+		return $user;
+	}
 
 	/**
 	 * @return array
