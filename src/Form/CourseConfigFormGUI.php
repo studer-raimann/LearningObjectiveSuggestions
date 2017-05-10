@@ -154,7 +154,8 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 				$item = new \ilNumberInputGUI($objective->getTitle(), $post_var);
 				$item->setRequired(true);
 				$item->allowDecimals(true);
-				$item->setValue($this->config->get($item->getPostVar()));
+				$value = $this->config->get($item->getPostVar());
+				$item->setValue($value === null ? 100 : $value);
 				$this->addItem($item);
 			}
 		}

@@ -53,8 +53,15 @@ class StudyProgramQuery {
 		} else {
 			$options = $this->udf_setting->get('json_' . $this->config->get('udf_id_study_program'));
 			$data = json_decode($options, true);
-			foreach ($data['options'][0]['options'] as $id => $row) {
-				$programs[] = new StudyProgram($id, $row['name']);
+			$program_titles = array();
+			// The study programs are options on the second level of all data available on the first level
+			foreach ($data['options'] as $level1) {
+				foreach ($level1['options'] as $level2) {
+					$program_titles[] = $level2['name'];
+				}
+			}
+			foreach (array_unique($program_titles) as $id => $title) {
+				$programs[] = new StudyProgram($id, $title);
 			}
 		}
 		$cache[$this->config->getCourse()->getId()] = $programs;

@@ -100,7 +100,6 @@ class LearningObjectiveSuggestionGenerator {
 		}
 
 		// Check for max condition
-//		$suggestions = $this->sortDescByScore($suggestions);
 		if (count($suggestions) > $max) {
 			$offset = $max - count($suggestions); // Negative offset!
 			$suggestions = array_values(array_slice($suggestions, $offset));
@@ -125,7 +124,8 @@ class LearningObjectiveSuggestionGenerator {
 				return (in_array($score->getObjectiveId(), $objective_ids));
 			}));
 			if (count($candidates)) {
-				$suggestions[count($suggestions) - 1] = $candidates[0];
+				$sorted = $this->sortDescByScore($candidates);
+				$suggestions[count($suggestions) - 1] = $sorted[0];
 			}
 		}
 
