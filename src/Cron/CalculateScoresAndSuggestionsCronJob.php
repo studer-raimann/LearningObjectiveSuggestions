@@ -267,13 +267,26 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		$sql = 'SELECT loc_user_results.* FROM loc_user_results
 				LEFT JOIN alo_score ON 
 					(
-					alo_score.user_id = loc_user_results.user_id 
-					AND alo_score.course_obj_id = loc_user_results.course_id 
-					AND alo_score.objective_id = loc_user_results.objective_id 
-					AND loc_user_results.type = 1
+						alo_score.user_id = loc_user_results.user_id 
+						AND alo_score.course_obj_id = loc_user_results.course_id 
+						AND alo_score.objective_id = loc_user_results.objective_id 
+					)
+				INNER JOIN loc_tst_run ON
+					(
+						loc_tst_run.container_id = loc_user_results.course_id
+						AND loc_tst_run.user_id = loc_user_results.user_id
+						AND loc_tst_run.objective_id = loc_user_results.objective_id
+					)
+				INNER JOIN tst_tests ON tst_tests.obj_fi = loc_tst_run.test_id
+				INNER JOIN tst_active ON
+					(
+						tst_active.test_fi = tst_tests.test_id
+						AND tst_active.user_fi = loc_user_results.user_id
 					)
 				WHERE loc_user_results.course_id = ' . $this->db->quote($course->getId(), 'integer') . ' 
-				AND alo_score.id IS NULL ';
+					AND loc_user_results.type = 1
+					AND tst_active.submitted > 0
+					AND alo_score.id IS NULL ';
 		// Only include users that are still member of the course
 		$member_ids = $course->getMemberIds();
 		if (count($member_ids)) {
