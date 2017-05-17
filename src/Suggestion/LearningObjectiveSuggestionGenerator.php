@@ -88,13 +88,12 @@ class LearningObjectiveSuggestionGenerator {
 		if (count($suggestions) < $min) {
 			$diff = $min - count($suggestions);
 			// Pick the highest scores which is not currently being suggested and append them
-			$candidates = array_filter($scores, function ($score) use ($suggestions) {
+			$candidates = array_values(array_filter($scores, function ($score) use ($suggestions) {
 				return (!in_array($score, $suggestions));
-			});
+			}));
 			for ($i = 0; $i < $diff; $i++) {
-				$score = array_pop($candidates);
-				if ($score) {
-					$suggestions[] = $score;
+				if (isset($candidates[$i])) {
+					$suggestions[] = $candidates[$i];
 				}
 			}
 		}
