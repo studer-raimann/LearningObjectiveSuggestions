@@ -7,3 +7,7 @@
 	\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\Config::installDB();
 	\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification::installDB();
 ?>
+<#2>
+<?php
+\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore::updateDB();
+?>

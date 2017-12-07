@@ -91,6 +91,14 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_length       8
 	 */
 	protected $updated_user_id;
+	/**
+	 * @var string
+	 *
+	 * @db_has_field    true
+	 * @db_fieldtype    text
+	 * @db_length       1024
+	 */
+	protected $title;
 
 
 	public function create() {
@@ -225,6 +233,22 @@ class LearningObjectiveScore extends \ActiveRecord {
 			"objectiveId => {$this->objective_id}",
 			"score => {$this->score}",
 		));
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getTitle() {
+		return $this->title;
+	}
+
+
+	/**
+	 * @param string $title
+	 */
+	public function setTitle($title) {
+		$this->title = $title;
 	}
 
 	/**
