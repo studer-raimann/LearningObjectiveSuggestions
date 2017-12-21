@@ -1,6 +1,6 @@
 <?php
 $id = 'dhbwautolo';
-$version = '0.0.6';
+$version = '0.0.3';
 $ilias_min_version = '5.0.0';
 $ilias_max_version = '5.2.999';
 $responsible = 'studer + raimann ag';
