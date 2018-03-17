@@ -1,9 +1,11 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 
 require_once('./Services/User/classes/class.ilUserDefinedFields.php');
 require_once('./Services/User/classes/class.ilUserDefinedData.php');
 require_once('./Services/Administration/classes/class.ilSetting.php');
+require_once('./Customizing/global/plugins/Services/User/UDFDefinition/CascadingSelect/classes/class.ilCascadingSelectSettings.php');
 
 
 /**
@@ -51,7 +53,9 @@ class StudyProgramQuery {
 				$programs[] = new StudyProgram($id, $title);
 			}
 		} else {
-			$options = $this->udf_setting->get('json_' . $this->config->get('udf_id_study_program'));
+			$settings = \ilCascadingSelectSettings::getInstance();
+			$options = $settings->get('json_' .$this->config->get('udf_id_study_program'));
+
 			$data = json_decode($options, true);
 			$program_titles = array();
 			// The study programs are options on the second level of all data available on the first level
