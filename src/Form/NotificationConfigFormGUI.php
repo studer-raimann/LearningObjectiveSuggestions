@@ -1,16 +1,14 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form;
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
-use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Parser;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Placeholders;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
-
 /**
  * Class NotificationConfigFormGUI
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form
  */
 class NotificationConfigFormGUI extends \ilPropertyFormGUI {
@@ -19,22 +17,39 @@ class NotificationConfigFormGUI extends \ilPropertyFormGUI {
 	 * @var CourseConfigProvider
 	 */
 	protected $config;
-
 	/**
 	 * @var Parser
 	 */
 	protected $parser;
+	/**
+	 * @var \ilObjUser
+	 */
+	protected $user;
+	/**
+	 * @var \ilLanguage
+	 */
+	protected $lng;
+	/**
+	 * @var \ilLearningObjectiveSuggestionsPlugin
+	 */
+	protected $pl;
+
 
 	/**
 	 * @param CourseConfigProvider $config
-	 * @param Parser $parser
+	 * @param Parser               $parser
 	 */
 	public function __construct(CourseConfigProvider $config, Parser $parser) {
 		parent::__construct();
+		global $DIC;
+		$this->user = $DIC->user();
+		$this->lng = $DIC->language();
 		$this->config = $config;
 		$this->parser = $parser;
+		$this->pl = \ilLearningObjectiveSuggestionsPlugin::getInstance();
 		$this->init();
 	}
+
 
 	/**
 	 * Additionally check if the strings can be parsed
@@ -42,70 +57,69 @@ class NotificationConfigFormGUI extends \ilPropertyFormGUI {
 	 * @return bool
 	 */
 	function checkInput() {
-		global $ilUser;
 		$result = parent::checkInput();
 		$placeholders = new Placeholders();
-		$ph = $placeholders->getPlaceholders($this->config->getCourse(), new User($ilUser), array());
+		$ph = $placeholders->getPlaceholders($this->config->getCourse(), new User($this->user), array());
 		if (!$this->parser->isValid($this->getInput('email_subject'), $ph)) {
 			/** @var \ilFormPropertyGUI $subject */
 			$subject = $this->getItemByPostVar('email_subject');
-			$subject->setAlert('Syntax Fehler, bitte prüfen Sie die verwendeten Platzhalter.');
+			$subject->setAlert($this->pl->txt("invalid_placeholders"));
 			$result = false;
 		}
 		if (!$this->parser->isValid($this->getInput('email_body'), $ph)) {
 			/** @var \ilFormPropertyGUI $body */
 			$body = $this->getItemByPostVar('email_body');
-			$body->setAlert('Syntax Fehler, bitte prüfen Sie die verwendeten Platzhalter.');
+			$body->setAlert($this->pl->txt("invalid_placeholders"));
 			$result = false;
 		}
 		if (!$result) {
-			global $lng;
-			\ilUtil::sendFailure($lng->txt("form_input_not_valid"));
+			\ilUtil::sendFailure($this->lng->txt("form_input_not_valid"));
 		}
+
 		return $result;
 	}
 
 
 	protected function init() {
-		$this->setTitle('Konfiguration');
+		$this->setTitle($this->pl->txt("configuration"));
 
-		$item = new \ilNumberInputGUI('User-ID Absender', 'notification_sender_user_id');
-		$item->setInfo('User-ID eines ILIAS Benutzers, welcher die Mails versendet.');
+		$item = new \ilNumberInputGUI($this->pl->txt("sender_user_id"), 'notification_sender_user_id');
+		$item->setInfo($this->pl->txt("sender_user_id_info"));
 		$item->setRequired(true);
 		$item->setValue($this->config->get($item->getPostVar()));
 		$this->addItem($item);
 
-		$item = new \ilNumberInputGUI('Rollen-ID Betreuer', 'notification_cc_role_id');
-		$item->setInfo('Mitglieder dieser Rolle enthalten eine CC als Mail, wenn die Empfehlungen an einen Benutzer gesendet werden.');
+		$item = new \ilNumberInputGUI($this->pl->txt("cc_role_id"), 'notification_cc_role_id');
+		$item->setInfo($this->pl->txt("cc_role_id_info"));
 		$item->setValue($this->config->get($item->getPostVar()));
 		$this->addItem($item);
 
 		$item = new \ilFormSectionHeaderGUI();
-		$item->setTitle('Templates');
+		$item->setTitle($this->pl->txt("templates"));
 		$this->addItem($item);
 
-		$item = new \ilTextInputGUI('Betreff', 'email_subject');
+		$item = new \ilTextInputGUI($this->pl->txt("subject"), 'email_subject');
 		$item->setRequired(true);
 		$item->setValue($this->config->get($item->getPostVar()));
 		$this->addItem($item);
 
-		$item = new \ilTextAreaInputGUI('Inhalt', 'email_body');
+		$item = new \ilTextAreaInputGUI($this->pl->txt("body"), 'email_body');
 		$item->setRequired(true);
-		$item->setInfo('Blub');
+		$item->setInfo($this->pl->txt("body_info"));
 		$item->setRows(10);
 		$item->setValue($this->config->get($item->getPostVar()));
 		$this->addItem($item);
 
-		$info = "<br>Für Betreff und Inhalt stehen folgende Platzhalter zur Verfügung:<br><br>";
+		$info = "<br>" . $this->pl->txt("placeholders_info") . "<br><br>";
 		$ph = array();
 		$placeholders = new Placeholders();
 		foreach ($placeholders->getAvailablePlaceholders() as $key => $value) {
-			$ph[] = "&lbrace;&lbrace; {$key} &rbrace;&rbrace; : {$value}";
+			$ph[] = "&lbrace;&lbrace; {$key} &rbrace;&rbrace; : {$this->pl->txt($value)}";
 		}
 		$info .= implode('<br>', $ph);
 		$item->setInfo($info);
 
-		$this->addCommandButton('saveNotifications', 'Speichern');
-		$this->addCommandButton('cancel', 'Abbrechen');
+		$this->addCommandButton(\ilLearningObjectiveSuggestionsConfigGUI::CMD_SAVE_NOTIFICATIONS, $this->pl->txt("save"));
+		$this->addCommandButton(\ilLearningObjectiveSuggestionsConfigGUI::CMD_CANCEL, $this->pl->txt("cancel"));
 	}
 }

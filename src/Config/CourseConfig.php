@@ -2,11 +2,13 @@
 
 /**
  * Class CourseConfig
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class CourseConfig extends \ActiveRecord {
 
+	const TABLE_NAME = "alo_crs_config";
 	/**
 	 * @var int
 	 *
@@ -17,7 +19,6 @@ class CourseConfig extends \ActiveRecord {
 	 * @db_sequence     true
 	 */
 	protected $id;
-
 	/**
 	 * @var int
 	 *
@@ -26,7 +27,6 @@ class CourseConfig extends \ActiveRecord {
 	 * @db_length       8
 	 */
 	protected $course_obj_id;
-
 	/**
 	 * @var string
 	 *
@@ -35,7 +35,6 @@ class CourseConfig extends \ActiveRecord {
 	 * @db_length       64
 	 */
 	protected $cfg_key;
-
 	/**
 	 * @var string
 	 *
@@ -52,12 +51,14 @@ class CourseConfig extends \ActiveRecord {
 		return $this->id;
 	}
 
+
 	/**
 	 * @return int
 	 */
 	public function getCourseObjId() {
 		return $this->course_obj_id;
 	}
+
 
 	/**
 	 * @param int $course_obj_id
@@ -66,12 +67,14 @@ class CourseConfig extends \ActiveRecord {
 		$this->course_obj_id = $course_obj_id;
 	}
 
+
 	/**
 	 * @return string
 	 */
 	public function getKey() {
 		return $this->cfg_key;
 	}
+
 
 	/**
 	 * @param string $key
@@ -80,12 +83,14 @@ class CourseConfig extends \ActiveRecord {
 		$this->cfg_key = $key;
 	}
 
+
 	/**
 	 * @return string
 	 */
 	public function getValue() {
 		return $this->value;
 	}
+
 
 	/**
 	 * @param string $value
@@ -99,6 +104,6 @@ class CourseConfig extends \ActiveRecord {
 	 * @inheritdoc
 	 */
 	static function returnDbTableName() {
-		return 'alo_crs_config';
+		return self::TABLE_NAME;
 	}
 }

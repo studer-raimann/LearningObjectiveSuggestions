@@ -2,11 +2,13 @@
 
 /**
  * Class Notification
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
 class Notification extends \ActiveRecord {
 
+	const TABLE_NAME = "alo_notification";
 	/**
 	 * @var int
 	 *
@@ -17,7 +19,6 @@ class Notification extends \ActiveRecord {
 	 * @db_sequence     true
 	 */
 	protected $id;
-
 	/**
 	 * @var int
 	 *
@@ -27,7 +28,6 @@ class Notification extends \ActiveRecord {
 	 * @db_index        true
 	 */
 	protected $user_id;
-
 	/**
 	 * @var int
 	 *
@@ -37,7 +37,6 @@ class Notification extends \ActiveRecord {
 	 * @db_index        true
 	 */
 	protected $course_obj_id;
-
 	/**
 	 * @var string
 	 *
@@ -45,7 +44,6 @@ class Notification extends \ActiveRecord {
 	 * @db_fieldtype    timestamp
 	 */
 	protected $sent_at;
-
 	/**
 	 * @var int
 	 *
@@ -55,12 +53,14 @@ class Notification extends \ActiveRecord {
 	 */
 	protected $sent_user_id;
 
+
 	/**
 	 * @return int
 	 */
 	public function getId() {
 		return $this->id;
 	}
+
 
 	/**
 	 * @return int
@@ -69,12 +69,14 @@ class Notification extends \ActiveRecord {
 		return $this->user_id;
 	}
 
+
 	/**
 	 * @param int $user_id
 	 */
 	public function setUserId($user_id) {
 		$this->user_id = $user_id;
 	}
+
 
 	/**
 	 * @return int
@@ -83,12 +85,14 @@ class Notification extends \ActiveRecord {
 		return $this->course_obj_id;
 	}
 
+
 	/**
 	 * @param int $course_obj_id
 	 */
 	public function setCourseObjId($course_obj_id) {
 		$this->course_obj_id = $course_obj_id;
 	}
+
 
 	/**
 	 * @return string
@@ -97,6 +101,7 @@ class Notification extends \ActiveRecord {
 		return $this->sent_at;
 	}
 
+
 	/**
 	 * @param string $sent_at
 	 */
@@ -104,12 +109,14 @@ class Notification extends \ActiveRecord {
 		$this->sent_at = $sent_at;
 	}
 
+
 	/**
 	 * @return int
 	 */
 	public function getSentUserId() {
 		return $this->sent_user_id;
 	}
+
 
 	/**
 	 * @param int $sent_user_id
@@ -122,9 +129,8 @@ class Notification extends \ActiveRecord {
 	/**
 	 * @return string
 	 * @description Return the Name of your Database Table
-	 * @deprecated
 	 */
 	static function returnDbTableName() {
-		return 'alo_notification';
+		return self::TABLE_NAME;
 	}
 }

@@ -14,60 +14,59 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjective
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-require_once('./Services/Cron/classes/class.ilCronJob.php');
-require_once('./Services/Cron/classes/class.ilCronJobResult.php');
-require_once('./Modules/Course/classes/class.ilCourseObjective.php');
-require_once('./Modules/Course/classes/class.ilObjCourse.php');
-
 /**
  * Class CalculateScoresAndSuggestionsCronJob
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron
  */
 class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
+	const CRON_JOB_ID = "alo_calc_user_scores";
 	/**
 	 * @var \ilDB
 	 */
 	protected $db;
-
 	/**
 	 * @var ConfigProvider
 	 */
 	protected $config;
-
 	/**
 	 * @var Log
 	 */
 	protected $log;
+	/**
+	 * @var \ilLearningObjectiveSuggestionsPlugin
+	 */
+	protected $pl;
+
 
 	/**
-	 * @param \ilDB $db
+	 * @param \ilDB          $db
 	 * @param ConfigProvider $config
-	 * @param Log $log
+	 * @param Log            $log
 	 */
-	public function __construct(\ilDB $db,
-	                            ConfigProvider $config,
-	                            Log $log
-	) {
+	public function __construct(\ilDB $db, ConfigProvider $config, Log $log) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->log = $log;
+		$this->pl = \ilLearningObjectiveSuggestionsPlugin::getInstance();
 	}
+
 
 	/**
 	 * @inheritdoc
 	 */
 	public function getTitle() {
-		return 'Lernziel-Empfehlungen generieren';
+		return $this->pl->txt("generate_suggestions");
 	}
+
 
 	/**
 	 * @inheritdoc
 	 */
 	public function getDescription() {
-		return 'Berechnet die Scores aller Lernziele für Benutzer, welche den Einstiegstest neu bestanden haben. ' .
-			'Zusätzlich werden die empfohlenen Lernziele definiert.';
+		return $this->pl->txt("generate_suggestions_description");
 	}
 
 
@@ -75,7 +74,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 	 * @inheritdoc
 	 */
 	public function getId() {
-		return 'alo_calc_user_scores';
+		return self::CRON_JOB_ID;
 	}
 
 
@@ -121,8 +120,10 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		}
 		$result = new \ilCronJobResult();
 		$result->setStatus(\ilCronJobResult::STATUS_OK);
+
 		return $result;
 	}
+
 
 	/**
 	 * @param LearningObjectiveCourse $course
@@ -166,9 +167,11 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		}
 	}
 
+
 	/**
 	 * @param LearningObjectiveCourse $course
-	 * @param User $user
+	 * @param User                    $user
+	 *
 	 * @return LearningObjectiveScore[]
 	 */
 	protected function getScores(LearningObjectiveCourse $course, User $user) {
@@ -178,11 +181,13 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		))->get();
 	}
 
+
 	/**
 	 * Checks if there already exist computed suggestions for the given course/user pair
 	 *
 	 * @param LearningObjectiveCourse $course
-	 * @param User $user
+	 * @param User                    $user
+	 *
 	 * @return bool
 	 */
 	protected function existSuggestions(LearningObjectiveCourse $course, User $user) {
@@ -202,7 +207,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			$suggestion->setCourseObjId($score->getCourseObjId());
 			$suggestion->setObjectiveId($score->getObjectiveId());
 			$suggestion->setUserId($score->getUserId());
-			$suggestion->setSort(++$sort);
+			$suggestion->setSort(++ $sort);
 			$suggestion->save();
 		}
 	}
@@ -210,6 +215,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 	/**
 	 * @param LearningObjectiveResult $objective_result
+	 *
 	 * @return LearningObjectiveScore
 	 */
 	protected function getLearningObjectiveScore(LearningObjectiveResult $objective_result) {
@@ -218,18 +224,20 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			'objective_id' => $objective_result->getLearningObjective()->getId(),
 			'user_id' => $objective_result->getUser()->getId()
 		))->first();
-		if ($score === null) {
+		if ($score === NULL) {
 			$score = new LearningObjectiveScore();
 			$score->setCourseObjId($objective_result->getLearningObjective()->getCourse()->getId());
 			$score->setObjectiveId($objective_result->getLearningObjective()->getId());
 			$score->setUserId($objective_result->getUser()->getId());
 		}
+
 		return $score;
 	}
 
 
 	/**
 	 * @param int $user_id
+	 *
 	 * @return User
 	 */
 	protected function getUser($user_id) {
@@ -239,12 +247,15 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		}
 		$user = new User(new \ilObjUser($user_id));
 		$cache[$user_id] = $user;
+
 		return $user;
 	}
 
+
 	/**
 	 * @param LearningObjectiveCourse $course
-	 * @param int $objective_id
+	 * @param int                     $objective_id
+	 *
 	 * @return LearningObjective
 	 */
 	protected function getLearningObjective(LearningObjectiveCourse $course, $objective_id) {
@@ -255,21 +266,23 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		}
 		$objective = new LearningObjective(new \ilCourseObjective($course->getILIASCourse(), $objective_id));
 		$cache[$cache_key] = $objective;
+
 		return $objective;
 	}
 
 
 	/**
 	 * @param LearningObjectiveCourse $course
+	 *
 	 * @return string
 	 */
 	protected function getSQL(LearningObjectiveCourse $course) {
 		$sql = 'SELECT loc_user_results.* FROM loc_user_results
-				LEFT JOIN alo_score ON 
+				LEFT JOIN ' . LearningObjectiveScore::TABLE_NAME . ' ON 
 					(
-						alo_score.user_id = loc_user_results.user_id 
-						AND alo_score.course_obj_id = loc_user_results.course_id 
-						AND alo_score.objective_id = loc_user_results.objective_id 
+						' . LearningObjectiveScore::TABLE_NAME . '.user_id = loc_user_results.user_id 
+						AND ' . LearningObjectiveScore::TABLE_NAME . '.course_obj_id = loc_user_results.course_id 
+						AND ' . LearningObjectiveScore::TABLE_NAME . '.objective_id = loc_user_results.objective_id 
 					)
 				INNER JOIN loc_tst_run ON
 					(
@@ -286,14 +299,14 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 				WHERE loc_user_results.course_id = ' . $this->db->quote($course->getId(), 'integer') . ' 
 					AND loc_user_results.type = 1
 					AND tst_active.submitted > 0
-					AND alo_score.id IS NULL ';
+					AND ' . LearningObjectiveScore::TABLE_NAME . '.id IS NULL ';
 		// Only include users that are still member of the course
 		$member_ids = $course->getMemberIds();
 		if (count($member_ids)) {
-			$sql .= ' AND loc_user_results.user_id IN (' . implode(',', $member_ids) .') ';
+			$sql .= ' AND loc_user_results.user_id IN (' . implode(',', $member_ids) . ') ';
 		}
 		$sql .= 'ORDER BY loc_user_results.user_id, loc_user_results.course_id';
+
 		return $sql;
 	}
-
 }

@@ -2,11 +2,13 @@
 
 /**
  * Class Config
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class Config extends \ActiveRecord {
 
+	const TABLE_NAME = "alo_config";
 	/**
 	 * @var int
 	 *
@@ -17,7 +19,6 @@ class Config extends \ActiveRecord {
 	 * @db_sequence     true
 	 */
 	protected $id;
-
 	/**
 	 * @var string
 	 *
@@ -26,7 +27,6 @@ class Config extends \ActiveRecord {
 	 * @db_length       64
 	 */
 	protected $cfg_key;
-
 	/**
 	 * @var string
 	 *
@@ -43,12 +43,14 @@ class Config extends \ActiveRecord {
 		return $this->id;
 	}
 
+
 	/**
 	 * @return string
 	 */
 	public function getKey() {
 		return $this->cfg_key;
 	}
+
 
 	/**
 	 * @param string $key
@@ -57,12 +59,14 @@ class Config extends \ActiveRecord {
 		$this->cfg_key = $key;
 	}
 
+
 	/**
 	 * @return string
 	 */
 	public function getValue() {
 		return $this->value;
 	}
+
 
 	/**
 	 * @param string $value
@@ -76,6 +80,6 @@ class Config extends \ActiveRecord {
 	 * @inheritdoc
 	 */
 	static function returnDbTableName() {
-		return 'alo_config';
+		return self::TABLE_NAME;
 	}
 }

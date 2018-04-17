@@ -3,6 +3,38 @@
     "twig/twig": "1.*"
   },
   "autoload": {
-    "psr-4": {"SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\": "src/"}
+    "psr-4": {
+      "SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\": "src/"
+    },
+    "classmap": [
+      "./classes/",
+      "../../../../../../../Modules/Course/classes/class.ilCourseObjective.php",
+      "../../../../../../../Modules/Course/classes/class.ilCourseObjectiveMaterials.php",
+      "../../../../../../../Modules/Course/classes/class.ilCourseParticipants.php",
+      "../../../../../../../Modules/Course/classes/class.ilObjCourse.php",
+      "../../../../../../../Modules/Course/classes/Objectives/class.ilLOUserResults.php",
+      "../../../../../../../Services/AccessControl/classes/class.ilObjRole.php",
+      "../../../../../../../Services/ActiveRecord/class.ActiveRecord.php",
+      "../../../../../../../Services/Administration/classes/class.ilSetting.php",
+      "../../../../../../../Services/Component/classes/class.ilPluginConfigGUI.php",
+      "../../../../../../../Services/Cron/classes/class.ilCronHookPlugin.php",
+      "../../../../../../../Services/Cron/classes/class.ilCronJob.php",
+      "../../../../../../../Services/Cron/classes/class.ilCronJobResult.php",
+      "../../../../../../../Services/Form/classes/class.ilMultiSelectInputGUI.php",
+      "../../../../../../../Services/Form/classes/class.ilPropertyFormGUI.php",
+      "../../../../../../../Services/Link/classes/class.ilLink.php",
+      "../../../../../../../Services/Logging/classes/class.ilLog.php",
+      "../../../../../../../Services/Mail/classes/class.ilMail.php",
+      "../../../../../../../Services/Table/classes/class.ilTable2GUI.php",
+      "../../../../../../../Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php",
+      "../../../../../../../Services/User/classes/class.ilObjUser.php",
+      "../../../../../../../Services/User/classes/class.ilUserDefinedData.php",
+      "../../../../../../../Services/User/classes/class.ilUserDefinedFields.php"
+    ]
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true,
+    "classmap-authoritative": true
   }
 }

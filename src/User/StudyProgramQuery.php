@@ -1,16 +1,15 @@
 <?php
+
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
+
+require_once __DIR__ . "/../../../../../User/UDFDefinition/CascadingSelect/classes/class.ilCascadingSelectSettings.php";
+
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
-
-require_once('./Services/User/classes/class.ilUserDefinedFields.php');
-require_once('./Services/User/classes/class.ilUserDefinedData.php');
-require_once('./Services/Administration/classes/class.ilSetting.php');
-require_once('./Customizing/global/plugins/Services/User/UDFDefinition/CascadingSelect/classes/class.ilCascadingSelectSettings.php');
-
 
 /**
  * Class StudyProgramQuery
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User
  */
 class StudyProgramQuery {
@@ -19,11 +18,11 @@ class StudyProgramQuery {
 	 * @var CourseConfigProvider
 	 */
 	protected $config;
-
 	/**
 	 * @var \ilSetting
 	 */
 	protected $udf_setting;
+
 
 	/**
 	 * @param CourseConfigProvider $config
@@ -32,6 +31,7 @@ class StudyProgramQuery {
 		$this->config = $config;
 		$this->udf_setting = new \ilSetting('udfd');
 	}
+
 
 	/**
 	 * Returns all the StudyPrograms
@@ -54,7 +54,7 @@ class StudyProgramQuery {
 			}
 		} else {
 			$settings = \ilCascadingSelectSettings::getInstance();
-			$options = $settings->get('json_' .$this->config->get('udf_id_study_program'));
+			$options = $settings->get('json_' . $this->config->get('udf_id_study_program'));
 
 			$data = json_decode($options, true);
 			$program_titles = array();
@@ -69,13 +69,16 @@ class StudyProgramQuery {
 			}
 		}
 		$cache[$this->config->getCourse()->getId()] = $programs;
+
 		return $programs;
 	}
+
 
 	/**
 	 * Returns the StudyProgram of the given User
 	 *
 	 * @param User $user
+	 *
 	 * @return StudyProgram|null
 	 */
 	public function getByUser(User $user) {
@@ -85,12 +88,14 @@ class StudyProgramQuery {
 			// The data is separated with an arrow, wtf...
 			list($_, $title, $_) = array_map('trim', explode("→", $title));
 		}
-		$filtered = array_filter($this->getAll(), function($study_program) use ($title) {
+		$filtered = array_filter($this->getAll(), function ($study_program) use ($title) {
 			/** @var $study_program StudyProgram */
 			return ($study_program->getTitle() == $title);
 		});
-		return count($filtered) ? array_pop($filtered) : null;
+
+		return count($filtered) ? array_pop($filtered) : NULL;
 	}
+
 
 	/**
 	 * Check if the the UDF field is of type cascading select
@@ -100,5 +105,4 @@ class StudyProgramQuery {
 	protected function isCascadingSelect() {
 		return ($this->udf_setting->get('json_' . $this->config->get('udf_id_study_program')) !== false);
 	}
-
 }

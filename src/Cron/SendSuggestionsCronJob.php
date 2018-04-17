@@ -6,7 +6,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningOb
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
-use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\InternalMail;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Parser;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Placeholders;
@@ -14,50 +13,49 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Sender;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-require_once('./Services/Cron/classes/class.ilCronJob.php');
-require_once('./Services/Cron/classes/class.ilCronJobResult.php');
-require_once('./Services/User/classes/class.ilObjUser.php');
-require_once('./Modules/Course/classes/class.ilObjCourse.php');
-require_once('./Services/AccessControl/classes/class.ilObjRole.php');
-
 /**
  * Class SendSuggestionsCronJob
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron
  */
 class SendSuggestionsCronJob extends \ilCronJob {
 
+	const CRON_JOB_ID = "alo_send_suggestions";
 	/**
 	 * @var \ilDB
 	 */
 	protected $db;
-
 	/**
 	 * @var ConfigProvider
 	 */
 	protected $config;
-
 	/**
 	 * @var Log
 	 */
 	protected $log;
-
 	/**
 	 * @var Parser
 	 */
 	protected $parser;
+	/**
+	 * @var \ilLearningObjectiveSuggestionsPlugin
+	 */
+	protected $pl;
+
 
 	/**
-	 * @param \ilDB $db
+	 * @param \ilDB          $db
 	 * @param ConfigProvider $config
-	 * @param Parser $parser
-	 * @param Log $log
+	 * @param Parser         $parser
+	 * @param Log            $log
 	 */
 	public function __construct(\ilDB $db, ConfigProvider $config, Parser $parser, Log $log) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->parser = $parser;
 		$this->log = $log;
+		$this->pl = \ilLearningObjectiveSuggestionsPlugin::getInstance();
 	}
 
 
@@ -65,21 +63,23 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	 * @inheritdoc
 	 */
 	public function getId() {
-		return 'alo_send_suggestions';
+		return self::CRON_JOB_ID;
 	}
+
 
 	/**
 	 * @inheritdoc
 	 */
 	public function getTitle() {
-		return 'Lernziel-Empfehlungen versenden';
+		return $this->pl->txt("send_suggestions");
 	}
+
 
 	/**
 	 * @inheritdoc
 	 */
 	public function getDescription() {
-		return 'Versendet die berechneten Lernziel-Empfehlungen an Benutzer und Betreuer';
+		return $this->pl->txt("send_suggestions_description");
 	}
 
 
@@ -90,12 +90,14 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		return true;
 	}
 
+
 	/**
 	 * @inheritdoc
 	 */
 	public function hasFlexibleSchedule() {
 		return true;
 	}
+
 
 	/**
 	 * @inheritdoc
@@ -104,12 +106,14 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		return self::SCHEDULE_TYPE_IN_MINUTES;
 	}
 
+
 	/**
 	 * @inheritdoc
 	 */
 	function getDefaultScheduleValue() {
 		return 60;
 	}
+
 
 	/**
 	 * @inheritdoc
@@ -121,6 +125,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		}
 		$result = new \ilCronJobResult();
 		$result->setStatus(\ilCronJobResult::STATUS_OK);
+
 		return $result;
 	}
 
@@ -135,9 +140,10 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		}
 	}
 
+
 	/**
 	 * @param LearningObjectiveCourse $course
-	 * @param User $user
+	 * @param User                    $user
 	 */
 	protected function send(LearningObjectiveCourse $course, User $user) {
 		$config = new CourseConfigProvider($course);
@@ -161,8 +167,10 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		}
 	}
 
+
 	/**
 	 * @param int $user_id
+	 *
 	 * @return User
 	 */
 	protected function getUser($user_id) {
@@ -172,13 +180,16 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		}
 		$user = new User(new \ilObjUser($user_id));
 		$cache[$user_id] = $user;
+
 		return $user;
 	}
 
+
 	/**
 	 * @param LearningObjectiveCourse $course
-	 * @param User $user
-	 * @param LearningObjectiveQuery $query
+	 * @param User                    $user
+	 * @param LearningObjectiveQuery  $query
+	 *
 	 * @return LearningObjective[]
 	 */
 	protected function getSuggestedLearningObjectives(LearningObjectiveCourse $course, User $user, LearningObjectiveQuery $query) {
@@ -191,29 +202,32 @@ class SendSuggestionsCronJob extends \ilCronJob {
 			/** @var $suggestion LearningObjectiveSuggestion */
 			$objectives[] = $query->getByObjectiveId($suggestion->getObjectiveId());
 		}
+
 		return $objectives;
 	}
 
 
 	/**
 	 * @param LearningObjectiveCourse $course
+	 *
 	 * @return string
 	 */
 	protected function getSQL(LearningObjectiveCourse $course) {
 		$sql = 'SELECT 
-				alo_suggestion.user_id 
-				FROM alo_suggestion
-				LEFT JOIN alo_notification ON 
-					(alo_notification.course_obj_id = alo_suggestion.course_obj_id AND alo_notification.user_id = alo_suggestion.user_id)
+				' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id 
+				FROM ' . LearningObjectiveSuggestion::TABLE_NAME . '
+				LEFT JOIN ' . Notification::TABLE_NAME . ' ON 
+					(' . Notification::TABLE_NAME . '.course_obj_id = ' . LearningObjectiveSuggestion::TABLE_NAME . '.course_obj_id AND '
+			. Notification::TABLE_NAME . '.user_id = ' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id)
 				WHERE 
-					alo_suggestion.course_obj_id = ' . $this->db->quote($course->getId(), 'integer') . ' 
-					AND alo_notification.sent_at IS NULL ';
+					' . LearningObjectiveSuggestion::TABLE_NAME . '.course_obj_id = ' . $this->db->quote($course->getId(), 'integer') . ' 
+					AND ' . Notification::TABLE_NAME . '.sent_at IS NULL ';
 		$member_ids = $course->getMemberIds();
 		if (count($member_ids)) {
-			$sql .= 'AND alo_suggestion.user_id IN (' . implode(',', $member_ids) . ') ';
+			$sql .= 'AND ' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id IN (' . implode(',', $member_ids) . ') ';
 		}
-		$sql .= 'GROUP BY alo_suggestion.user_id';
+		$sql .= 'GROUP BY ' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id';
+
 		return $sql;
 	}
-
 }

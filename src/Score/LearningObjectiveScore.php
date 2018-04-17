@@ -3,11 +3,12 @@
 /**
  * Class LearningObjectiveScore
  *
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveScore extends \ActiveRecord {
 
+	const TABLE_NAME = "alo_score";
 	/**
 	 * @var int
 	 *
@@ -18,7 +19,6 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_sequence     true
 	 */
 	protected $id;
-
 	/**
 	 * @var int
 	 *
@@ -28,7 +28,6 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_index        true
 	 */
 	protected $user_id;
-
 	/**
 	 * @var int
 	 *
@@ -38,7 +37,6 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_index        true
 	 */
 	protected $course_obj_id;
-
 	/**
 	 * @var int
 	 *
@@ -48,7 +46,6 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_index        true
 	 */
 	protected $objective_id;
-
 	/**
 	 * @var float
 	 *
@@ -57,7 +54,6 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_length       8
 	 */
 	protected $score;
-
 	/**
 	 * @var string
 	 *
@@ -65,7 +61,6 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_fieldtype    timestamp
 	 */
 	protected $created_at;
-
 	/**
 	 * @var string
 	 *
@@ -73,7 +68,6 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_fieldtype    timestamp
 	 */
 	protected $updated_at;
-
 	/**
 	 * @var int
 	 *
@@ -82,7 +76,6 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_length       8
 	 */
 	protected $created_user_id;
-
 	/**
 	 * @var int
 	 *
@@ -94,14 +87,17 @@ class LearningObjectiveScore extends \ActiveRecord {
 
 
 	public function create() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC->user();
 		$this->created_at = date('Y-m-d H:i:s');
 		$this->created_user_id = $ilUser->getId();
 		parent::create();
 	}
 
+
 	public function update() {
-		global $ilUser;
+		global $DIC;
+		$ilUser = $DIC->user();
 		$this->updated_at = date('Y-m-d H:i:s');
 		$this->updated_user_id = $ilUser->getId();
 		parent::update();
@@ -123,12 +119,14 @@ class LearningObjectiveScore extends \ActiveRecord {
 		return $this->user_id;
 	}
 
+
 	/**
 	 * @param int $user_id
 	 */
 	public function setUserId($user_id) {
 		$this->user_id = $user_id;
 	}
+
 
 	/**
 	 * @return int
@@ -137,12 +135,14 @@ class LearningObjectiveScore extends \ActiveRecord {
 		return $this->course_obj_id;
 	}
 
+
 	/**
 	 * @param int $course_obj_id
 	 */
 	public function setCourseObjId($course_obj_id) {
 		$this->course_obj_id = $course_obj_id;
 	}
+
 
 	/**
 	 * @return int
@@ -151,12 +151,14 @@ class LearningObjectiveScore extends \ActiveRecord {
 		return $this->objective_id;
 	}
 
+
 	/**
 	 * @param int $objective_id
 	 */
 	public function setObjectiveId($objective_id) {
 		$this->objective_id = $objective_id;
 	}
+
 
 	/**
 	 * @return float
@@ -165,12 +167,14 @@ class LearningObjectiveScore extends \ActiveRecord {
 		return $this->score;
 	}
 
+
 	/**
 	 * @param float $score
 	 */
 	public function setScore($score) {
 		$this->score = $score;
 	}
+
 
 	/**
 	 * @return string
@@ -179,12 +183,14 @@ class LearningObjectiveScore extends \ActiveRecord {
 		return $this->created_at;
 	}
 
+
 	/**
 	 * @param string $created_at
 	 */
 	public function setCreatedAt($created_at) {
 		$this->created_at = $created_at;
 	}
+
 
 	/**
 	 * @return mixed
@@ -193,12 +199,14 @@ class LearningObjectiveScore extends \ActiveRecord {
 		return $this->updated_at;
 	}
 
+
 	/**
 	 * @param mixed $updated_at
 	 */
 	public function setUpdatedAt($updated_at) {
 		$this->updated_at = $updated_at;
 	}
+
 
 	/**
 	 * @return int
@@ -215,6 +223,7 @@ class LearningObjectiveScore extends \ActiveRecord {
 		return $this->updated_user_id;
 	}
 
+
 	/**
 	 * @return string
 	 */
@@ -227,10 +236,11 @@ class LearningObjectiveScore extends \ActiveRecord {
 		));
 	}
 
+
 	/**
 	 * @inheritdoc
 	 */
 	static function returnDbTableName() {
-		return 'alo_score';
+		return self::TABLE_NAME;
 	}
 }

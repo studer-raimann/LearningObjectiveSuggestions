@@ -2,8 +2,6 @@
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-require_once('./Services/Mail/classes/class.ilMail.php');
-
 /**
  * Class InternalMailSender
  * @author Stefan Wanzenried <sw@studer-raimann.ch>

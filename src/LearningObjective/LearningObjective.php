@@ -1,10 +1,9 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
-require_once('./Modules/Course/classes/class.ilCourseObjectiveMaterials.php');
-
 /**
  * Class LearningObjective
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjective {
@@ -14,12 +13,14 @@ class LearningObjective {
 	 */
 	protected $objective;
 
+
 	/**
 	 * @param \ilCourseObjective $objective
 	 */
 	public function __construct(\ilCourseObjective $objective) {
 		$this->objective = $objective;
 	}
+
 
 	/**
 	 * @return int
@@ -28,12 +29,14 @@ class LearningObjective {
 		return $this->objective->getObjectiveId();
 	}
 
+
 	/**
 	 * @return \ilObjCourse
 	 */
 	public function getCourse() {
 		return $this->objective->getCourse();
 	}
+
 
 	/**
 	 * @return string
@@ -42,6 +45,7 @@ class LearningObjective {
 		return $this->objective->getTitle();
 	}
 
+
 	/**
 	 * @return bool
 	 */
@@ -49,12 +53,14 @@ class LearningObjective {
 		return $this->objective->isActive();
 	}
 
+
 	/**
 	 * @return string
 	 */
 	public function getDescription() {
 		return $this->objective->getDescription();
 	}
+
 
 	/**
 	 * @return array

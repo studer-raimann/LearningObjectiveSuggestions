@@ -1,11 +1,9 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
-require_once('./Services/Link/classes/class.ilLink.php');
-require_once('./Modules/Course/classes/class.ilCourseParticipants.php');
-
 /**
  * Class LearningObjectiveCourse
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveCourse {
@@ -15,13 +13,16 @@ class LearningObjectiveCourse {
 	 */
 	protected $course;
 
+
 	/**
 	 * LearningObjectiveCourse constructor.
+	 *
 	 * @param \ilObjCourse $course
 	 */
 	public function __construct(\ilObjCourse $course) {
 		$this->course = $course;
 	}
+
 
 	/**
 	 * @return \ilObjCourse
@@ -30,12 +31,14 @@ class LearningObjectiveCourse {
 		return $this->course;
 	}
 
+
 	/**
 	 * @return int
 	 */
 	public function getId() {
 		return $this->course->getId();
 	}
+
 
 	/**
 	 * @return string
@@ -44,12 +47,14 @@ class LearningObjectiveCourse {
 		return $this->course->getTitle();
 	}
 
+
 	/**
 	 * @return int
 	 */
 	public function getRefId() {
 		return $this->course->getRefId();
 	}
+
 
 	/**
 	 * @return string
@@ -58,14 +63,18 @@ class LearningObjectiveCourse {
 		return \ilLink::_getStaticLink($this->getRefId(), 'crs');
 	}
 
+
 	/**
 	 * Get the user-IDs of all members of this course
+	 *
 	 * @return array
 	 */
 	public function getMemberIds() {
 		$participants = \ilCourseParticipants::getInstanceByObjId($this->getId());
+
 		return $participants->getMembers();
 	}
+
 
 	function __toString() {
 		return '[' . implode(', ', array(
@@ -73,5 +82,4 @@ class LearningObjectiveCourse {
 				$this->getTitle()
 			)) . ']';
 	}
-
 }

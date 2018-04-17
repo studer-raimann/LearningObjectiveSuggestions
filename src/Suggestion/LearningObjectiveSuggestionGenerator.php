@@ -8,8 +8,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-require_once('./Services/User/classes/class.ilObjUser.php');
-
 /**
  * Class LearningObjectiveSuggestionGenerator
  * @author Stefan Wanzenried <sw@studer-raimann.ch>

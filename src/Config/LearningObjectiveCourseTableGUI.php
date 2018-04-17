@@ -2,30 +2,38 @@
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 
-require_once('./Services/Table/classes/class.ilTable2GUI.php');
-require_once('./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php');
-
 /**
  * Class LearningObjectiveCourseTableGUI
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 
+	/**
+	 * @var \ilCtrl
+	 */
 	protected $ctrl;
+	/**
+	 * @var \ilLearningObjectiveSuggestionsPlugin
+	 */
+	protected $pl;
+
 
 	/**
 	 * @param $a_parent_obj
 	 */
 	public function __construct($a_parent_obj) {
-		global $ilCtrl;
+		global $DIC;
+		$this->pl = \ilLearningObjectiveSuggestionsPlugin::getInstance();
 		parent::__construct($a_parent_obj, '', '');
-		$this->ctrl = $ilCtrl;
-		$this->setFormAction($ilCtrl->getFormAction($a_parent_obj));
-		$this->setRowTemplate('tpl.row_generic.html', './Customizing/global/plugins/Services/Cron/CronHook/LearningObjectiveSuggestions');
-		$this->setTitle('Lernzielorientierte Kurse');
+		$this->ctrl = $DIC->ctrl();
+		$this->setFormAction($this->ctrl->getFormAction($a_parent_obj));
+		$this->setRowTemplate('tpl.row_generic.html', $this->pl->getDirectory());
+		$this->setTitle($this->pl->txt("courses"));
 		$this->addColumns();
 	}
+
 
 	/**
 	 * @param LearningObjectiveCourse[] $courses
@@ -48,8 +56,9 @@ class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 				$this->addColumn($data['txt'], $column);
 			}
 		}
-		$this->addColumn('Aktionen');
+		$this->addColumn($this->pl->txt("actions"));
 	}
+
 
 	protected function fillRow($a_set) {
 		foreach (array_keys($this->getSelectableColumns()) as $column) {
@@ -62,11 +71,11 @@ class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 		}
 		$list = new \ilAdvancedSelectionListGUI();
 		static $id = 0;
-		$list->setId(++$id);
+		$list->setId(++ $id);
 		$this->ctrl->setParameter($this->parent_obj, 'course_ref_id', $a_set['ref_id']);
-		$list->addItem('Konfigurieren', '', $this->ctrl->getLinkTarget($this->parent_obj, 'configureCourse'));
+		$list->addItem($this->pl->txt("configurate"), '', $this->ctrl->getLinkTarget($this->parent_obj, \ilLearningObjectiveSuggestionsConfigGUI::CMD_CONFIGURE_COURSE));
 		$this->ctrl->clearParameters($this->parent_obj);
-		$list->setListTitle('Aktionen');
+		$list->setListTitle($this->pl->txt("actions"));
 		$this->tpl->setCurrentBlock('td');
 		$this->tpl->setVariable('VALUE', $list->getHTML());
 		$this->tpl->parseCurrentBlock();
@@ -75,10 +84,8 @@ class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 
 	function getSelectableColumns() {
 		return array(
-			'ref_id' => array('txt' => 'Ref-ID', 'default' => true),
-			'title' => array('txt' => 'Titel', 'default' => true),
+			'ref_id' => array( 'txt' => $this->pl->txt("ref_id"), 'default' => true ),
+			'title' => array( 'txt' => $this->pl->txt("title"), 'default' => true ),
 		);
 	}
-
-
 }

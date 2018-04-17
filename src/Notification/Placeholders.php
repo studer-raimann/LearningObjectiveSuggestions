@@ -6,7 +6,8 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
 /**
  * Class Placeholders
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
 class Placeholders {
@@ -16,20 +17,22 @@ class Placeholders {
 	 */
 	public function getAvailablePlaceholders() {
 		return array(
-			'user.getLogin' => 'Login',
-			'user.getFirstname' => 'Vorname',
-			'user.getLastname' => 'Nachname',
-			'user.getEmail' => 'E-Mail',
-			'course.getTitle' => 'Kurs-Titel',
-			'course.getLink' => 'Link zum Kurs',
-			'objectives' => 'Liste der empfohlenen Lernziele'
+			'user.getLogin' => 'login',
+			'user.getFirstname' => 'firstname',
+			'user.getLastname' => 'lastname',
+			'user.getEmail' => 'email',
+			'course.getTitle' => 'course_title',
+			'course.getLink' => 'course_link',
+			'objectives' => 'objectives'
 		);
 	}
 
+
 	/**
 	 * @param LearningObjectiveCourse $course
-	 * @param User $user
-	 * @param array $objectives
+	 * @param User                    $user
+	 * @param array                   $objectives
+	 *
 	 * @return array
 	 */
 	public function getPlaceholders(LearningObjectiveCourse $course, User $user, array $objectives) {
@@ -40,8 +43,10 @@ class Placeholders {
 		);
 	}
 
+
 	/**
 	 * @param LearningObjective[] $objectives
+	 *
 	 * @return string
 	 */
 	protected function renderObjectives(array $objectives) {
@@ -49,7 +54,7 @@ class Placeholders {
 			/** @var LearningObjective $objective */
 			return ($objective) ? $objective->getTitle() : '';
 		}, $objectives);
+
 		return implode("\n", $titles);
 	}
-
 }

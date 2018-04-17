@@ -1,0 +1,56 @@
+add_course#:#Kurs hinzufügen
+actions#:#Aktionen
+back#:#Zurück
+basic_configuration#:#Basis-Konfiguration
+bias#:#Bias
+body#:#Inhalt
+body_blub#:#Blub
+cancel#:#Abbrechen
+cc_role_id#:#Rollen-ID Betreuer
+cc_role_id_info#:#Mitglieder dieser Rolle enthalten eine CC als Mail, wenn die Empfehlungen an einen Benutzer gesendet werden.
+change_udf_study_program#:#UDF Studienprogramm ändern
+change_udf_study_program_info#:#Achtung: Das Ändern vom UDF wirkt sich auf die gesamte folgende Konfiguration aus
+configuration_saved#:#Konfiguration gespeichert
+configurate#:#Konfigurieren
+configuration#:#Konfiguration
+course_added#:#Lernzielorientierter Kurs wurde hinzugefügt und kann nun konfiguriert werden
+course_link#:#Link zum Kurs
+course_title#:#Kurs-Titel
+courses#:#Lernzielorientierte Kurse
+create_course#:#Lernzielorientierter Kurs erfassen
+email#:#E-Mail
+firstname#:#Vorname
+general#:#Allgemein
+generate_suggestions#:#Lernziel-Empfehlungen generieren
+generate_suggestions_description#:#Berechnet die Scores aller Lernziele für Benutzer, welche den Einstiegstest neu bestanden haben. Zusätzlich werden die empfohlenen Lernziele definiert.
+invalid_placeholders#:#Syntax Fehler, bitte prüfen Sie die verwendeten Platzhalter.
+lastname#:#Nachname
+login#:#Login
+max_amount_suggestions#:#Max empfohlene Lernziele
+max_amount_suggestions_info#:#Maximale Anzahl von Lernziele, welche dem Benutzer empfohlen werden
+min_amount_suggestions#:#Min empfohlene Lernziele
+min_amount_suggestions_info#:#Minimale Anzahl von Lernziele, welche dem Benutzer empfohlen werden
+no_course_object#:#Die eingegebene Ref-ID referenziert kein Kurs-Objekt
+notifications#:#Benachrichtigungen
+objectives#:#Liste der empfohlenen Lernziele
+objectives_extended#:#Erweiterter Bereich
+objectives_extended_info#:#Lernziele, welche dem erweiterten Bereich zugeordnet werden
+objectives_main#:#Kernbereich
+objectives_main_info#:#Lernziele, welche dem Kernbereich zugeordnet werden
+offset#:#Offset
+placeholders_info#:#Für Betreff und Inhalt stehen folgende Platzhalter zur Verfügung:
+ref_id#:#Ref-ID
+ref_id_info#:#Ref-ID eines lernzielorientierten Kurses
+save#:#Speichern
+send_suggestions#:#Lernziel-Empfehlungen versenden
+send_suggestions_description#:#Versendet die berechneten Lernziel-Empfehlungen an Benutzer und Betreuer
+sender_user_id#:#User-ID Absender
+sender_user_id_info#:#User-ID eines ILIAS Benutzers, welcher die Mails versendet.
+subject#:#Betreff
+steps#:#Steps
+templates#:#Vorlagen
+title#:#Titel
+udf_study_program#:#UDF Studienprogramm
+udf_study_program_info#:#UDF Dropdown Feld, welches die Studiengänge enthält
+weight_fine#:#Feingewichte
+weight_rough#:#Grobgewichte

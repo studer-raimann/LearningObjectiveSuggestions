@@ -1,4 +1,5 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion;
+
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
@@ -8,7 +9,8 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
 /**
  * Class LearningObjectiveSuggestionModification
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion
  */
 class LearningObjectiveSuggestionModification {
@@ -17,43 +19,38 @@ class LearningObjectiveSuggestionModification {
 	 * @var LearningObjectiveCourse
 	 */
 	protected $course;
-
 	/**
 	 * @var User
 	 */
 	protected $user;
-
 	/**
 	 * @var ModificationLog
 	 */
 	protected $log;
-
 	/**
 	 * @var User
 	 */
 	protected $editor;
-
 	/**
 	 * @var LearningObjectiveQuery
 	 */
 	protected $learning_objective_query;
 
+
 	/**
 	 * @param LearningObjectiveCourse $course
-	 * @param User $user
-	 * @param User $editor
-	 * @param ModificationLog $log
+	 * @param User                    $user
+	 * @param User                    $editor
+	 * @param ModificationLog         $log
 	 */
-	public function __construct(LearningObjectiveCourse $course,
-	                            User $user,
-	                            User $editor,
-	                            ModificationLog $log) {
+	public function __construct(LearningObjectiveCourse $course, User $user, User $editor, ModificationLog $log) {
 		$this->course = $course;
 		$this->user = $user;
 		$this->log = $log;
 		$this->editor = $editor;
 		$this->learning_objective_query = new LearningObjectiveQuery(new CourseConfigProvider($course));
 	}
+
 
 	/**
 	 * Replace current suggestions with the given learning objectives
@@ -67,7 +64,7 @@ class LearningObjectiveSuggestionModification {
 		$added_suggestions = array();
 		foreach ($learning_objectives as $objective) {
 			// Check if the objective is already part of the current suggestions
-			$suggestion = array_pop(array_filter($current_suggestions, function($suggestion) use ($objective) {
+			$suggestion = array_pop(array_filter($current_suggestions, function ($suggestion) use ($objective) {
 				/** @var $suggestion LearningObjectiveSuggestion */
 				return ($suggestion->getObjectiveId() == $objective->getId());
 			}));
@@ -85,26 +82,29 @@ class LearningObjectiveSuggestionModification {
 			$added_suggestions[] = $suggestion;
 		}
 		// Delete all current suggestions no longer being part of the new ones
-		$delete_suggestions = array_filter($current_suggestions, function($suggestion) use ($new_suggestions) {
+		$delete_suggestions = array_filter($current_suggestions, function ($suggestion) use ($new_suggestions) {
 			return (!in_array($suggestion, $new_suggestions));
 		});
 		foreach ($delete_suggestions as $suggestion) {
 			$suggestion->delete();
 		}
 		foreach ($new_suggestions as $sort => $suggestion) {
-			$suggestion->setSort(++$sort);
+			$suggestion->setSort(++ $sort);
 			$suggestion->save();
 		}
 		$this->log->write("Manually change suggested learning objectives in course {$this->course} for {$this->user}");
 		$this->log->write("Editor: {$this->editor}");
-		$this->log->write("Learning objective suggestions before modification:\n" . implode("\n", $this->getLearningObjectives($current_suggestions)));
+		$this->log->write("Learning objective suggestions before modification:\n"
+			. implode("\n", $this->getLearningObjectives($current_suggestions)));
 		$this->log->write("Newly added learning objective suggestions:\n" . implode("\n", $this->getLearningObjectives($added_suggestions)));
 		$this->log->write("Deleted learning objective suggestions:\n" . implode("\n", $this->getLearningObjectives($delete_suggestions)));
 		$this->log->write("Current learning objective suggestions:\n" . implode("\n", $this->getLearningObjectives($new_suggestions)));
 	}
 
+
 	/**
 	 * @param array $suggestions
+	 *
 	 * @return array
 	 */
 	protected function getLearningObjectives(array $suggestions) {
@@ -114,8 +114,10 @@ class LearningObjectiveSuggestionModification {
 			$objective = $this->learning_objective_query->getByObjectiveId($suggestion->getObjectiveId());
 			$objectives[] = $objective->getTitle();
 		}
+
 		return $objectives;
 	}
+
 
 	/**
 	 * @return LearningObjectiveSuggestion[]
