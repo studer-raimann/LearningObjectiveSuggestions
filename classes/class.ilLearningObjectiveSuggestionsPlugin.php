@@ -2,11 +2,16 @@
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\Config;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfig;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron\CalculateScoresAndSuggestionsCronJob;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron\SendSuggestionsCronJob;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\TwigParser;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion;
 
 /**
  * Class ilLearningObjectiveSuggestionsPlugin
@@ -107,15 +112,21 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 	}
 
 
+	protected function init() {
+		parent::init();
+		require_once __DIR__ . "/../../../../EventHandling/EventHook/UserDefaults/vendor/autoload.php";
+		require_once __DIR__ . "/../../../../UIComponent/UserInterfaceHook/LearningObjectiveSuggestionsUI/vendor/autoload.php";
+		require_once __DIR__ . "/../../../../UIComponent/UserInterfaceHook/ParticipationCertificate/vendor/autoload.php";
+	}
 	/**
 	 * @return bool
 	 */
 	protected function beforeUninstall() {
-		$this->db->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore::TABLE_NAME, false);
-		$this->db->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion::TABLE_NAME, false);
-		$this->db->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfig::TABLE_NAME, false);
-		$this->db->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\Config::TABLE_NAME, false);
-		$this->db->dropTable(\SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification::TABLE_NAME, false);
+		$this->db->dropTable(LearningObjectiveScore::TABLE_NAME, false);
+		$this->db->dropTable(LearningObjectiveSuggestion::TABLE_NAME, false);
+		$this->db->dropTable(CourseConfig::TABLE_NAME, false);
+		$this->db->dropTable(Config::TABLE_NAME, false);
+		$this->db->dropTable(Notification::TABLE_NAME, false);
 
 		return true;
 	}
