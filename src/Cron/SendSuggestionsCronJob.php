@@ -50,7 +50,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	 * @param Parser         $parser
 	 * @param Log            $log
 	 */
-	public function __construct(\ilDB $db, ConfigProvider $config, Parser $parser, Log $log) {
+	public function __construct( $db, ConfigProvider $config, Parser $parser, Log $log) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->parser = $parser;
