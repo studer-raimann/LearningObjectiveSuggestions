@@ -46,7 +46,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 	 * @param ConfigProvider $config
 	 * @param Log            $log
 	 */
-	public function __construct(\ilDB $db, ConfigProvider $config, Log $log) {
+	public function __construct($db, ConfigProvider $config, Log $log) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->log = $log;
