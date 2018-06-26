@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'ActiveRecord' => $baseDir . '/../../../../../../../Services/ActiveRecord/class.ActiveRecord.php',
     'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Config\\Config' => $baseDir . '/src/Config/Config.php',
     'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Config\\ConfigProvider' => $baseDir . '/src/Config/ConfigProvider.php',
     'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Config\\CourseConfig' => $baseDir . '/src/Config/CourseConfig.php',
@@ -241,6 +242,7 @@ return array(
     'ilCronHookPlugin' => $baseDir . '/../../../../../../../Services/Cron/classes/class.ilCronHookPlugin.php',
     'ilCronJob' => $baseDir . '/../../../../../../../Services/Cron/classes/class.ilCronJob.php',
     'ilCronJobResult' => $baseDir . '/../../../../../../../Services/Cron/classes/class.ilCronJobResult.php',
+    'ilFormSectionHeaderGUI' => $baseDir . '/../../../../../../../Services/Form/classes/class.ilFormSectionHeaderGUI.php',
     'ilLOUserResults' => $baseDir . '/../../../../../../../Modules/Course/classes/Objectives/class.ilLOUserResults.php',
     'ilLearningObjectiveSuggestionsConfigGUI' => $baseDir . '/classes/class.ilLearningObjectiveSuggestionsConfigGUI.php',
     'ilLearningObjectiveSuggestionsPlugin' => $baseDir . '/classes/class.ilLearningObjectiveSuggestionsPlugin.php',
@@ -253,8 +255,11 @@ return array(
     'ilObjUser' => $baseDir . '/../../../../../../../Services/User/classes/class.ilObjUser.php',
     'ilPluginConfigGUI' => $baseDir . '/../../../../../../../Services/Component/classes/class.ilPluginConfigGUI.php',
     'ilPropertyFormGUI' => $baseDir . '/../../../../../../../Services/Form/classes/class.ilPropertyFormGUI.php',
+    'ilRoleAutoComplete' => $baseDir . '/../../../../../../../Services/AccessControl/classes/class.ilRoleAutoComplete.php',
     'ilSetting' => $baseDir . '/../../../../../../../Services/Administration/classes/class.ilSetting.php',
     'ilTable2GUI' => $baseDir . '/../../../../../../../Services/Table/classes/class.ilTable2GUI.php',
+    'ilTextAreaInputGUI' => $baseDir . '/../../../../../../../Services/Form/classes/class.ilTextAreaInputGUI.php',
+    'ilUserAutoComplete' => $baseDir . '/../../../../../../../Services/User/classes/class.ilUserAutoComplete.php',
     'ilUserDefinedData' => $baseDir . '/../../../../../../../Services/User/classes/class.ilUserDefinedData.php',
     'ilUserDefinedFields' => $baseDir . '/../../../../../../../Services/User/classes/class.ilUserDefinedFields.php',
 );
