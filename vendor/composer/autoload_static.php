@@ -278,6 +278,7 @@ class ComposerStaticInit20237c052b6e05270ce13c7b54d2b268
         'ilObjCourse' => __DIR__ . '/../..' . '/../../../../../../../Modules/Course/classes/class.ilObjCourse.php',
         'ilObjRole' => __DIR__ . '/../..' . '/../../../../../../../Services/AccessControl/classes/class.ilObjRole.php',
         'ilObjUser' => __DIR__ . '/../..' . '/../../../../../../../Services/User/classes/class.ilObjUser.php',
+        'ilObjectFactory' => __DIR__ . '/../..' . '/../../../../../../../Services/Object/classes/class.ilObjectFactory.php',
         'ilPluginConfigGUI' => __DIR__ . '/../..' . '/../../../../../../../Services/Component/classes/class.ilPluginConfigGUI.php',
         'ilPropertyFormGUI' => __DIR__ . '/../..' . '/../../../../../../../Services/Form/classes/class.ilPropertyFormGUI.php',
         'ilRoleAutoComplete' => __DIR__ . '/../..' . '/../../../../../../../Services/AccessControl/classes/class.ilRoleAutoComplete.php',

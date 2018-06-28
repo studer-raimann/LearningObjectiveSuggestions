@@ -253,6 +253,7 @@ return array(
     'ilObjCourse' => $baseDir . '/../../../../../../../Modules/Course/classes/class.ilObjCourse.php',
     'ilObjRole' => $baseDir . '/../../../../../../../Services/AccessControl/classes/class.ilObjRole.php',
     'ilObjUser' => $baseDir . '/../../../../../../../Services/User/classes/class.ilObjUser.php',
+    'ilObjectFactory' => $baseDir . '/../../../../../../../Services/Object/classes/class.ilObjectFactory.php',
     'ilPluginConfigGUI' => $baseDir . '/../../../../../../../Services/Component/classes/class.ilPluginConfigGUI.php',
     'ilPropertyFormGUI' => $baseDir . '/../../../../../../../Services/Form/classes/class.ilPropertyFormGUI.php',
     'ilRoleAutoComplete' => $baseDir . '/../../../../../../../Services/AccessControl/classes/class.ilRoleAutoComplete.php',

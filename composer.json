@@ -28,6 +28,7 @@
       "../../../../../../../Services/Link/classes/class.ilLink.php",
       "../../../../../../../Services/Logging/classes/class.ilLog.php",
       "../../../../../../../Services/Mail/classes/class.ilMail.php",
+      "../../../../../../../Services/Object/classes/class.ilObjectFactory.php",
       "../../../../../../../Services/Table/classes/class.ilTable2GUI.php",
       "../../../../../../../Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php",
       "../../../../../../../Services/User/classes/class.ilObjUser.php",

@@ -49,6 +49,10 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 	 */
 	protected $toolbar;
 	/**
+	 * @var ilRbacReview
+	 */
+	protected $rbacreview;
+	/**
 	 * @var ilLearningObjectiveSuggestionsPlugin
 	 */
 	protected $pl;
@@ -63,6 +67,7 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$this->ctrl = $DIC->ctrl();
 		$this->tabs = $DIC->tabs();
 		$this->toolbar = $DIC->toolbar();
+		$this->rbacreview = $DIC->rbac()->review();
 		$this->pl = ilLearningObjectiveSuggestionsPlugin::getInstance();
 	}
 
@@ -130,9 +135,24 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 
 		$autocomplete->setSearchFields([ "usr_id", "login", "firstname", "lastname", "email" ]);
 		$autocomplete->setResultField("usr_id");
-		$autocomplete->enableFieldSearchableCheck(true);
+		$autocomplete->enableFieldSearchableCheck(false);
 
-		echo $autocomplete->getList($term);
+		$users = json_decode($autocomplete->getList($term));
+
+		// Format label to lastname, firstname, login
+		$users->items = array_map(function (stdClass $user) {
+			$labels = preg_split("/[(, )( \[)]/", $user->label, - 1, PREG_SPLIT_NO_EMPTY);
+			$labels[2] = substr($labels[2], 0, - 1);
+			$labels = [ $labels[0], $labels[1], $labels[2] ];
+			$label = implode(", ", $labels);
+
+			return [
+				"label" => $label,
+				"value" => $user->value
+			];
+		}, $users->items);
+
+		echo json_encode($users);
 
 		exit();
 	}
@@ -141,14 +161,42 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 	/**
 	 *
 	 */
-	protected function configureNotificationsrRolesAutocomplete() {
+	protected function configureNotificationsRolesAutocomplete() {
 		$term = filter_input(INPUT_GET, "term");
 
-		$autocomplete = new ilRoleAutoComplete();
+		//$roles = json_encode(ilRoleAutoComplete::getList($term)); // ilRoleAutoComplete is bad and not so good configurable like ilUserAutoComplete
 
-		//$autocomplete->setResultField("role_id"); // TODO
+		/**
+		 * @var array $roles
+		 */
+		$roles = $this->rbacreview->getRolesForIDs([ $term ], false); // Allow search for role id
+		if (count($roles) === 0) {
+			$roles = $this->rbacreview->getRolesByFilter(ilRbacReview::FILTER_ALL, 0, trim($term));
+		}
 
-		echo $autocomplete->getList($term);
+		$roles = [
+			"items" => array_map(function (array $role) {
+				$labels = [
+					ilObjRole::_getTranslation($role["title"])
+				];
+				if ($role["role_type"] === "local") {
+					/**
+					 * @var ilObject $parent
+					 */
+					$parent = ilObjectFactory::getInstanceByRefId($role["parent"]);
+					$labels[] = $parent->getTitle();
+				}
+				$label = implode(", ", $labels);
+
+				return [
+					"label" => $label,
+					"value" => $role["obj_id"]
+				];
+			}, $roles),
+			"hasMoreResults" => false
+		];
+
+		echo json_encode($roles);
 
 		exit();
 	}
