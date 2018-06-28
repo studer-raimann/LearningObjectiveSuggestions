@@ -1,4 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config;
+<?php
+
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config;
 
 /**
  * Class Config
@@ -9,6 +11,25 @@
 class Config extends \ActiveRecord {
 
 	const TABLE_NAME = "alo_config";
+
+
+	/**
+	 * @return string
+	 */
+	public function getConnectorContainerName() {
+		return self::TABLE_NAME;
+	}
+
+
+	/**
+	 * @return string
+	 * @deprecated
+	 */
+	public static function returnDbTableName() {
+		return self::TABLE_NAME;
+	}
+
+
 	/**
 	 * @var int
 	 *
@@ -73,13 +94,5 @@ class Config extends \ActiveRecord {
 	 */
 	public function setValue($value) {
 		$this->value = $value;
-	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	static function returnDbTableName() {
-		return self::TABLE_NAME;
 	}
 }

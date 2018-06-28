@@ -1,4 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
+<?php
+
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
 
 /**
  * Class Notification
@@ -9,6 +11,25 @@
 class Notification extends \ActiveRecord {
 
 	const TABLE_NAME = "alo_notification";
+
+
+	/**
+	 * @return string
+	 */
+	public function getConnectorContainerName() {
+		return self::TABLE_NAME;
+	}
+
+
+	/**
+	 * @return string
+	 * @deprecated
+	 */
+	public static function returnDbTableName() {
+		return self::TABLE_NAME;
+	}
+
+
 	/**
 	 * @var int
 	 *
@@ -123,14 +144,5 @@ class Notification extends \ActiveRecord {
 	 */
 	public function setSentUserId($sent_user_id) {
 		$this->sent_user_id = $sent_user_id;
-	}
-
-
-	/**
-	 * @return string
-	 * @description Return the Name of your Database Table
-	 */
-	static function returnDbTableName() {
-		return self::TABLE_NAME;
 	}
 }

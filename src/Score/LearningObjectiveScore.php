@@ -1,4 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score;
+<?php
+
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score;
 
 /**
  * Class LearningObjectiveScore
@@ -9,6 +11,25 @@
 class LearningObjectiveScore extends \ActiveRecord {
 
 	const TABLE_NAME = "alo_score";
+
+
+	/**
+	 * @return string
+	 */
+	public function getConnectorContainerName() {
+		return self::TABLE_NAME;
+	}
+
+
+	/**
+	 * @return string
+	 * @deprecated
+	 */
+	public static function returnDbTableName() {
+		return self::TABLE_NAME;
+	}
+
+
 	/**
 	 * @var int
 	 *
@@ -234,13 +255,5 @@ class LearningObjectiveScore extends \ActiveRecord {
 			"objectiveId => {$this->objective_id}",
 			"score => {$this->score}",
 		));
-	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	static function returnDbTableName() {
-		return self::TABLE_NAME;
 	}
 }

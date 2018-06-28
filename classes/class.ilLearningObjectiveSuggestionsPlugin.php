@@ -71,6 +71,9 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 	protected $db;
 
 
+	/**
+	 *
+	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -112,12 +115,17 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 	}
 
 
+	/**
+	 *
+	 */
 	protected function init() {
 		parent::init();
 		require_once __DIR__ . "/../../../../EventHandling/EventHook/UserDefaults/vendor/autoload.php";
 		require_once __DIR__ . "/../../../../UIComponent/UserInterfaceHook/LearningObjectiveSuggestionsUI/vendor/autoload.php";
 		require_once __DIR__ . "/../../../../UIComponent/UserInterfaceHook/ParticipationCertificate/vendor/autoload.php";
 	}
+
+
 	/**
 	 * @return bool
 	 */
@@ -127,6 +135,13 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 		$this->db->dropTable(CourseConfig::TABLE_NAME, false);
 		$this->db->dropTable(Config::TABLE_NAME, false);
 		$this->db->dropTable(Notification::TABLE_NAME, false);
+
+		if (file_exists(ILIAS_DATA_DIR . "/learning-objective-modifications.log")) {
+			unlink(ILIAS_DATA_DIR . "/learning-objective-modifications.log");
+		}
+		if (file_exists(ILIAS_DATA_DIR . "/learning-objective-suggestions.log")) {
+			unlink(ILIAS_DATA_DIR . "/learning-objective-suggestions.log");
+		}
 
 		return true;
 	}
