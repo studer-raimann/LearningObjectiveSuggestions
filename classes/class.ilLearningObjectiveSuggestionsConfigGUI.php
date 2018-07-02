@@ -56,6 +56,10 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 	 * @var ilLearningObjectiveSuggestionsPlugin
 	 */
 	protected $pl;
+	/**
+	 * @var ilTree
+	 */
+	protected $tree;
 
 
 	/**
@@ -69,6 +73,7 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$this->toolbar = $DIC->toolbar();
 		$this->rbacreview = $DIC->rbac()->review();
 		$this->pl = ilLearningObjectiveSuggestionsPlugin::getInstance();
+		$this->tree = $DIC->repositoryTree();
 	}
 
 
@@ -131,6 +136,7 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 	protected function configureNotificationsUsersAutocomplete() {
 		$term = filter_input(INPUT_GET, "term");
 
+		// Get users
 		$autocomplete = new ilUserAutoComplete();
 
 		$autocomplete->setSearchFields([ "usr_id", "login", "firstname", "lastname", "email" ]);
@@ -144,14 +150,38 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 			$labels = preg_split("/[(, )( \[)]/", $user->label, - 1, PREG_SPLIT_NO_EMPTY);
 			$labels[2] = substr($labels[2], 0, - 1);
 			$labels = [ $labels[0], $labels[1], $labels[2] ];
-			$label = implode(", ", $labels);
 
 			return [
-				"label" => $label,
+				"label" => $labels,
 				"value" => $user->value
 			];
 		}, $users->items);
 
+		// Sort users by labels
+		usort($users->items, function (array $user1, array $user2) {
+			foreach (array_keys($user1["label"]) as $i) {
+				$sort1 = strtolower($user1["label"][$i]);
+				$sort2 = strtolower($user2["label"][$i]);
+
+				if ($sort1 > $sort2) {
+					return 1;
+				}
+				if ($sort1 < $sort2) {
+					return - 1;
+				}
+			}
+
+			return 0;
+		});
+
+		// Join labels
+		$users->items = array_map(function (array $user) {
+			$user["label"] = implode(", ", $user["label"]);
+
+			return $user;
+		}, $users->items);
+
+		// Output
 		echo json_encode($users);
 
 		exit();
@@ -164,35 +194,72 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 	protected function configureNotificationsRolesAutocomplete() {
 		$term = filter_input(INPUT_GET, "term");
 
+		// Get roles
 		//$roles = json_encode(ilRoleAutoComplete::getList($term)); // ilRoleAutoComplete is bad and not so good configurable like ilUserAutoComplete
-
 		/**
 		 * @var array $roles
 		 */
 		$roles = $this->rbacreview->getRolesForIDs([ $term ], false); // Allow search for role id
-		if (count($roles) === 0) {
+		if (count($roles) === 0 || !empty(ilObject::_lookupDeletedDate($roles[0]["parent"]))) {
 			$roles = $this->rbacreview->getRolesByFilter(ilRbacReview::FILTER_ALL, 0, trim($term));
 		}
 
-		$roles = [
-			"items" => array_map(function (array $role) {
-				$labels = [
-					ilObjRole::_getTranslation($role["title"])
-				];
-				if ($role["role_type"] === "local") {
-					/**
-					 * @var ilObject $parent
-					 */
-					$parent = ilObjectFactory::getInstanceByRefId($role["parent"]);
-					$labels[] = $parent->getTitle();
-				}
-				$label = implode(", ", $labels);
+		// Remove roles of deleted parent
+		$roles = array_filter($roles, function (array $role) {
+			return empty(ilObject::_lookupDeletedDate($role["parent"])); // TODO move this to core rbacreview check
+		});
 
-				return [
-					"label" => $label,
-					"value" => $role["obj_id"]
-				];
-			}, $roles),
+		$roles = array_map(function (array $role) {
+			$labels = [
+				ilObjRole::_getTranslation($role["title"])
+			];
+			if ($role["role_type"] === "local") {
+				/**
+				 * @var ilObjCourse|ilObject $parent
+				 */
+				$parent = ilObjectFactory::getInstanceByRefId($role["parent"]);
+				$labels[] = $parent->getTitle();
+
+				/**
+				 * @var ilObjCategory|ilObject $parent_parent
+				 */
+				$parent_parent = ilObjectFactory::getInstanceByRefId($this->tree->getParentId($parent->getRefId()));
+				$labels[] = $parent_parent->getTitle();
+			}
+
+			return [
+				"label" => $labels,
+				"value" => $role["obj_id"]
+			];
+		}, $roles);
+
+		// Sort roles by labels
+		usort($roles, function (array $role1, array $role2) {
+			foreach (array_keys($role1["label"]) as $i) {
+				$sort1 = strtolower($role1["label"][$i]);
+				$sort2 = strtolower($role2["label"][$i]);
+
+				if ($sort1 > $sort2) {
+					return 1;
+				}
+				if ($sort1 < $sort2) {
+					return - 1;
+				}
+			}
+
+			return 0;
+		});
+
+		// Join labels
+		$roles = array_map(function (array $role) {
+			$role["label"] = implode(", ", $role["label"]);
+
+			return $role;
+		}, $roles);
+
+		// Output
+		$roles = [
+			"items" => $roles,
 			"hasMoreResults" => false
 		];
 
