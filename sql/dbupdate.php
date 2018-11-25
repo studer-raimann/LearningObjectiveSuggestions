@@ -15,3 +15,7 @@ CourseConfig::updateDB();
 Config::updateDB();
 Notification::updateDB();
 ?>
+<#2>
+<?php
+//
+?>
