@@ -54,3 +54,4 @@ udf_study_program#:#UDF Studienprogramm
 udf_study_program_info#:#UDF Dropdown Feld, welches die Studiengänge enthält
 weight_fine#:#Feingewichte
 weight_rough#:#Grobgewichte
+cron#:#Cron Aktiv

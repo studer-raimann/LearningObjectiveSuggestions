@@ -142,6 +142,11 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		$users = array(); // Stores all the users where we might need to create the suggestions
 		foreach ($objective_results as $objective_result) {
 			/** @var LearningObjectiveResult $objective_result */
+			//do not cacculate if cron is inactive
+			if ($this->isCronInactiveForUserSuggestions($course, $objective_result->getUser())) {
+				continue;
+			}
+
 			$calculator = new LearningObjectiveScoreCalculator($config, $study_program_query, $this->log);
 			$score = $this->getLearningObjectiveScore($objective_result);
 			try {
@@ -160,6 +165,12 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			if ($this->existSuggestions($course, $user)) {
 				continue;
 			}
+			// Do not create suggestions if cron is deactivated
+			if ($this->isCronInactiveForUserSuggestions($course, $user)) {
+				continue;
+			}
+
+
 			$generator = new LearningObjectiveSuggestionGenerator($config, $learning_objective_query, $this->log);
 			$scores = $this->getScores($course, $user);
 			$suggested_scores = $generator->generate($scores);
@@ -194,6 +205,22 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		return LearningObjectiveSuggestion::where(array(
 			'user_id' => $user->getId(),
 			'course_obj_id' => $course->getId(),
+		))->hasSets();
+	}
+
+	/**
+	 * Checks if cron is setz to inactve for the given course/user pair
+	 *
+	 * @param LearningObjectiveCourse $course
+	 * @param User                    $user
+	 *
+	 * @return bool
+	 */
+	protected function isCronInactiveForUserSuggestions(LearningObjectiveCourse $course, User $user) {
+		return LearningObjectiveSuggestion::where(array(
+			'user_id' => $user->getId(),
+			'course_obj_id' => $course->getId(),
+			'is_cron_active' => 0
 		))->hasSets();
 	}
 

@@ -19,3 +19,17 @@ Notification::updateDB();
 <?php
 //
 ?>
+<#3>
+<?php
+SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion::updateDB();
+?>
+<#4>
+<?php
+foreach(SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion::get() as $sug) {
+	/**
+	 * @@var LearningObjectiveSuggestion $sug
+	 */
+	$sug->setIsCronActive(1);
+	$sug->save();
+}
+?>

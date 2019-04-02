@@ -96,8 +96,8 @@ used in the ``escape`` call) and the second one must be a valid PHP callable:
 
 .. code-block:: php
 
-    $twig = new Twig_Environment($loader);
-    $twig->getExtension('Twig_Extension_Core')->setEscaper('csv', 'csv_escaper');
+    $twig = new \Twig\Environment($loader);
+    $twig->getExtension('\Twig\Extension\CoreExtension')->setEscaper('csv', 'csv_escaper');
 
     // before Twig 1.26
     $twig->getExtension('core')->setEscaper('csv', 'csv_escaper');
@@ -116,4 +116,4 @@ Arguments
 * ``strategy``: The escaping strategy
 * ``charset``:  The string charset
 
-.. _`htmlspecialchars`: http://php.net/htmlspecialchars
+.. _`htmlspecialchars`: https://secure.php.net/htmlspecialchars

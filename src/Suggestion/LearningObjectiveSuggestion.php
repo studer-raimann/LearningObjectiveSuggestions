@@ -2,6 +2,9 @@
 
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion;
 
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
+
 /**
  * Class LearningObjectiveSuggestion
  *
@@ -105,6 +108,15 @@ class LearningObjectiveSuggestion extends \ActiveRecord {
 	 * @db_length       8
 	 */
 	protected $updated_user_id;
+	/**
+	 * @var int
+	 *
+	 * @db_has_field    true
+	 * @db_fieldtype    integer
+	 * @con_is_notnull  true
+	 * @db_length       1
+	 */
+	protected $is_cron_active = 1;
 
 
 	public function create() {
@@ -121,6 +133,15 @@ class LearningObjectiveSuggestion extends \ActiveRecord {
 		$ilUser = $DIC->user();
 		$this->updated_at = date('Y-m-d H:i:s');
 		$this->updated_user_id = $ilUser->getId();
+
+		$course = new LearningObjectiveCourse(new \ilObjCourse($this->getCourseObjId(), false));
+		$user = new User($ilUser);
+
+		$learning_objective_suggestions = new LearningObjectiveSuggestions($course, $user);
+		if ($learning_objective_suggestions->isCronInactive()) {
+			$this->setIsCronActive(0);
+		}
+
 		parent::update();
 	}
 
@@ -242,5 +263,21 @@ class LearningObjectiveSuggestion extends \ActiveRecord {
 	 */
 	public function setObjectiveId($objective_id) {
 		$this->objective_id = $objective_id;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getIsCronActive() {
+		return $this->is_cron_active;
+	}
+
+
+	/**
+	 * @param int $is_cron_active
+	 */
+	public function setIsCronActive($is_cron_active) {
+		$this->is_cron_active = $is_cron_active;
 	}
 }

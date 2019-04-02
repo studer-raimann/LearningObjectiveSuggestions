@@ -221,6 +221,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
 			. Notification::TABLE_NAME . '.user_id = ' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id)
 				WHERE 
 					' . LearningObjectiveSuggestion::TABLE_NAME . '.course_obj_id = ' . $this->db->quote($course->getId(), 'integer') . ' 
+					AND ' . LearningObjectiveSuggestion::TABLE_NAME .'.is_cron_active = 1
 					AND ' . Notification::TABLE_NAME . '.sent_at IS NULL ';
 		$member_ids = $course->getMemberIds();
 		if (count($member_ids)) {
