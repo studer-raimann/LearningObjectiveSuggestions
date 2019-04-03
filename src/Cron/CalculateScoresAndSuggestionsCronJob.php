@@ -161,15 +161,10 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			}
 		}
 		foreach ($users as $user) {
-			// Do not create suggestions if they already exist
-			if ($this->existSuggestions($course, $user)) {
-				continue;
-			}
 			// Do not create suggestions if cron is deactivated
 			if ($this->isCronInactiveForUserSuggestions($course, $user)) {
 				continue;
 			}
-
 
 			$generator = new LearningObjectiveSuggestionGenerator($config, $learning_objective_query, $this->log);
 			$scores = $this->getScores($course, $user);

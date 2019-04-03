@@ -2,6 +2,11 @@
 
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config;
 
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
+
+
 /**
  * Class CourseConfig
  *
@@ -63,6 +68,33 @@ class CourseConfig extends \ActiveRecord {
 	 * @db_fieldtype    clob
 	 */
 	protected $value;
+
+
+	public function delete() {
+
+		foreach(LearningObjectiveSuggestion::where(['course_obj_id' => $this->getCourseObjId()])->get() as $learning_objective_suggestions) {
+			/**
+			 * @var LearningObjectiveSuggestion $$learning_objective_suggestions
+			 */
+			$learning_objective_suggestions->delete();
+		}
+
+		foreach(LearningObjectiveScore::where(['course_obj_id' => $this->getCourseObjId()])->get() as $learning_objective_score) {
+			/**
+			 * @var LearningObjectiveScore $learning_objective_score
+			 */
+			$learning_objective_score->delete();
+		}
+
+		foreach(Notification::where(['course_obj_id' => $this->getCourseObjId()])->get() as $notification) {
+			/**
+			 * @var Notification $notification
+			 */
+			$notification->delete();
+		}
+
+		parent::delete();
+	}
 
 
 	/**

@@ -46,6 +46,17 @@ class CourseConfigProvider {
 		return ($config) ? $config->getValue() : null;
 	}
 
+
+	public function delete() {
+		/** @var CourseConfig $config */
+		foreach(CourseConfig::where(array(
+			'course_obj_id' => $this->course->getId()
+		))->get() as $course_config) {
+			$course_config->delete();
+		}
+
+	}
+
 	/**
 	 * @param string $key
 	 * @param string $value

@@ -74,6 +74,7 @@ class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 		$list->setId(++ $id);
 		$this->ctrl->setParameter($this->parent_obj, 'course_ref_id', $a_set['ref_id']);
 		$list->addItem($this->pl->txt("configurate"), '', $this->ctrl->getLinkTarget($this->parent_obj, \ilLearningObjectiveSuggestionsConfigGUI::CMD_CONFIGURE_COURSE));
+		$list->addItem($this->pl->txt("delete_learning_objective_course"), '', $this->ctrl->getLinkTarget($this->parent_obj, \ilLearningObjectiveSuggestionsConfigGUI::CMD_CONFIRM_DELETE_COURSE_CONFIG));
 		$this->ctrl->clearParameters($this->parent_obj);
 		$list->setListTitle($this->pl->txt("actions"));
 		$this->tpl->setCurrentBlock('td');

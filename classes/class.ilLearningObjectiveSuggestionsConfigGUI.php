@@ -12,6 +12,7 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\LearningObjectiveCour
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\TwigParser;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestionsUI\SuggestionsTableGUI;
 
 /**
  * Class ilLearningObjectiveSuggestionsConfigGUI
@@ -24,6 +25,9 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 	const CMD_CANCEL = "cancel";
 	const CMD_CONFIGURE = "configure";
 	const CMD_CONFIGURE_COURSE = "configureCourse";
+	const CMD_CONFIRM_DELETE_COURSE_CONFIG = "confirmDeleteCourse";
+	const CMD_DELETE_COURSE = "deleteCourse";
+	const CMD_DOWNLOAD_SUGGESTIONS = "downloadSuggestions";
 	const CMD_CONFIGURE_NOTIFICATIONS = "configureNotifications";
 	const CMD_CONFIGURE_NOTIFICATIONS_USERS_AUTOCOMPLETE = "configureNotificationsUsersAutocomplete";
 	const CMD_CONFIGURE_NOTIFICATIONS_ROLES_AUTOCOMPLETE = "configureNotificationsRolesAutocomplete";
@@ -113,6 +117,52 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$form = new CourseConfigFormGUI($config, new LearningObjectiveQuery($config), new StudyProgramQuery($config));
 		$form->setFormAction($this->ctrl->getFormAction($this));
 		$this->tpl->setContent($form->getHTML());
+	}
+
+
+	protected function confirmDeleteCourse() {
+		global $DIC;
+
+		$this->ctrl->saveParameter($this, 'course_ref_id');
+		$confirmation_gui = new ilConfirmationGUI();
+		$confirmation_gui->setFormAction($this->ctrl->getFormAction($this));
+
+		$confirmation_gui->setConfirm($this->pl->txt('delete_learning_objective_course'), self::CMD_DELETE_COURSE, self::CMD_DELETE_COURSE);
+
+		$this->ctrl->setParameter($this, 'cmd', self::CMD_CANCEL);
+		$confirmation_gui->setCancel($this->pl->txt('cancel'), self::CMD_CANCEL, self::CMD_CANCEL);
+
+		$confirmation_gui->setHeaderText($this->pl->txt('confirm_delete_crs') . " " . $DIC->ui()->renderer()->render($DIC->ui()->factory()->link()
+				->standard($this->pl->txt('download_suggestions'), $this->ctrl->getLinkTarget($this, self::CMD_DOWNLOAD_SUGGESTIONS))));
+
+		$this->tpl->setContent($confirmation_gui->getHTML());
+	}
+
+
+	protected function deleteCourse() {
+
+		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
+		$config = new ConfigProvider();
+		$course_config = new CourseConfigProvider($course);
+
+		$ref_ids = (array)json_decode($config->get('course_ref_ids'), true);
+		if (($key = array_search($_GET['course_ref_id'], $ref_ids)) !== false) {
+			unset($ref_ids[$key]);
+		}
+		$config->set('course_ref_ids', json_encode(array_unique($ref_ids)));
+
+		$course_config->delete();
+
+		ilUtil::sendSuccess($this->pl->txt("course_removed"),true);
+		$this->ctrl->redirect($this, self::CMD_CONFIGURE);
+	}
+
+
+	protected function downloadSuggestions() {
+
+		$this->ctrl->setParameterByClass("alouiCourseGUI", 'alo_xpt', 1);
+		$this->ctrl->setParameterByClass("alouiCourseGUI", 'ref_id', $_GET['course_ref_id']);
+		$this->ctrl->redirectByClass([ "ilUIPluginRouterGUI", "alouiCourseGUI" ]);
 	}
 
 
