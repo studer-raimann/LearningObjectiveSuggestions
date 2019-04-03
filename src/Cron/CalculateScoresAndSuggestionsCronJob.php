@@ -115,6 +115,11 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 	 */
 	public function run() {
 		foreach ($this->config->getCourseRefIds() as $ref_id) {
+
+			if(!\ilObject::_exists($ref_id,true)) {
+				continue;
+			}
+
 			$course = new LearningObjectiveCourse(new \ilObjCourse($ref_id));
 			$this->runFor($course);
 		}
