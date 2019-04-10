@@ -140,4 +140,11 @@ class CourseConfigProvider {
 	public function getEmailBodyTemplate() {
 		return (string)$this->get('email_body');
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getIsCronInactive() {
+		return (bool)$this->get('is_cron_inactive');
+	}
 }

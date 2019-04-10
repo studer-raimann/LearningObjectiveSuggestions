@@ -1,5 +1,7 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
+
 /**
  * Class LearningObjectiveCourse
  *
@@ -53,6 +55,15 @@ class LearningObjectiveCourse {
 	 */
 	public function getRefId() {
 		return $this->course->getRefId();
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function getIsCronInactive() {
+		$config = new CourseConfigProvider($this);
+		return $config->getIsCronInactive();
 	}
 
 

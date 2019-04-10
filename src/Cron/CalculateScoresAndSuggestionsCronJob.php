@@ -121,6 +121,9 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			}
 
 			$course = new LearningObjectiveCourse(new \ilObjCourse($ref_id));
+			if($course->getIsCronInactive()) {
+				continue;
+			}
 			$this->runFor($course);
 		}
 		$result = new \ilCronJobResult();

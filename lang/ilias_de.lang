@@ -60,3 +60,5 @@ confirm_delete_crs#:#Wollen Sie den Lernzielorientierten Kurs wirklich löschen?
 download_suggestions#:#Empfehlungen herunterladen
 cancel#:#Abbrechen
 course_removed#:#Lernzielorientierter Kurs wurde entfernt.
+deactivate_cron#:#Cron deaktivieren
+activate_cron#:#Cron aktivieren
