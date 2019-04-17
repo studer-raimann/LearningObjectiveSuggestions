@@ -23,7 +23,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
 
 	const CRON_JOB_ID = "alo_send_suggestions";
 	/**
-	 * @var \ilDB
+	 * @var \ilDBInterface
 	 */
 	protected $db;
 	/**
@@ -45,12 +45,12 @@ class SendSuggestionsCronJob extends \ilCronJob {
 
 
 	/**
-	 * @param \ilDB          $db
+	 * @param \ilDBInterface $db
 	 * @param ConfigProvider $config
 	 * @param Parser         $parser
 	 * @param Log            $log
 	 */
-	public function __construct( $db, ConfigProvider $config, Parser $parser, Log $log) {
+	public function __construct($db, ConfigProvider $config, Parser $parser, Log $log) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->parser = $parser;
