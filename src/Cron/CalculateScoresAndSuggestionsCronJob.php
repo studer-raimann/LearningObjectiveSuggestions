@@ -24,7 +24,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 	const CRON_JOB_ID = "alo_calc_user_scores";
 	/**
-	 * @var \ilDB
+	 * @var \ilDBInterface
 	 */
 	protected $db;
 	/**
@@ -42,7 +42,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 
 	/**
-	 * @param \ilDB          $db
+	 * @param \ilDBInterface          $db
 	 * @param ConfigProvider $config
 	 * @param Log            $log
 	 */
