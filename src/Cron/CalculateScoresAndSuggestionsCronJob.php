@@ -173,7 +173,6 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			if ($this->isCronInactiveForUserSuggestions($course, $user)) {
 				continue;
 			}
-
 			$generator = new LearningObjectiveSuggestionGenerator($config, $learning_objective_query, $this->log);
 			$scores = $this->getScores($course, $user);
 			$suggested_scores = $generator->generate($scores);
@@ -232,7 +231,15 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 	 * @param LearningObjectiveScore[] $scores
 	 */
 	protected function createSuggestions(array $scores) {
+
+		$arr_saved = [];
 		foreach ($scores as $sort => $score) {
+			$key = $score->getCourseObjId().".".$score->getObjectiveId().".".$score->getUserId();
+			if(key_exists($key,$arr_saved)) {
+				continue;
+			}
+			$arr_saved[$key] = 1;
+
 			$suggestion = new LearningObjectiveSuggestion();
 			$suggestion->setCourseObjId($score->getCourseObjId());
 			$suggestion->setObjectiveId($score->getObjectiveId());

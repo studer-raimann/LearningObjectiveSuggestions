@@ -41,6 +41,7 @@ class LearningObjectiveQuery {
 		foreach ($ids as $id) {
 			$objectives[] = new LearningObjective(new \ilCourseObjective($course, $id));
 		}
+
 		$cache[$ref_id] = $objectives;
 
 		return $objectives;
