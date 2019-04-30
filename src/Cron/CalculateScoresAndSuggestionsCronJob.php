@@ -161,7 +161,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 				$skore = $calculator->calculate($objective_result);
 				$score->setScore($skore);
 				$score->save();
-				$users[] = $objective_result->getUser();
+				$users[$objective_result->getUser()->getId()] = $objective_result->getUser();
 			} catch (\Exception $e) {
 				$this->log->write("Exception when trying to calculate the score for {$score}");
 				$this->log->write($e->getMessage());
@@ -337,6 +337,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 					AND loc_user_results.type = 1
 					AND tst_active.submitted > 0
 					AND ' . LearningObjectiveScore::TABLE_NAME . '.id IS NULL ';
+
 		// Only include users that are still member of the course
 		$member_ids = $course->getMemberIds();
 		if (count($member_ids)) {
