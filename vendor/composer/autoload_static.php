@@ -14,8 +14,8 @@ class ComposerStaticInit20237c052b6e05270ce13c7b54d2b268
         's' => 
         array (
             'srag\\LibrariesNamespaceChanger\\' => 31,
-            'srag\\DIC\\' => 9,
-            'srag\\CustomInputGUIs\\' => 21,
+            'srag\\DIC\\LearningObjectiveSuggestions\\' => 38,
+            'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\' => 50,
         ),
         'T' => 
         array (
@@ -33,11 +33,11 @@ class ComposerStaticInit20237c052b6e05270ce13c7b54d2b268
         array (
             0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
         ),
-        'srag\\DIC\\' => 
+        'srag\\DIC\\LearningObjectiveSuggestions\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/dic/src',
         ),
-        'srag\\CustomInputGUIs\\' => 
+        'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/custominputguis/src',
         ),
@@ -74,9 +74,9 @@ class ComposerStaticInit20237c052b6e05270ce13c7b54d2b268
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Config\\LearningObjectiveCourseTableGUI' => __DIR__ . '/../..' . '/src/Config/LearningObjectiveCourseTableGUI.php',
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Cron\\CalculateScoresAndSuggestionsCronJob' => __DIR__ . '/../..' . '/src/Cron/CalculateScoresAndSuggestionsCronJob.php',
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Cron\\SendSuggestionsCronJob' => __DIR__ . '/../..' . '/src/Cron/SendSuggestionsCronJob.php',
+        'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\DclExportMiddleware\\LosDclExportMiddleware' => __DIR__ . '/../..' . '/src/DclExportMiddleware/LosDclExportMiddleware.php',
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Form\\CourseConfigFormGUI' => __DIR__ . '/../..' . '/src/Form/CourseConfigFormGUI.php',
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Form\\NotificationConfigFormGUI' => __DIR__ . '/../..' . '/src/Form/NotificationConfigFormGUI.php',
-        'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Form\\RolesAjaxAutoCompleteCtrl' => __DIR__ . '/../..' . '/src/Form/class.RolesAjaxAutoCompleteCtrl.php',
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\LearningObjective\\LearningObjective' => __DIR__ . '/../..' . '/src/LearningObjective/LearningObjective.php',
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\LearningObjective\\LearningObjectiveCourse' => __DIR__ . '/../..' . '/src/LearningObjective/LearningObjectiveCourse.php',
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\LearningObjective\\LearningObjectiveCourseQuery' => __DIR__ . '/../..' . '/src/LearningObjective/LearningObjectiveCourseQuery.php',

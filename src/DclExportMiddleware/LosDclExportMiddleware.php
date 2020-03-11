@@ -1,5 +1,12 @@
 <?php
 include_once "./Customizing/global/plugins/Services/WebServices/SoapHook/DataCollectionSOAPServices/vendor/autoload.php";
+
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\DclExportMiddleware;
+
+use ilDclBaseRecordModel;
+use ilDclTable;
+use ilExcel;
+use ilObjUser;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron\SendSuggestionsCronJob;
 use srag\Plugins\DataCollectionSOAPServices\ExportDataCollectionExtendDataMiddleware;
 
