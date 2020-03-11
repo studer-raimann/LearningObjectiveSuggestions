@@ -1,7 +1,10 @@
 <?php
-include_once "./Customizing/global/plugins/Services/WebServices/SoapHook/DataCollectionSOAPServices/vendor/autoload.php";
 
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\DclExportMiddleware;
+
+include_once "./Customizing/global/plugins/Services/WebServices/SoapHook/DataCollectionSOAPServices/vendor/autoload.php";
+
+
 
 use ilDclBaseRecordModel;
 use ilDclTable;
