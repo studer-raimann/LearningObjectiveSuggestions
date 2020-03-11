@@ -1,6 +1,8 @@
 {
   "require": {
-    "twig/twig": "1.*"
+    "twig/twig": "1.*",
+    "srag/custominputguis": ">=0.1.0",
+    "srag/librariesnamespacechanger": ">=0.1.0"
   },
   "autoload": {
     "psr-4": {
@@ -41,5 +43,8 @@
     "optimize-autoloader": true,
     "sort-packages": true,
     "classmap-authoritative": true
+  },
+  "scripts": {
+    "pre-autoload-dump": "srag\\LibrariesNamespaceChanger\\LibrariesNamespaceChanger::rewriteLibrariesNamespaces"
   }
 }

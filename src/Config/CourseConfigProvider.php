@@ -62,6 +62,9 @@ class CourseConfigProvider {
 	 * @param string $value
 	 */
 	public function set($key, $value) {
+	    global $ilLog;
+	    $ilLog->write($key . " ". $value);
+
 		$config = CourseConfig::where(array(
 			'cfg_key' => $key,
 			'course_obj_id' => $this->course->getId(),
@@ -147,4 +150,11 @@ class CourseConfigProvider {
 	public function getIsCronInactive() {
 		return (bool)$this->get('is_cron_inactive');
 	}
+
+    /**
+     * @return string
+     */
+    public function getRoleAssignmentConfig() {
+        return $this->get('role_assignment_config');
+    }
 }

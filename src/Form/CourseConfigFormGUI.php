@@ -1,15 +1,26 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form;
 
+use ilCrsInitialTestStates;
+use ilLearningObjectiveSuggestionsConfigGUI;
+
+use ilObject;
+use ilRbacReview;
+use ilSelectInputGUI;
+use srag\CustomInputGUIs\LearningObjectiveSuggestions\MultiLineNewInputGUI\MultiLineNewInputGUI;
+use srag\CustomInputGUIs\LearningObjectiveSuggestions\MultiSelectSearchNewInputGUI\MultiSelectSearchNewInputGUI;
+use srag\CustomInputGUIs\LearningObjectiveSuggestions\NumberInputGUI\NumberInputGUI;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
+use srag\Plugins\SrUserEnrolment\EnrolmentWorkflow\Member\UsersMembersAjaxAutoCompleteCtrl;
 
 /**
  * Class CourseConfigFormGUI
  *
  * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form
+ *
  */
 class CourseConfigFormGUI extends \ilPropertyFormGUI {
 
@@ -68,6 +79,7 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 			$this->addGeneralConfig();
 			$this->addWeightFineConfig();
 			$this->addWeightRoughConfig();
+			$this->addRoleAssignmentConfig();
 		} else {
 			$this->addItem($udf);
 		}
@@ -163,6 +175,57 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 			}
 		}
 	}
+
+    protected function addRoleAssignmentConfig() {
+        global $DIC;
+
+            $item = new \ilFormSectionHeaderGUI();
+            $item->setTitle($this->pl->txt("role_assignment"));
+            $this->addItem($item);
+
+            $item = new MultiLineNewInputGUI('role_assignment_config', 'role_assignment_config');
+
+                $subitem = new NumberInputGUI('min_points','min_points');
+                $item->addInput($subitem);
+                $subitem = new NumberInputGUI('max_points','max_points');
+                $item->addInput($subitem);
+                $subitem = new ilSelectInputGUI('role','role');
+                $subitem->setOptions($this->getAllRoles());
+                $item->addInput($subitem);
+
+        $item->setValue(json_decode($this->config->get($item->getPostVar()),true));
+        $this->addItem($item);
+    }
+
+    protected function getAllRoles() {
+	    global $DIC;
+        $roles = $DIC->rbac()->review()->getRolesByFilter(ilRbacReview::FILTER_NOT_INTERNAL);
+
+        $options = [];
+        $options[0] = '';
+        foreach($roles as $role_arr) {
+            $options[$role_arr['obj_id']] = ilObject::_lookupTitle($role_arr['obj_id']);
+        }
+
+       return $options;
+    }
+
+    protected function getAllTests() {
+        global $DIC;
+
+
+
+        $roles = $DIC->rbac()->review()->getGlobalRoles();
+
+        $options = [];
+        $options[0] = '';
+        foreach($roles as $role_id) {
+            $options[$role_id] = ilObject::_lookupTitle($role_id);
+        }
+
+
+        return $options;
+    }
 
 
 	/**

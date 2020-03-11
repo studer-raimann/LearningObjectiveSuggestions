@@ -1,5 +1,9 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron;
 
+use ilCrsInitialTestState;
+use ilCrsInitialTestStates;
+use ilObjectTest;
+use ilObjTest;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
@@ -119,6 +123,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	 * @inheritdoc
 	 */
 	public function run() {
+
 		foreach ($this->config->getCourseRefIds() as $ref_id) {
 			if(!\ilObject::_exists($ref_id,true)) {
 				continue;
@@ -139,9 +144,64 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	protected function runForCourse(LearningObjectiveCourse $course) {
 		$set = $this->db->query($this->getSQL($course));
 		while ($row = $this->db->fetchObject($set)) {
-			$this->send($course, $this->getUser($row->user_id));
+
+		    $this->assignToRole($course, $row->user_id);
+		    if($row->sent_at === null) {
+                $this->send($course, $this->getUser($row->user_id));
+            }
 		}
 	}
+
+    /**
+     * @param LearningObjectiveCourse $course
+     * @param User                    $user
+     */
+	protected function assignToRole(LearningObjectiveCourse $course, int $user_id) {
+        global $DIC;
+
+        try {
+            $test_result = self::getTestUserResult($user_id);
+            if($test_result > 0) {
+                $config = new CourseConfigProvider($course);
+                $assign_role_config = json_decode($config->getRoleAssignmentConfig(),true);
+                if(count($assign_role_config) > 0) {
+                    foreach($assign_role_config as $config) {
+                        if($config['min_points'] <= $test_result &&  $test_result <= $config['max_points']) {
+                            $DIC->rbac()->admin()->assignUser($config['role'],$user_id);
+                        }
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            $this->log->write("Error while trying to assign roles for learning objective suggestions: " . $e->getMessage());
+            $this->log->write($e->getTraceAsString());
+        }
+    }
+
+
+    public static function getTestUserResult(int $user_id ):int
+    {
+        $arr_initial_test_states = ilCrsInitialTestStates::getData([$user_id]);
+        if (count($arr_initial_test_states) > 0) {
+            /**
+             * @var ilCrsInitialTestState
+             */
+            $crs_inital_test_state = $arr_initial_test_states[$user_id];
+
+            $test_obj = new ilObjTest($crs_inital_test_state->getCrsitestItestObjId(), false);
+            $participants = array($user_id);
+            $data = $test_obj->getAllTestResults($participants, false);
+            foreach ($data as $row) {
+                $max = $row["max_points"];
+                $res = $row["reached_points"];
+            }
+            if ($max == 0) {
+                return (-1);
+            }
+            return ($res * 100 / $max);
+        }
+        return (-1);
+    }
 
 
 	/**
@@ -217,18 +277,18 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	 */
 	protected function getSQL(LearningObjectiveCourse $course) {
 		$sql = 'SELECT 
-				' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id 
+				' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id,
+				' . Notification::TABLE_NAME . '.sent_at
 				FROM ' . LearningObjectiveSuggestion::TABLE_NAME . '
 				LEFT JOIN ' . Notification::TABLE_NAME . ' ON 
 					(' . Notification::TABLE_NAME . '.course_obj_id = ' . LearningObjectiveSuggestion::TABLE_NAME . '.course_obj_id AND '
 			. Notification::TABLE_NAME . '.user_id = ' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id)
 				WHERE 
 					' . LearningObjectiveSuggestion::TABLE_NAME . '.course_obj_id = ' . $this->db->quote($course->getId(), 'integer') . ' 
-					AND ' . LearningObjectiveSuggestion::TABLE_NAME .'.is_cron_active = 1
-					AND ' . Notification::TABLE_NAME . '.sent_at IS NULL ';
+					AND ' . LearningObjectiveSuggestion::TABLE_NAME .'.is_cron_active = 1';
 		$member_ids = $course->getMemberIds();
 		if (count($member_ids)) {
-			$sql .= 'AND ' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id IN (' . implode(',', $member_ids) . ') ';
+			$sql .= ' AND ' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id IN (' . implode(',', $member_ids) . ') ';
 		}
 		$sql .= 'GROUP BY ' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id';
 
