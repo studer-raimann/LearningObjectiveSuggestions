@@ -1,5 +1,6 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron;
 
+use ilObjUser;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
