@@ -7,25 +7,49 @@ include_once "./Customizing/global/plugins/Services/WebServices/SoapHook/DataCol
 
 
 use ilDclBaseRecordModel;
-use ilDclTable;
-use ilExcel;
+use ilObjCourse;
 use ilObjUser;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron\SendSuggestionsCronJob;
-use srag\Plugins\DataCollectionSOAPServices\ExportDataCollectionExtendDataMiddleware;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
+use srag\Plugins\DataCollectionSOAPServices\RecordsOfDataCollectionViewExtendMiddleware;
 
-class LosDclExportMiddleware implements ExportDataCollectionExtendDataMiddleware {
+class LosDclExportMiddleware implements RecordsOfDataCollectionViewExtendMiddleware {
 
-    public function process(ilDclTable $table, ilExcel $worksheet, ilDclBaseRecordModel $record, &$row, &$col, $field_id)
+    public static function new():RecordsOfDataCollectionViewExtendMiddleware {
+        return new static();
+    }
+
+    public function process(array $record_data, ilDclBaseRecordModel $record)
     {
-        $colstart = $col;
-        $worksheet->setCell(1, $col,"Login");
-        $col++;
-        $worksheet->setCell(1, $col,"Percentage DET");
+        $crs_ref_ids = SendSuggestionsCronJob::getCrsRefIdsWithInitialTestStates($record->getOwner());
 
-        $col = $colstart;
-        $worksheet->setCell($row, $col,ilObjUser::_lookupLogin($record->getOwner()));
-        $col++;
-        $worksheet->setCell($row, $col,SendSuggestionsCronJob::getTestUserResult($record->getOwner()));
-        $col++;
+        $record_data["UsrId"] = $record->getOwner();
+        $record_data["PercentageDet"] = -1;
+        $record_data["StudyProgram"] = NULL;
+
+        if(count($crs_ref_ids) === 0) {
+            return $record_data;
+        }
+
+        $crs_ref_id = $crs_ref_ids[0]; //we take the first one. There should by concept be only one!
+
+
+        $learning_objective_course = new LearningObjectiveCourse(new ilObjCourse($crs_ref_id));
+        $config = new CourseConfigProvider($learning_objective_course);
+        $study_program_query = new StudyProgramQuery($config);
+
+
+
+        $record_data["PercentageDet"] = SendSuggestionsCronJob::getTestUserResult($record->getOwner(),$crs_ref_id);
+        $study_program = $study_program_query->getByUser(new User(new ilObjUser($record->getOwner())));
+        if(is_object($study_program)) {
+            $record_data["StudyProgram"] =  $study_program->getTitle();
+        }
+
+
+        return $record_data;
     }
 }

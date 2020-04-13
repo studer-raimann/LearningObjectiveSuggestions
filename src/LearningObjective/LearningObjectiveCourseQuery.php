@@ -1,5 +1,6 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
+use ilObject;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 
 /**
@@ -34,7 +35,10 @@ class LearningObjectiveCourseQuery {
 		}
 		$courses = array();
 		foreach ($this->config->getCourseRefIds() as $ref_id) {
-			$courses[] = new LearningObjectiveCourse(new \ilObjCourse($ref_id));
+		    if(ilObject::_exists($ref_id, true)) {
+                $courses[] = new LearningObjectiveCourse(new \ilObjCourse($ref_id));
+            }
+
 		}
 		$cache = $courses;
 

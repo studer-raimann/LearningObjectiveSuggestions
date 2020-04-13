@@ -160,7 +160,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
         global $DIC;
 
         try {
-            $test_result = self::getTestUserResult($user_id);
+            $test_result = self::getTestUserResult($user_id,$course->getRefId());
             if($test_result > 0) {
                 $config = new CourseConfigProvider($course);
                 $assign_role_config = json_decode($config->getRoleAssignmentConfig(),true);
@@ -178,8 +178,21 @@ class SendSuggestionsCronJob extends \ilCronJob {
         }
     }
 
+    public static function getCrsRefIdsWithInitialTestStates(int $user_id):array {
+        $arr_initial_test_states = ilCrsInitialTestStates::getData([$user_id]);
 
-    public static function getTestUserResult(int $user_id ):int
+        $arr_crs_ref_ids = [];
+        if (count($arr_initial_test_states) > 0) {
+            foreach($arr_initial_test_states as $initial_test_state) {
+                $arr_crs_ref_ids[] = $initial_test_state->getCrsitestCrsRefId();
+            }
+        }
+
+        return $arr_crs_ref_ids;
+    }
+
+
+    public static function getTestUserResult(int $user_id,int $crs_ref_id):float
     {
         $arr_initial_test_states = ilCrsInitialTestStates::getData([$user_id]);
         if (count($arr_initial_test_states) > 0) {
@@ -188,8 +201,21 @@ class SendSuggestionsCronJob extends \ilCronJob {
              */
             $crs_inital_test_state = $arr_initial_test_states[$user_id];
 
+            if(!is_object($crs_inital_test_state)) {
+                return -1;
+            }
+            if($crs_inital_test_state->getCrsitestCrsRefId() !== $crs_ref_id)           {
+                return -1;
+            }
+
             $test_obj = new ilObjTest($crs_inital_test_state->getCrsitestItestObjId(), false);
-            $participants = array($user_id);
+            $all_participants = $test_obj->getTestParticipants();
+            foreach($all_participants as $part) {
+                if($part['usr_id'] == $user_id) {
+                    $participants[$part['active_id']] = $user_id;
+                }
+            }
+
             $data = $test_obj->getAllTestResults($participants, false);
             foreach ($data as $row) {
                 $max = $row["max_points"];
@@ -198,7 +224,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
             if ($max == 0) {
                 return (-1);
             }
-            return ($res * 100 / $max);
+            return round($res * 100 / $max,2);
         }
         return (-1);
     }

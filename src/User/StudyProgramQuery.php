@@ -80,7 +80,7 @@ class StudyProgramQuery {
         // The data is separated with an arrow, wtf...
         list($_, $title, $_) = array_map('trim', explode("→", $title));
 
-		$filtered = array_filter($this->getAll(), function ($study_program) use ($title) {
+       	$filtered = array_filter($this->getAll(), function ($study_program) use ($title) {
 			/** @var $study_program StudyProgram */
 			return ($study_program->getTitle() == $title);
 		});
