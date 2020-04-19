@@ -204,7 +204,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
             if(!is_object($crs_inital_test_state)) {
                 return -1;
             }
-            if($crs_inital_test_state->getCrsitestCrsRefId() !== $crs_ref_id)           {
+            if($crs_inital_test_state->getCrsitestCrsRefId() !== $crs_ref_id) {
                 return -1;
             }
 
