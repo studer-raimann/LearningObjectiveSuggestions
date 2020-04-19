@@ -161,7 +161,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
 
         try {
             $test_result = self::getTestUserResult($user_id,$course->getRefId());
-            if($test_result > 0) {
+            if($test_result >= 0) {
                 $config = new CourseConfigProvider($course);
                 $assign_role_config = json_decode($config->getRoleAssignmentConfig(),true);
                 if(count($assign_role_config) > 0) {
