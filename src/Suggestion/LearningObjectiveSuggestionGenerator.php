@@ -98,7 +98,7 @@ class LearningObjectiveSuggestionGenerator {
 
 		// Check for max condition
 		if (count($suggestions) > $max) {
-			$offset = $max - count($suggestions); // Negative offset!
+			$offset = count($suggestions)  - $max; // Negative offset!
 			$suggestions = array_values(array_slice($suggestions, $offset));
 		}
 
