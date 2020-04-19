@@ -236,12 +236,18 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		$arr_saved = [];
 		foreach ($scores as $sort => $score) {
 			$key = $score->getCourseObjId().".".$score->getObjectiveId().".".$score->getUserId();
-			if(key_exists($key,$arr_saved)) {
+			if(array_key_exists($key,$arr_saved)) {
 				continue;
 			}
 			$arr_saved[$key] = 1;
 
-			$suggestion = new LearningObjectiveSuggestion();
+			$suggestions = LearningObjectiveSuggestion::where(['course_obj_id' => $score->getCourseObjId(), 'objective_id' => $score->getObjectiveId(), 'user_id' => $score->getUserId()])->get();
+			if(count($suggestions) > 0) {
+                $suggestion = array_values($scores)[0];
+            } else {
+                $suggestion = new LearningObjectiveSuggestion();
+            }
+
 			$suggestion->setCourseObjId($score->getCourseObjId());
 			$suggestion->setObjectiveId($score->getObjectiveId());
 			$suggestion->setUserId($score->getUserId());
@@ -257,19 +263,21 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 	 * @return LearningObjectiveScore
 	 */
 	protected function getLearningObjectiveScore(LearningObjectiveResult $objective_result) {
-		$score = LearningObjectiveScore::where(array(
+
+		$scores = LearningObjectiveScore::where(array(
 			'course_obj_id' => $objective_result->getLearningObjective()->getCourse()->getId(),
 			'objective_id' => $objective_result->getLearningObjective()->getId(),
 			'user_id' => $objective_result->getUser()->getId()
-		))->first();
-		if ($score === NULL) {
+		))->get();
+		if (count($scores) === 0) {
 			$score = new LearningObjectiveScore();
 			$score->setCourseObjId($objective_result->getLearningObjective()->getCourse()->getId());
 			$score->setObjectiveId($objective_result->getLearningObjective()->getId());
 			$score->setUserId($objective_result->getUser()->getId());
+            return $score;
 		}
 
-		return $score;
+		return array_values($scores)[0];
 	}
 
 
