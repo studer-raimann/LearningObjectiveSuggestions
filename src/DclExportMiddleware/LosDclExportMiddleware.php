@@ -29,6 +29,9 @@ class LosDclExportMiddleware implements RecordsOfDataCollectionViewExtendMiddlew
         $record_data["UsrId"] = $record->getOwner();
         $record_data["PercentageDet"] = -1;
         $record_data["StudyProgram"] = NULL;
+        $record_data["DclRefid"] = $record->getTable()->getCollectionObject()->getRefId();
+        $record_data["DclTitle"] = $record->getTable()->getCollectionObject()->getTitle();
+
 
         if(count($crs_ref_ids) === 0) {
             return $record_data;
