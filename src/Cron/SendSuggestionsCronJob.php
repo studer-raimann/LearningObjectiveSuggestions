@@ -1,4 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron;
+<?php
+
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron;
 
 use ilCrsInitialTestState;
 use ilCrsInitialTestStates;
@@ -123,7 +125,6 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	 * @inheritdoc
 	 */
 	public function run() {
-
 		foreach ($this->config->getCourseRefIds() as $ref_id) {
 			if(!\ilObject::_exists($ref_id,true)) {
 				continue;
@@ -133,7 +134,6 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		}
 		$result = new \ilCronJobResult();
 		$result->setStatus(\ilCronJobResult::STATUS_OK);
-
 		return $result;
 	}
 
@@ -158,7 +158,6 @@ class SendSuggestionsCronJob extends \ilCronJob {
      */
 	protected function assignToRole(LearningObjectiveCourse $course, int $user_id) {
         global $DIC;
-
         try {
             $test_result = self::getTestUserResult($user_id,$course->getRefId());
             if($test_result >= 0) {
