@@ -6,6 +6,7 @@ use ilCrsInitialTestState;
 use ilCrsInitialTestStates;
 use ilObjectTest;
 use ilObjTest;
+use ilTemplate;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
@@ -193,6 +194,12 @@ class SendSuggestionsCronJob extends \ilCronJob {
 
     public static function getTestUserResult(int $user_id,int $crs_ref_id):float
     {
+        // Fix missing tpl ui in cron context used in test question object constructor
+        global $DIC;
+        if (!$DIC->offsetExists("tpl")) {
+            $DIC["tpl"] = $GLOBALS["tpl"] = new ilTemplate("tpl.main_menu.html", true, true, "Services/MainMenu");
+        }
+
         $arr_initial_test_states = ilCrsInitialTestStates::getData([$user_id]);
         if (count($arr_initial_test_states) > 0) {
             /**
