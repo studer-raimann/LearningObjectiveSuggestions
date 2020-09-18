@@ -166,7 +166,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
                 $assign_role_config = json_decode($config->getRoleAssignmentConfig(),true);
                 if(count($assign_role_config) > 0) {
                     foreach($assign_role_config as $config) {
-                        if($config['min_points'] <= $test_result &&  $test_result <= $config['max_points']) {
+                        if($config['min_points'] <= round($test_result) &&  round($test_result) <= $config['max_points']) {
                             $DIC->rbac()->admin()->assignUser($config['role'],$user_id);
                         }
                     }
