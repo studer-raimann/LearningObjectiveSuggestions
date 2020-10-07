@@ -116,7 +116,7 @@ class InternalMail {
 			$this->subject,
 			$this->body,
 			array(),
-			array('normal')
+			false
 		);
 		if ($result) {
 			$message = (is_array($result)) ? implode(', ', $result) : $result;
