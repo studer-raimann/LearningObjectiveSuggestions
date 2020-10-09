@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
+use ILIAS\DI\Container;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\Config;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfig;
@@ -12,6 +13,7 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\TwigParser;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion;
+use srag\CustomInputGUIs\LearningObjectiveSuggestions\Loader\CustomInputGUIsLoaderDetector;
 
 /**
  * Class ilLearningObjectiveSuggestionsPlugin
@@ -145,4 +147,10 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
 
 		return true;
 	}
+
+
+    public function exchangeUIRendererAfterInitialization(Container $dic) : Closure
+    {
+        return CustomInputGUIsLoaderDetector::exchangeUIRendererAfterInitialization();
+    }
 }

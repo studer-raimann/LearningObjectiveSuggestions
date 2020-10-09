@@ -20,35 +20,12 @@ class MultiSelectSearchNewInputGUI extends ilFormPropertyGUI implements ilTableF
 {
 
     use DICTrait;
+
+    const EMPTY_PLACEHOLDER = "__empty_placeholder__";
     /**
      * @var bool
      */
     protected static $init = false;
-
-
-    /**
-     *
-     */
-    public static function init()/*: void*/
-    {
-        if (self::$init === false) {
-            self::$init = true;
-
-            $dir = __DIR__;
-            $dir = "./" . substr($dir, strpos($dir, "/Customizing/") + 1);
-
-            self::dic()->ui()->mainTemplate()->addCss($dir . "/../../node_modules/select2/dist/css/select2.min.css");
-
-            self::dic()->ui()->mainTemplate()->addCss($dir . "/css/multi_select_search_new_input_gui.css");
-
-            self::dic()->ui()->mainTemplate()->addJavaScript($dir . "/../../node_modules/select2/dist/js/select2.full.min.js");
-
-            self::dic()->ui()->mainTemplate()->addJavaScript($dir . "/../../node_modules/select2/dist/js/i18n/" . self::dic()->user()->getCurrentLanguage()
-                . ".js");
-        }
-    }
-
-
     /**
      * @var AbstractAjaxAutoCompleteCtrl|null
      */
@@ -86,6 +63,42 @@ class MultiSelectSearchNewInputGUI extends ilFormPropertyGUI implements ilTableF
 
 
     /**
+     * @param array $values
+     *
+     * @return array
+     */
+    public static function cleanValues(array $values) : array
+    {
+        return array_values(array_filter($values, function ($value) : bool {
+            return ($value !== self::EMPTY_PLACEHOLDER);
+        }));
+    }
+
+
+    /**
+     *
+     */
+    public static function init()/*: void*/
+    {
+        if (self::$init === false) {
+            self::$init = true;
+
+            $dir = __DIR__;
+            $dir = "./" . substr($dir, strpos($dir, "/Customizing/") + 1);
+
+            self::dic()->ui()->mainTemplate()->addCss($dir . "/../../node_modules/select2/dist/css/select2.min.css");
+
+            self::dic()->ui()->mainTemplate()->addCss($dir . "/css/multi_select_search_new_input_gui.css");
+
+            self::dic()->ui()->mainTemplate()->addJavaScript($dir . "/../../node_modules/select2/dist/js/select2.full.min.js");
+
+            self::dic()->ui()->mainTemplate()->addJavaScript($dir . "/../../node_modules/select2/dist/js/i18n/" . self::dic()->user()->getCurrentLanguage()
+                . ".js");
+        }
+    }
+
+
+    /**
      * @param string $key
      * @param mixed  $value
      */
@@ -104,6 +117,8 @@ class MultiSelectSearchNewInputGUI extends ilFormPropertyGUI implements ilTableF
         if (!is_array($values)) {
             $values = [];
         }
+
+        $values = self::cleanValues($values);
 
         if ($this->getRequired() && empty($values)) {
             $this->setAlert(self::dic()->language()->txt("msg_input_is_required"));
@@ -147,11 +162,29 @@ class MultiSelectSearchNewInputGUI extends ilFormPropertyGUI implements ilTableF
 
 
     /**
+     * @param AbstractAjaxAutoCompleteCtrl|null $ajax_auto_complete_ctrl
+     */
+    public function setAjaxAutoCompleteCtrl(/*?*/ AbstractAjaxAutoCompleteCtrl $ajax_auto_complete_ctrl = null)/*: void*/
+    {
+        $this->ajax_auto_complete_ctrl = $ajax_auto_complete_ctrl;
+    }
+
+
+    /**
      * @return int|null
      */
     public function getLimitCount()/* : ?int*/
     {
         return $this->limit_count;
+    }
+
+
+    /**
+     * @param int|null $limit_count
+     */
+    public function setLimitCount(/*?*/ int $limit_count = null)/* : void*/
+    {
+        $this->limit_count = $limit_count;
     }
 
 
@@ -169,11 +202,29 @@ class MultiSelectSearchNewInputGUI extends ilFormPropertyGUI implements ilTableF
 
 
     /**
+     * @param int|null $minimum_input_length
+     */
+    public function setMinimumInputLength(/*?*/ int $minimum_input_length = null)/*: void*/
+    {
+        $this->minimum_input_length = $minimum_input_length;
+    }
+
+
+    /**
      * @return array
      */
     public function getOptions() : array
     {
         return $this->options;
+    }
+
+
+    /**
+     * @param array $options
+     */
+    public function setOptions(array $options)/* : void*/
+    {
+        $this->options = $options;
     }
 
 
@@ -205,9 +256,22 @@ class MultiSelectSearchNewInputGUI extends ilFormPropertyGUI implements ilTableF
 
 
     /**
+     * @param array $value
+     */
+    public function setValue(/*array*/ $value)/*: void*/
+    {
+        if (is_array($value)) {
+            $this->value = self::cleanValues($value);
+        } else {
+            $this->value = [];
+        }
+    }
+
+
+    /**
      * @param ilTemplate $tpl
      */
-    public function insert(ilTemplate $tpl) /*: void*/
+    public function insert(ilTemplate $tpl)/*: void*/
     {
         $html = $this->render();
 
@@ -227,6 +291,8 @@ class MultiSelectSearchNewInputGUI extends ilFormPropertyGUI implements ilTableF
         $tpl->setVariableEscaped("ID", $this->getFieldId());
 
         $tpl->setVariableEscaped("POST_VAR", $this->getPostVar());
+
+        $tpl->setVariableEscaped("EMPTY_PLACEHOLDER", self::EMPTY_PLACEHOLDER); // ILIAS 6 will not set `null` value to input on post
 
         $config = [
             "maximumSelectionLength" => $this->getLimitCount(),
@@ -268,59 +334,10 @@ class MultiSelectSearchNewInputGUI extends ilFormPropertyGUI implements ilTableF
 
 
     /**
-     * @param AbstractAjaxAutoCompleteCtrl|null $ajax_auto_complete_ctrl
+     * @param array $values
      */
-    public function setAjaxAutoCompleteCtrl(/*?*/ AbstractAjaxAutoCompleteCtrl $ajax_auto_complete_ctrl = null)/*: void*/
+    public function setValueByArray(/*array*/ $values)/*: void*/
     {
-        $this->ajax_auto_complete_ctrl = $ajax_auto_complete_ctrl;
-    }
-
-
-    /**
-     * @param int|null $limit_count
-     */
-    public function setLimitCount(/*?*/ int $limit_count = null)/* : void*/
-    {
-        $this->limit_count = $limit_count;
-    }
-
-
-    /**
-     * @param int|null $minimum_input_length
-     */
-    public function setMinimumInputLength(/*?*/ int $minimum_input_length = null)/*: void*/
-    {
-        $this->minimum_input_length = $minimum_input_length;
-    }
-
-
-    /**
-     * @param array $options
-     */
-    public function setOptions(array $options)/* : void*/
-    {
-        $this->options = $options;
-    }
-
-
-    /**
-     * @param array $value
-     */
-    public function setValue(/*array*/ $value)/*: void*/
-    {
-        if (is_array($value)) {
-            $this->value = $value;
-        } else {
-            $this->value = [];
-        }
-    }
-
-
-    /**
-     * @param array $value
-     */
-    public function setValueByArray(/*array*/ $value)/*: void*/
-    {
-        $this->setValue($value[$this->getPostVar()]);
+        $this->setValue($values[$this->getPostVar()]);
     }
 }
