@@ -1,8 +1,6 @@
 <#1>
 <?php
 
-require_once __DIR__ ."/../vendor/autoload.php";
-
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\Config;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfig;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
