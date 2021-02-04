@@ -29,7 +29,7 @@ class StudyProgramQuery
     public function __construct(CourseConfigProvider $config)
     {
         $this->config = $config;
-        $this->udf_setting = new \ilSetting('udfd');
+	$this->udf_setting = new \ilSetting('udfd');
     }
 
     /**
@@ -59,6 +59,7 @@ class StudyProgramQuery
      */
     public function getAll()
     {
+	    
         static $cache = array();
         if (isset($cache[$this->config->getCourse()->getId()])) {
             return $cache[$this->config->getCourse()->getId()];
@@ -73,11 +74,14 @@ class StudyProgramQuery
                 $programs[] = new StudyProgram($id, $title);
             }
         } else {
-
             $settings = \ilCascadingSelectSettings::getInstance();
             $options = $settings->get('json_' . $this->config->get('udf_id_study_program'));
 
-            $data = json_decode($options, true);
+	    $data = json_decode($options, true);
+
+
+
+
             $program_titles = array();
             // The study programs are options on the second level of all data available on the first level
             foreach ($data['options'] as $level1) {
@@ -101,7 +105,7 @@ class StudyProgramQuery
      */
     protected function isCascadingSelect()
     {
-        return ($this->udf_setting->get('json_' . $this->config->get('udf_id_study_program')) !== false);
+        return ($this->config->get('udf_id_study_program') > 0);
     }
 
 }
