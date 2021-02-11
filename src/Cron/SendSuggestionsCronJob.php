@@ -51,6 +51,58 @@ class SendSuggestionsCronJob extends \ilCronJob {
 	protected $pl;
 
 
+ /**
+     * provide $styleDefinition object
+     */
+    protected static function initStyle()
+    {
+	    global $DIC, $ilPluginAdmin;
+
+	    if (isset($GLOBALS['styleDefinition'])) {
+		return;	    
+	    }
+
+        // load style definitions
+        self::initGlobal(
+            "styleDefinition",
+            "ilStyleDefinition",
+            "./Services/Style/System/classes/class.ilStyleDefinition.php"
+        );
+
+        // add user interface hook for style initialisation
+        $pl_names = $ilPluginAdmin->getActivePluginsForSlot(IL_COMP_SERVICE, "UIComponent", "uihk");
+        foreach ($pl_names as $pl) {
+            $ui_plugin = ilPluginAdmin::getPluginObject(IL_COMP_SERVICE, "UIComponent", "uihk", $pl);
+            $gui_class = $ui_plugin->getUIClassInstance();
+            $gui_class->modifyGUI("Services/Init", "init_style", array("styleDefinition" => $DIC->systemStyle()));
+        }
+    }
+
+	 /**
+     * Initialize global instance
+     *
+     * @param string $a_name
+     * @param string $a_class
+     * @param string $a_source_file
+     */
+    protected static function initGlobal($a_name, $a_class, $a_source_file = null)
+    {
+        global $DIC;
+
+        if ($a_source_file) {
+            include_once $a_source_file;
+            $GLOBALS[$a_name] = new $a_class;
+        } else {
+            $GLOBALS[$a_name] = $a_class;
+        }
+
+        $DIC[$a_name] = function ($c) use ($a_name) {
+            return $GLOBALS[$a_name];
+        };
+    }
+
+
+
 	/**
 	 * @param \ilDBInterface $db
 	 * @param ConfigProvider $config
@@ -63,6 +115,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		$this->parser = $parser;
 		$this->log = $log;
 		$this->pl = \ilLearningObjectiveSuggestionsPlugin::getInstance();
+		static::initStyle();
 	}
 
 
