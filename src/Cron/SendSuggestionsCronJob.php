@@ -7,6 +7,7 @@ use ilCrsInitialTestStates;
 use ilObjectTest;
 use ilObjTest;
 use ilTemplate;
+use ilPluginAdmin;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
@@ -56,10 +57,10 @@ class SendSuggestionsCronJob extends \ilCronJob {
      */
     protected static function initStyle()
     {
-	    global $DIC, $ilPluginAdmin;
+        global $DIC, $ilPluginAdmin;
 
 	    if (isset($GLOBALS['styleDefinition'])) {
-		return;	    
+		    return;
 	    }
 
         // load style definitions
