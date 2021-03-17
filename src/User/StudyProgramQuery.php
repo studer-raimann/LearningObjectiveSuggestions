@@ -77,10 +77,7 @@ class StudyProgramQuery
             $settings = \ilCascadingSelectSettings::getInstance();
             $options = $settings->get('json_' . $this->config->get('udf_id_study_program'));
 
-	    $data = json_decode($options, true);
-
-
-
+	        $data = json_decode($options, true);
 
             $program_titles = array();
             // The study programs are options on the second level of all data available on the first level
@@ -105,7 +102,9 @@ class StudyProgramQuery
      */
     protected function isCascadingSelect()
     {
-        return ($this->config->get('udf_id_study_program') > 0);
+        $udf = \ilUserDefinedFields::_getInstance();
+        $data = $udf->getDefinition($this->config->get('udf_id_study_program'));
+        return ($data['field_type'] === "51");
     }
 
 }
