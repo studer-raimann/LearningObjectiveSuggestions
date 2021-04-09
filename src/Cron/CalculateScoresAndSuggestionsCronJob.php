@@ -160,6 +160,10 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			$score = $this->getLearningObjectiveScore($objective_result);
 			try {
 				$skore = $calculator->calculate($objective_result);
+				if ($skore == -1) {
+				    continue;
+                }
+
 				$score->setScore($skore);
 				$score->save();
 				$users[$objective_result->getUser()->getId()] = $objective_result->getUser();
