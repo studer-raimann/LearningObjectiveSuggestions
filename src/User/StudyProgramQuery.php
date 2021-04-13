@@ -43,8 +43,10 @@ class StudyProgramQuery
         $title = $data->get('f_' . $this->config->get('udf_id_study_program'));
 
         // The data is separated with an arrow, wtf...
+        //13.04.2021 Modification DHBW from old master 
+          if ($this->isCascadingSelect()) {
         list($_, $title, $_) = array_map('trim', explode("→", $title));
-
+          }
         $filtered = array_filter($this->getAll(), function ($study_program) use ($title) {
             /** @var $study_program StudyProgram */
             return ($study_program->getTitle() == $title);
