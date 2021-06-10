@@ -51,8 +51,7 @@ class LearningObjectiveScoreCalculator {
 		//		$weight_fine = $this->config->getWeightFine($objective);
 		$study_program = $this->study_program_query->getByUser($user);
 		if ($study_program === NULL) {
-			// throw new \ilException("No study program assigned to user $user");
-			return -1;
+			throw new \ilException("No study program assigned to user $user");
 		}
 		$weight_rough = $this->config->getWeightRough($objective, $study_program);
 		if ($weight_rough === NULL) {
