@@ -6,7 +6,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfig;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion;
-use srag\Plugins\SrUserEnrolment\Log\Log;
 
 LearningObjectiveScore::updateDB();
 LearningObjectiveSuggestion::updateDB();
