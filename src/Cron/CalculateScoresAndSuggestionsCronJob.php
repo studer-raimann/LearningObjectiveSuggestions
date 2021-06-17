@@ -158,6 +158,11 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 			$calculator = new LearningObjectiveScoreCalculator($config, $study_program_query, $this->log);
 			$score = $this->getLearningObjectiveScore($objective_result);
+
+			if ($score->getScore()) {
+			    continue;
+            }
+
 			try {
 				$skore = $calculator->calculate($objective_result);
 				if ($skore == -1) {
@@ -245,18 +250,25 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			}
 			$arr_saved[$key] = 1;
 
-			$suggestions = LearningObjectiveSuggestion::where(['course_obj_id' => $score->getCourseObjId(), 'objective_id' => $score->getObjectiveId(), 'user_id' => $score->getUserId()])->get();
-			if(count($suggestions) > 0) {
-                $suggestion = array_values($scores)[0];
-            } else {
-                $suggestion = new LearningObjectiveSuggestion();
+			try {
+                $suggestions = LearningObjectiveSuggestion::where(['course_obj_id' => $score->getCourseObjId(), 'objective_id' => $score->getObjectiveId(), 'user_id' => $score->getUserId()])->get();
+                if(count($suggestions) > 0) {
+                    $suggestion = array_values($scores)[0];
+                } else {
+                    $suggestion = new LearningObjectiveSuggestion();
+                }
+
+                $suggestion->setCourseObjId($score->getCourseObjId());
+                $suggestion->setObjectiveId($score->getObjectiveId());
+                $suggestion->setUserId($score->getUserId());
+                $suggestion->setSort(++ $sort);
+                $suggestion->save();
+            } catch (\Exception $e) {
+                $this->log->write("Exception when trying to save a suggestions {$suggestion}");
+                $this->log->write($e->getMessage());
+                $this->log->write($e->getTraceAsString());
             }
 
-			$suggestion->setCourseObjId($score->getCourseObjId());
-			$suggestion->setObjectiveId($score->getObjectiveId());
-			$suggestion->setUserId($score->getUserId());
-			$suggestion->setSort(++ $sort);
-			$suggestion->save();
 		}
 	}
 

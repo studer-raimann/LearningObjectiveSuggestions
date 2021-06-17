@@ -31,3 +31,31 @@ foreach(SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjec
 	$sug->save();
 }
 ?>
+
+<#5>
+<?php
+    GLobal $DIC;
+
+    $DIC->database()->query("DELETE t
+     FROM alo_score t JOIN
+          (SELECT user_id, course_obj_id, objective_id, min(id) AS min_id
+           FROM alo_score t
+           GROUP BY user_id, course_obj_id, objective_id
+          ) tt
+          USING (user_id, course_obj_id, objective_id)
+    WHERE id > min_id;");
+
+    $DIC->database()->query("DELETE t
+         FROM alo_suggestion t JOIN
+              (SELECT user_id, course_obj_id, objective_id, min(id) AS min_id
+               FROM alo_suggestion t
+               GROUP BY user_id, course_obj_id, objective_id
+              ) tt
+              USING (user_id, course_obj_id, objective_id)
+        WHERE id > min_id;");
+
+
+    $DIC->database()->query("ALTER TABLE alo_score ADD UNIQUE unique_index(user_Id, course_obj_id, objective_id)");
+    $DIC->database()->query("ALTER TABLE alo_suggestion ADD UNIQUE unique_index(user_Id, course_obj_id, objective_id)");
+
+?>
