@@ -55,7 +55,6 @@ foreach(SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjec
         WHERE id > min_id;");
 
 
-    $DIC->database()->query("ALTER TABLE alo_score ADD UNIQUE unique_index(user_Id, course_obj_id, objective_id)");
-    $DIC->database()->query("ALTER TABLE alo_suggestion ADD UNIQUE unique_index(user_Id, course_obj_id, objective_id)");
-
+    $DIC->database()->query("ALTER TABLE alo_score ADD UNIQUE INDEX (user_Id, course_obj_id, objective_id)");
+    $DIC->database()->query("ALTER TABLE alo_suggestion ADD UNIQUE INDEX (user_Id, course_obj_id, objective_id)");
 ?>
