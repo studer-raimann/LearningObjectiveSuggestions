@@ -159,10 +159,9 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			$calculator = new LearningObjectiveScoreCalculator($config, $study_program_query, $this->log);
 			$score = $this->getLearningObjectiveScore($objective_result);
 
-			if ($score->getScore()) {
+			if ($score->getCreatedAt() != null) { // we dont need to update existing scores
 			    continue;
             }
-
 			try {
 				$skore = $calculator->calculate($objective_result);
 				if ($skore == -1) {
