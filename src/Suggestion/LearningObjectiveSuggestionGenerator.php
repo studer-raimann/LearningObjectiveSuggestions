@@ -98,7 +98,7 @@ class LearningObjectiveSuggestionGenerator {
 
 		// Check for max condition
 		if (count($suggestions) > $max) {
-			$suggestions = array_values(array_slice($suggestions, $max));
+			$suggestions = array_values(array_slice($suggestions, 0, $max));
 		}
 
 		// Check that we have suggested at least one objective from the main and extended section
