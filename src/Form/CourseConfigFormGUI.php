@@ -1,18 +1,26 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form;
 
+use ilCrsInitialTestStates;
+use ilLearningObjectiveSuggestionsConfigGUI;
+
+use ilObject;
+use ilRbacReview;
+use ilSelectInputGUI;
+use srag\CustomInputGUIs\LearningObjectiveSuggestions\MultiLineNewInputGUI\MultiLineNewInputGUI;
+use srag\CustomInputGUIs\LearningObjectiveSuggestions\MultiSelectSearchNewInputGUI\MultiSelectSearchNewInputGUI;
+use srag\CustomInputGUIs\LearningObjectiveSuggestions\NumberInputGUI\NumberInputGUI;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
-
-require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
-require_once('./Services/Form/classes/class.ilMultiSelectInputGUI.php');
-require_once('./Modules/Course/classes/class.ilObjCourse.php');
-require_once('./Services/User/classes/class.ilUserDefinedFields.php');
+use srag\Plugins\SrUserEnrolment\EnrolmentWorkflow\Member\UsersMembersAjaxAutoCompleteCtrl;
 
 /**
  * Class CourseConfigFormGUI
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form
+ *
  */
 class CourseConfigFormGUI extends \ilPropertyFormGUI {
 
@@ -20,69 +28,74 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 	 * @var CourseConfigProvider
 	 */
 	protected $config;
-
 	/**
 	 * @var LearningObjectiveQuery
 	 */
 	protected $objective_query;
-
 	/**
 	 * @var StudyProgramQuery
 	 */
 	protected $study_program_query;
+	/**
+	 * @var \ilLearningObjectiveSuggestionsPlugin
+	 */
+	protected $pl;
+
 
 	/**
-	 * @param CourseConfigProvider $config
+	 * @param CourseConfigProvider   $config
 	 * @param LearningObjectiveQuery $objective_query
-	 * @param StudyProgramQuery $study_program_query
+	 * @param StudyProgramQuery      $study_program_query
 	 */
-	public function __construct(CourseConfigProvider $config,
-	                            LearningObjectiveQuery $objective_query,
-	                            StudyProgramQuery $study_program_query) {
+	public function __construct(CourseConfigProvider $config, LearningObjectiveQuery $objective_query, StudyProgramQuery $study_program_query) {
 		parent::__construct();
 		$this->config = $config;
 		$this->objective_query = $objective_query;
 		$this->study_program_query = $study_program_query;
+		$this->pl = \ilLearningObjectiveSuggestionsPlugin::getInstance();
 		$this->init();
 	}
 
+
 	protected function init() {
-		$this->setTitle('Konfiguration');
+		$this->setTitle($this->pl->txt("configuration"));
 
 		$options = array();
 		$definitions = \ilUserDefinedFields::_getInstance()->getDefinitions();
 		foreach ($definitions as $field_id => $data) {
 			$options[$field_id] = $data['field_name'];
 		}
-		$udf = new \ilSelectInputGUI('UDF Studienprogramm', 'udf_id_study_program');
-		$udf->setInfo('UDF Dropdown Feld, welches die Studiengänge enthält');
+		$udf = new \ilSelectInputGUI($this->pl->txt("udf_study_program"), 'udf_id_study_program');
+		$udf->setInfo($this->pl->txt("udf_study_program_info"));
 		$udf->setOptions($options);
 		$udf->setRequired(true);
 		$udf->setValue($this->config->get('udf_id_study_program'));
 
 		if ($this->config->get('udf_id_study_program')) {
-			$item = new \ilCheckboxInputGUI('UDF Studienprogramm ändern', 'change_mapping_ids');
-			$item->setInfo('Achtung: Das Ändern vom UDF wirkt sich auf die gesamte folgende Konfiguration aus');
+			$item = new \ilCheckboxInputGUI($this->pl->txt("change_udf_study_program"), 'change_mapping_ids');
+			$item->setInfo($this->pl->txt("change_udf_study_program_info"));
 			$item->addSubItem($udf);
 			$this->addItem($item);
 			$this->addGeneralConfig();
 			$this->addWeightFineConfig();
 			$this->addWeightRoughConfig();
+			$this->addRoleAssignmentConfig();
 		} else {
 			$this->addItem($udf);
 		}
 
-		$this->addCommandButton('save', 'Speichern');
-		$this->addCommandButton('cancel', 'Abbrechen');
+		$this->addCommandButton(\ilLearningObjectiveSuggestionsConfigGUI::CMD_SAVE, $this->pl->txt("save"));
+		$this->addCommandButton(\ilLearningObjectiveSuggestionsConfigGUI::CMD_CANCEL, $this->pl->txt("cancel"));
 	}
+
 
 	protected function addGeneralConfig() {
 		$item = new \ilFormSectionHeaderGUI();
-		$item->setTitle('Allgemein');
+		$item->setTitle($this->pl->txt("general"));
 		$this->addItem($item);
 
-		$item = new \ilMultiSelectInputGUI('Kernbereich', 'learning_objectives_main');
-		$item->setInfo('Lernziele, welche dem Kernbereich zugeordnet werden');
+		$item = new \ilMultiSelectInputGUI($this->pl->txt("objectives_main"), 'learning_objectives_main');
+		$item->setInfo($this->pl->txt("objectives_main_info"));
 		$item->setRequired(true);
 		$item->setWidth(100);
 		$item->setWidthUnit('%');
@@ -97,43 +110,44 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 		$this->addItem($item);
 
 		$item = clone $item;
-		$item->setTitle('Erweiterter Bereich');
+		$item->setTitle($this->pl->txt("objectives_extended"));
 		$item->setPostVar('learning_objectives_extended');
-		$item->setInfo('Lernziele, welche dem erweiterten Bereich zugeordnet werden');
+		$item->setInfo($this->pl->txt("objectives_extended_info"));
 		$item->setValue(json_decode($this->config->get($item->getPostVar()), true));
 		$this->addItem($item);
 
-		$item = new \ilNumberInputGUI('Min empfohlene Lernziele', 'min_amount_suggestions');
-		$item->setInfo('Minimale Anzahl von Lernziele, welche dem Benutzer empfohlen werden');
+		$item = new \ilNumberInputGUI($this->pl->txt("min_amount_suggestions"), 'min_amount_suggestions');
+		$item->setInfo($this->pl->txt("min_amount_suggestions_info"));
 		$item->setValue($this->config->get($item->getPostVar()));
 		$item->setRequired(true);
 		$this->addItem($item);
 
-		$item = new \ilNumberInputGUI('Max empfohlene Lernziele', 'max_amount_suggestions');
-		$item->setInfo('Maximale Anzahl von Lernziele, welche dem Benutzer empfohlen werden');
+		$item = new \ilNumberInputGUI($this->pl->txt("max_amount_suggestions"), 'max_amount_suggestions');
+		$item->setInfo($this->pl->txt("max_amount_suggestions_info"));
 		$item->setValue($this->config->get($item->getPostVar()));
 		$item->setRequired(true);
 		$this->addItem($item);
 
-		$item = new \ilNumberInputGUI('Bias', 'bias');
+		$item = new \ilNumberInputGUI($this->pl->txt("bias"), 'bias');
 		$item->setValue($this->config->get($item->getPostVar()));
 		$item->setRequired(true);
 		$this->addItem($item);
 
-		$item = new \ilNumberInputGUI('Offset', 'offset');
+		$item = new \ilNumberInputGUI($this->pl->txt("offset"), 'offset');
 		$item->setValue($this->config->get($item->getPostVar()));
 		$item->setRequired(true);
 		$this->addItem($item);
 
-		$item = new \ilNumberInputGUI('Steps', 'steps');
+		$item = new \ilNumberInputGUI($this->pl->txt("steps"), 'steps');
 		$item->setValue($this->config->get($item->getPostVar()));
 		$item->setRequired(true);
 		$this->addItem($item);
 	}
 
+
 	protected function addWeightFineConfig() {
 		$item = new \ilFormSectionHeaderGUI();
-		$item->setTitle('Feingewichte');
+		$item->setTitle($this->pl->txt("weight_fine"));
 		$this->addItem($item);
 		foreach ($this->getObjectives() as $objective) {
 			$item = new \ilNumberInputGUI($objective->getTitle(), 'weight_fine_' . $objective->getId());
@@ -144,10 +158,11 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 		}
 	}
 
+
 	protected function addWeightRoughConfig() {
 		foreach ($this->study_program_query->getAll() as $study_program) {
 			$item = new \ilFormSectionHeaderGUI();
-			$item->setTitle('Grobgewichte "' . $study_program->getTitle() . '"');
+			$item->setTitle($this->pl->txt("weight_rough") . ' "' . $study_program->getTitle() . '"');
 			$this->addItem($item);
 			foreach ($this->getObjectives() as $objective) {
 				$post_var = 'weight_rough_' . $objective->getId() . '_' . $study_program->getId();
@@ -155,23 +170,74 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 				$item->setRequired(true);
 				$item->allowDecimals(true);
 				$value = $this->config->get($item->getPostVar());
-				$item->setValue($value === null ? 100 : $value);
+				$item->setValue($value === NULL ? 100 : $value);
 				$this->addItem($item);
 			}
 		}
-
 	}
 
+    protected function addRoleAssignmentConfig() {
+        global $DIC;
+
+            $item = new \ilFormSectionHeaderGUI();
+            $item->setTitle($this->pl->txt("role_assignment"));
+            $this->addItem($item);
+
+            $item = new MultiLineNewInputGUI('role_assignment_config', 'role_assignment_config');
+
+                $subitem = new NumberInputGUI('min_points','min_points');
+                $item->addInput($subitem);
+                $subitem = new NumberInputGUI('max_points','max_points');
+                $item->addInput($subitem);
+                $subitem = new ilSelectInputGUI('role','role');
+                $subitem->setOptions($this->getAllRoles());
+                $item->addInput($subitem);
+
+        $item->setValue(json_decode($this->config->get($item->getPostVar()),true));
+        $this->addItem($item);
+    }
+
+    protected function getAllRoles() {
+	    global $DIC;
+        $roles = $DIC->rbac()->review()->getRolesByFilter(ilRbacReview::FILTER_NOT_INTERNAL);
+
+        $options = [];
+        $options[0] = '';
+        foreach($roles as $role_arr) {
+            $options[$role_arr['obj_id']] = ilObject::_lookupTitle($role_arr['obj_id']);
+        }
+
+       return $options;
+    }
+
+    protected function getAllTests() {
+        global $DIC;
+
+
+
+        $roles = $DIC->rbac()->review()->getGlobalRoles();
+
+        $options = [];
+        $options[0] = '';
+        foreach($roles as $role_id) {
+            $options[$role_id] = ilObject::_lookupTitle($role_id);
+        }
+
+
+        return $options;
+    }
+
+
 	/**
-	 * @return \SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective[]
+	 * @return LearningObjective[]
 	 */
 	protected function getObjectives() {
-		static $objectives = null;
-		if ($objectives !== null) {
+		static $objectives = NULL;
+		if ($objectives !== NULL) {
 			return $objectives;
 		}
 		$objectives = $this->objective_query->getAll();
+
 		return $objectives;
 	}
-
 }

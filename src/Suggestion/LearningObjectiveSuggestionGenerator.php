@@ -8,8 +8,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-require_once('./Services/User/classes/class.ilObjUser.php');
-
 /**
  * Class LearningObjectiveSuggestionGenerator
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
@@ -100,8 +98,7 @@ class LearningObjectiveSuggestionGenerator {
 
 		// Check for max condition
 		if (count($suggestions) > $max) {
-			$offset = $max - count($suggestions); // Negative offset!
-			$suggestions = array_values(array_slice($suggestions, $offset));
+			$suggestions = array_values(array_slice($suggestions, 0, $max));
 		}
 
 		// Check that we have suggested at least one objective from the main and extended section
@@ -155,7 +152,7 @@ class LearningObjectiveSuggestionGenerator {
 				$objective_result_b = new LearningObjectiveResult($objective_b, $user);
 				$weight_fine_a = $config->getWeightFine($objective_a);
 				$weight_fine_b = $config->getWeightFine($objective_b);
-				if ($objective_result_a->getPercentage() < 90 && $objective_result_b->getPercentage() < 90) {
+				if ($objective_result_a->getPercentage() < 90 || $objective_result_b->getPercentage() < 90) {
 					// If the user reached less than 90 percent on both objectives, sort DESC depending on fine weights
 					return ($weight_fine_a > $weight_fine_b) ? -1 : 1;
 				} else if ($objective_result_a->getPercentage() >= 90 && $objective_result_b->getPercentage() >= 90) {

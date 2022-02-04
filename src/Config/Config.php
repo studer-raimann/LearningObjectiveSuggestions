@@ -1,11 +1,34 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config;
+<?php
+
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config;
 
 /**
  * Class Config
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class Config extends \ActiveRecord {
+
+	const TABLE_NAME = "alo_config";
+
+
+	/**
+	 * @return string
+	 */
+	public function getConnectorContainerName() {
+		return self::TABLE_NAME;
+	}
+
+
+	/**
+	 * @return string
+	 * @deprecated
+	 */
+	public static function returnDbTableName() {
+		return self::TABLE_NAME;
+	}
+
 
 	/**
 	 * @var int
@@ -17,7 +40,6 @@ class Config extends \ActiveRecord {
 	 * @db_sequence     true
 	 */
 	protected $id;
-
 	/**
 	 * @var string
 	 *
@@ -26,7 +48,6 @@ class Config extends \ActiveRecord {
 	 * @db_length       64
 	 */
 	protected $cfg_key;
-
 	/**
 	 * @var string
 	 *
@@ -43,12 +64,14 @@ class Config extends \ActiveRecord {
 		return $this->id;
 	}
 
+
 	/**
 	 * @return string
 	 */
 	public function getKey() {
 		return $this->cfg_key;
 	}
+
 
 	/**
 	 * @param string $key
@@ -57,6 +80,7 @@ class Config extends \ActiveRecord {
 		$this->cfg_key = $key;
 	}
 
+
 	/**
 	 * @return string
 	 */
@@ -64,18 +88,11 @@ class Config extends \ActiveRecord {
 		return $this->value;
 	}
 
+
 	/**
 	 * @param string $value
 	 */
 	public function setValue($value) {
 		$this->value = $value;
-	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	static function returnDbTableName() {
-		return 'alo_config';
 	}
 }

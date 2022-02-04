@@ -46,11 +46,25 @@ class CourseConfigProvider {
 		return ($config) ? $config->getValue() : null;
 	}
 
+
+	public function delete() {
+		/** @var CourseConfig $config */
+		foreach(CourseConfig::where(array(
+			'course_obj_id' => $this->course->getId()
+		))->get() as $course_config) {
+			$course_config->delete();
+		}
+
+	}
+
 	/**
 	 * @param string $key
 	 * @param string $value
 	 */
 	public function set($key, $value) {
+	    global $ilLog;
+	    $ilLog->write($key . " ". $value);
+
 		$config = CourseConfig::where(array(
 			'cfg_key' => $key,
 			'course_obj_id' => $this->course->getId(),
@@ -129,4 +143,18 @@ class CourseConfigProvider {
 	public function getEmailBodyTemplate() {
 		return (string)$this->get('email_body');
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getIsCronInactive() {
+		return (bool)$this->get('is_cron_inactive');
+	}
+
+    /**
+     * @return string
+     */
+    public function getRoleAssignmentConfig() {
+        return $this->get('role_assignment_config');
+    }
 }

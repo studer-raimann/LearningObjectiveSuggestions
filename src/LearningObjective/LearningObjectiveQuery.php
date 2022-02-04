@@ -2,12 +2,10 @@
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 
-require_once('./Modules/Course/classes/class.ilCourseObjective.php');
-require_once('./Modules/Course/classes/class.ilObjCourse.php');
-
 /**
  * Class LearningObjectiveQuery
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ *
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveQuery {
@@ -16,6 +14,7 @@ class LearningObjectiveQuery {
 	 * @var CourseConfigProvider
 	 */
 	protected $config;
+
 
 	/**
 	 * @param CourseConfigProvider $config
@@ -42,21 +41,27 @@ class LearningObjectiveQuery {
 		foreach ($ids as $id) {
 			$objectives[] = new LearningObjective(new \ilCourseObjective($course, $id));
 		}
+
 		$cache[$ref_id] = $objectives;
+
 		return $objectives;
 	}
 
+
 	/**
 	 * @param int $objective_id
+	 *
 	 * @return LearningObjective
 	 */
 	public function getByObjectiveId($objective_id) {
-		$filtered = array_filter($this->getAll(), function($objective) use ($objective_id) {
+		$filtered = array_filter($this->getAll(), function ($objective) use ($objective_id) {
 			/** @var $objective LearningObjective */
 			return ($objective->getId() == $objective_id);
 		});
+
 		return array_pop($filtered);
 	}
+
 
 	/**
 	 * Get the learning objectives belonging to the main section
@@ -65,11 +70,13 @@ class LearningObjectiveQuery {
 	 */
 	public function getMain() {
 		$main = json_decode($this->config->get('learning_objectives_main'), true);
-		return array_filter($this->getAll(), function($objective) use ($main) {
+
+		return array_filter($this->getAll(), function ($objective) use ($main) {
 			/** @var $objective LearningObjective */
 			return (in_array($objective->getId(), $main));
 		});
 	}
+
 
 	/**
 	 * Get the learning objectives belonging to the extended section
@@ -78,10 +85,10 @@ class LearningObjectiveQuery {
 	 */
 	public function getExtended() {
 		$extended = json_decode($this->config->get('learning_objectives_extended'), true);
-		return array_filter($this->getAll(), function($objective) use ($extended) {
+
+		return array_filter($this->getAll(), function ($objective) use ($extended) {
 			/** @var $objective LearningObjective */
 			return (in_array($objective->getId(), $extended));
 		});
 	}
-
 }

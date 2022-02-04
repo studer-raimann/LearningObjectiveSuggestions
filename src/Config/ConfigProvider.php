@@ -5,14 +5,14 @@
  *
  * Provides access to global config data
  *
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
+ * @author  Stefan Wanzenried <sw@studer-raimann.ch>
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class ConfigProvider {
 
-
 	/**
 	 * @param string $key
+	 *
 	 * @return string
 	 */
 	public function get($key) {
@@ -20,8 +20,10 @@ class ConfigProvider {
 		$config = Config::where(array(
 			'cfg_key' => $key,
 		))->first();
-		return ($config) ? $config->getValue() : null;
+
+		return ($config) ? $config->getValue() : NULL;
 	}
+
 
 	/**
 	 * @param string $key
@@ -30,8 +32,8 @@ class ConfigProvider {
 	public function set($key, $value) {
 		$config = Config::where(array(
 			'cfg_key' => $key,
-			))->first();
-		if ($config === null) {
+		))->first();
+		if ($config === NULL) {
 			$config = new Config();
 			$config->setKey($key);
 		}
@@ -39,11 +41,11 @@ class ConfigProvider {
 		$config->save();
 	}
 
+
 	/**
 	 * @return array
 	 */
 	public function getCourseRefIds() {
 		return (array)json_decode($this->get('course_ref_ids'), true);
 	}
-
 }
