@@ -14,8 +14,8 @@ class ComposerStaticInitb59319c1827b3c54e2057db4922edf89
         's' => 
         array (
             'srag\\LibrariesNamespaceChanger\\' => 31,
-            'srag\\DIC\\' => 9,
-            'srag\\CustomInputGUIs\\' => 21,
+            'srag\\DIC\\LearningObjectiveSuggestions\\' => 38,
+            'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\' => 50,
         ),
         'T' => 
         array (
@@ -33,11 +33,11 @@ class ComposerStaticInitb59319c1827b3c54e2057db4922edf89
         array (
             0 => __DIR__ . '/..' . '/srag/librariesnamespacechanger/src',
         ),
-        'srag\\DIC\\' => 
+        'srag\\DIC\\LearningObjectiveSuggestions\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/dic/src',
         ),
-        'srag\\CustomInputGUIs\\' => 
+        'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\' => 
         array (
             0 => __DIR__ . '/..' . '/srag/custominputguis/src',
         ),
@@ -67,6 +67,7 @@ class ComposerStaticInitb59319c1827b3c54e2057db4922edf89
 
     public static $classMap = array (
         'ActiveRecord' => __DIR__ . '/../..' . '/../../../../../../../Services/ActiveRecord/class.ActiveRecord.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Config\\Config' => __DIR__ . '/../..' . '/src/Config/Config.php',
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Config\\ConfigProvider' => __DIR__ . '/../..' . '/src/Config/ConfigProvider.php',
         'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\Config\\CourseConfig' => __DIR__ . '/../..' . '/src/Config/CourseConfig.php',
@@ -506,7 +507,6 @@ class ComposerStaticInitb59319c1827b3c54e2057db4922edf89
         'ilUserAutoComplete' => __DIR__ . '/../..' . '/../../../../../../../Services/User/classes/class.ilUserAutoComplete.php',
         'ilUserDefinedData' => __DIR__ . '/../..' . '/../../../../../../../Services/User/classes/class.ilUserDefinedData.php',
         'ilUserDefinedFields' => __DIR__ . '/../..' . '/../../../../../../../Services/User/classes/class.ilUserDefinedFields.php',
-        'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\CheckboxInputGUI\\AjaxCheckbox' => __DIR__ . '/..' . '/srag/custominputguis/src/AjaxCheckbox/AjaxCheckbox.php',
         'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\CheckboxInputGUI\\CheckboxInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/CheckboxInputGUI/CheckboxInputGUI.php',
         'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\ColorPickerInputGUI\\ColorPickerInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/ColorPickerInputGUI/ColorPickerInputGUI.php',
         'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\CustomInputGUIs' => __DIR__ . '/..' . '/srag/custominputguis/src/CustomInputGUIs.php',
@@ -529,10 +529,6 @@ class ComposerStaticInitb59319c1827b3c54e2057db4922edf89
         'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchInputGUI\\MultiSelectSearchInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchInputGUI/MultiSelectSearchInputGUI.php',
         'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchNewInputGUI\\AbstractAjaxAutoCompleteCtrl' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/AbstractAjaxAutoCompleteCtrl.php',
         'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchNewInputGUI\\MultiSelectSearchNewInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/MultiSelectSearchNewInputGUI.php',
-        'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchNewInputGUI\\ObjectChildrenAjaxAutoCompleteCtrl' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/class.ObjectChildrenAjaxAutoCompleteCtrl.php',
-        'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchNewInputGUI\\ObjectsAjaxAutoCompleteCtrl' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/class.ObjectsAjaxAutoCompleteCtrl.php',
-        'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchNewInputGUI\\OrgUnitAjaxAutoCompleteCtrl' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/class.OrgUnitAjaxAutoCompleteCtrl.php',
-        'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchNewInputGUI\\UsersAjaxAutoCompleteCtrl' => __DIR__ . '/..' . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/class.UsersAjaxAutoCompleteCtrl.php',
         'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\NumberInputGUI\\NumberInputGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/NumberInputGUI/NumberInputGUI.php',
         'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\PropertyFormGUI\\ConfigPropertyFormGUI' => __DIR__ . '/..' . '/srag/custominputguis/src/PropertyFormGUI/ConfigPropertyFormGUI.php',
         'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\PropertyFormGUI\\Exception\\PropertyFormGUIException' => __DIR__ . '/..' . '/srag/custominputguis/src/PropertyFormGUI/Exception/PropertyFormGUIException.php',
@@ -567,7 +563,6 @@ class ComposerStaticInitb59319c1827b3c54e2057db4922edf89
         'srag\\DIC\\LearningObjectiveSuggestions\\Database\\DatabaseInterface' => __DIR__ . '/..' . '/srag/dic/src/Database/DatabaseInterface.php',
         'srag\\DIC\\LearningObjectiveSuggestions\\Database\\PdoContextHelper' => __DIR__ . '/..' . '/srag/dic/src/Database/PdoContextHelper.php',
         'srag\\DIC\\LearningObjectiveSuggestions\\Database\\PdoStatementContextHelper' => __DIR__ . '/..' . '/srag/dic/src/Database/PdoStatementContextHelper.php',
-        'srag\\DIC\\LearningObjectiveSuggestions\\DevTools\\DevToolsCtrl' => __DIR__ . '/..' . '/srag/dic/src/DevTools/class.DevToolsCtrl.php',
         'srag\\DIC\\LearningObjectiveSuggestions\\Exception\\DICException' => __DIR__ . '/..' . '/srag/dic/src/Exception/DICException.php',
         'srag\\DIC\\LearningObjectiveSuggestions\\Ilias7PreWarn' => __DIR__ . '/..' . '/srag/dic/src/Ilias7PreWarn.php',
         'srag\\DIC\\LearningObjectiveSuggestions\\Loader\\AbstractLoaderDetector' => __DIR__ . '/..' . '/srag/dic/src/Loader/AbstractLoaderDetector.php',
