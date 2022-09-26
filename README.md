@@ -18,4 +18,7 @@ configuration is correct prior to activate the cron jobs ("Administration -> Gen
 
 ## Cron Jobs
 
+## Maintenance
+fluxlabs ag, support@fluxlabs.ch
 
+This project is maintained by fluxlabs. 
