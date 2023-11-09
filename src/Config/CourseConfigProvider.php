@@ -13,31 +13,15 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgram;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class CourseConfigProvider {
-
-	/**
-	 * @var LearningObjectiveCourse
-	 */
-	protected $course;
-
-	/**
-	 * @param LearningObjectiveCourse $course
-	 */
+	protected LearningObjectiveCourse $course;
 	public function __construct(LearningObjectiveCourse $course) {
 		$this->course = $course;
 	}
-
-	/**
-	 * @return LearningObjectiveCourse
-	 */
-	public function getCourse() {
+	public function getCourse(): LearningObjectiveCourse
+    {
 		return $this->course;
 	}
-
-	/**
-	 * @param string $key
-	 * @return string
-	 */
-	public function get($key) {
+	public function get(string $key): ?string {
 		/** @var CourseConfig $config */
 		$config = CourseConfig::where(array(
 			'cfg_key' => $key,
@@ -45,23 +29,16 @@ class CourseConfigProvider {
 		))->first();
 		return ($config) ? $config->getValue() : null;
 	}
-
-
-	public function delete() {
+	public function delete(): void
+    {
 		/** @var CourseConfig $config */
 		foreach(CourseConfig::where(array(
 			'course_obj_id' => $this->course->getId()
 		))->get() as $course_config) {
 			$course_config->delete();
 		}
-
 	}
-
-	/**
-	 * @param string $key
-	 * @param string $value
-	 */
-	public function set($key, $value) {
+	public function set(string $key, string $value): void {
 	    global $ilLog;
 	    $ilLog->write($key . " ". $value);
 
@@ -77,84 +54,48 @@ class CourseConfigProvider {
 		$config->setValue($value);
 		$config->save();
 	}
-
-	/**
-	 * @return int
-	 */
-	public function getMaxSuggestions() {
+	public function getMaxSuggestions(): int
+    {
 		return (int)$this->get('max_amount_suggestions');
 	}
-
-	/**
-	 * @return int
-	 */
-	public function getMinSuggestions() {
+	public function getMinSuggestions(): int
+    {
 		return (int)$this->get('min_amount_suggestions');
 	}
-
-	/**
-	 * @param LearningObjective $learning_objective
-	 * @param StudyProgram $study_program
-	 * @return int
-	 */
-	public function getWeightRough(LearningObjective $learning_objective, StudyProgram $study_program) {
+	public function getWeightRough(LearningObjective $learning_objective, StudyProgram $study_program): int|string
+    {
 		return $this->get('weight_rough_' . $learning_objective->getId() . '_' . $study_program->getId());
 	}
-
-	/**
-	 * @param LearningObjective $learning_objective
-	 * @return int
-	 */
-	public function getWeightFine(LearningObjective $learning_objective) {
+	public function getWeightFine(LearningObjective $learning_objective): string
+    {
 		return $this->get('weight_fine_' . $learning_objective->getId());
 	}
-
-	/**
-	 * @return int
-	 */
-	public function getBias() {
+	public function getBias(): int
+    {
 		return (int)$this->get('bias');
 	}
-
-	/**
-	 * @return int
-	 */
-	public function getOffset() {
+	public function getOffset(): int
+    {
 		return (int)$this->get('offset');
 	}
-
-	/**
-	 * @return int
-	 */
-	public function getSteps() {
+	public function getSteps(): int
+    {
 		return (int)$this->get('steps');
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getEmailSubjectTemplate() {
+	public function getEmailSubjectTemplate(): string
+    {
 		return (string)$this->get('email_subject');
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getEmailBodyTemplate() {
+	public function getEmailBodyTemplate(): string
+    {
 		return (string)$this->get('email_body');
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getIsCronInactive() {
+	public function getIsCronInactive(): bool
+    {
 		return (bool)$this->get('is_cron_inactive');
 	}
-
-    /**
-     * @return string
-     */
-    public function getRoleAssignmentConfig() {
+    public function getRoleAssignmentConfig(): string
+    {
         return $this->get('role_assignment_config');
     }
 }

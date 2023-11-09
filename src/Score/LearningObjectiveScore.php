@@ -9,27 +9,18 @@ namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveScore extends \ActiveRecord {
-
 	const TABLE_NAME = "alo_score";
-
-
-	/**
-	 * @return string
-	 */
-	public function getConnectorContainerName() {
+	public function getConnectorContainerName(): string
+    {
 		return self::TABLE_NAME;
 	}
-
-
 	/**
-	 * @return string
 	 * @deprecated
 	 */
-	public static function returnDbTableName() {
+	public static function returnDbTableName(): string
+    {
 		return self::TABLE_NAME;
 	}
-
-
 	/**
 	 * @var int
 	 *
@@ -39,7 +30,7 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_is_primary   true
 	 * @db_sequence     true
 	 */
-	protected $id;
+	protected ?int $id;
 	/**
 	 * @var int
 	 *
@@ -48,7 +39,7 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_length       8
 	 * @db_index        true
 	 */
-	protected $user_id;
+	protected int $user_id;
 	/**
 	 * @var int
 	 *
@@ -57,7 +48,7 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_length       8
 	 * @db_index        true
 	 */
-	protected $course_obj_id;
+	protected int $course_obj_id;
 	/**
 	 * @var int
 	 *
@@ -66,7 +57,7 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_length       8
 	 * @db_index        true
 	 */
-	protected $objective_id;
+	protected int $objective_id;
 	/**
 	 * @var float
 	 *
@@ -74,21 +65,21 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_fieldtype    float
 	 * @db_length       8
 	 */
-	protected $score;
+	protected float $score;
 	/**
 	 * @var string
 	 *
 	 * @db_has_field    true
 	 * @db_fieldtype    timestamp
 	 */
-	protected $created_at;
+	protected string $created_at;
 	/**
 	 * @var string
 	 *
 	 * @db_has_field    true
 	 * @db_fieldtype    timestamp
 	 */
-	protected $updated_at;
+	protected string $updated_at;
 	/**
 	 * @var int
 	 *
@@ -96,7 +87,7 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_fieldtype    integer
 	 * @db_length       8
 	 */
-	protected $created_user_id;
+	protected int $created_user_id;
 	/**
 	 * @var int
 	 *
@@ -104,151 +95,82 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_fieldtype    integer
 	 * @db_length       8
 	 */
-	protected $updated_user_id;
-
-
-	public function create() {
+	protected int $updated_user_id;
+	public function create(): void
+    {
 		global $DIC;
 		$ilUser = $DIC->user();
 		$this->created_at = date('Y-m-d H:i:s');
 		$this->created_user_id = $ilUser->getId();
 		parent::create();
 	}
-
-
-	public function update() {
+	public function update(): void
+    {
 		global $DIC;
 		$ilUser = $DIC->user();
 		$this->updated_at = date('Y-m-d H:i:s');
 		$this->updated_user_id = $ilUser->getId();
 		parent::update();
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getId() {
+	public function getId(): int
+    {
 		return $this->id;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getUserId() {
+	public function getUserId(): int
+    {
 		return $this->user_id;
 	}
-
-
-	/**
-	 * @param int $user_id
-	 */
-	public function setUserId($user_id) {
+	public function setUserId(int $user_id): void
+    {
 		$this->user_id = $user_id;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getCourseObjId() {
+	public function getCourseObjId(): int
+    {
 		return $this->course_obj_id;
 	}
-
-
-	/**
-	 * @param int $course_obj_id
-	 */
-	public function setCourseObjId($course_obj_id) {
+	public function setCourseObjId(int $course_obj_id): void
+    {
 		$this->course_obj_id = $course_obj_id;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getObjectiveId() {
+	public function getObjectiveId(): int
+    {
 		return $this->objective_id;
 	}
-
-
-	/**
-	 * @param int $objective_id
-	 */
-	public function setObjectiveId($objective_id) {
+	public function setObjectiveId(int $objective_id): void
+    {
 		$this->objective_id = $objective_id;
 	}
-
-
-	/**
-	 * @return float
-	 */
-	public function getScore() {
+	public function getScore(): float
+    {
 		return $this->score;
 	}
-
-
-	/**
-	 * @param float $score
-	 */
-	public function setScore($score) {
+	public function setScore(float $score): void
+    {
 		$this->score = $score;
 	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getCreatedAt() {
+	public function getCreatedAt(): string
+    {
 		return $this->created_at;
 	}
-
-
-	/**
-	 * @param string $created_at
-	 */
-	public function setCreatedAt($created_at) {
+	public function setCreatedAt(string $created_at): void
+    {
 		$this->created_at = $created_at;
 	}
-
-
-	/**
-	 * @return mixed
-	 */
-	public function getUpdatedAt() {
+	public function getUpdatedAt(): string {
 		return $this->updated_at;
 	}
-
-
-	/**
-	 * @param mixed $updated_at
-	 */
-	public function setUpdatedAt($updated_at) {
+	public function setUpdatedAt(string $updated_at) {
 		$this->updated_at = $updated_at;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getCreatedUserId() {
+	public function getCreatedUserId(): int
+    {
 		return $this->created_user_id;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getUpdatedUserId() {
+	public function getUpdatedUserId(): int
+    {
 		return $this->updated_user_id;
 	}
-
-
-	/**
-	 * @return string
-	 */
-	public function __toString() {
+	public function __toString(): string {
 		return implode(', ', array(
 			"userId => {$this->user_id}",
 			"courseObjId => {$this->course_obj_id}",

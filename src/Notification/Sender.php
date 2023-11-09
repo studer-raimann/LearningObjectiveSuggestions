@@ -12,28 +12,11 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
 class Sender {
-
-	/**
-	 * @var string
-	 */
-	protected $subject;
-	/**
-	 * @var string
-	 */
-	protected $body;
-	/**
-	 * @var LearningObjectiveCourse
-	 */
-	protected $course;
-	/**
-	 * @var User
-	 */
-	protected $user;
-	/**
-	 * @var Log
-	 */
-	protected $log;
-
+	protected string $subject;
+	protected string $body;
+	protected LearningObjectiveCourse $course;
+	protected User $user;
+	protected Log $log;
 
 	/**
 	 * @param LearningObjectiveCourse $course
@@ -45,36 +28,20 @@ class Sender {
 		$this->user = $user;
 		$this->log = $log;
 	}
-
-
-	/**
-	 * @param string $subject
-	 *
-	 * @return $this
-	 */
-	public function subject($subject) {
+	public function subject(string $subject): static
+    {
 		$this->subject = $subject;
 
 		return $this;
 	}
-
-
-	/**
-	 * @param string $body
-	 *
-	 * @return $this
-	 */
-	public function body($body) {
+	public function body(string $body): static
+    {
 		$this->body = $body;
 
 		return $this;
 	}
-
-
-	/**
-	 * @return bool
-	 */
-	public function send() {
+	public function send(): bool
+    {
 		$config = new CourseConfigProvider($this->course);
 		$sender = new User(new \ilObjUser($config->get('notification_sender_user_id')));
 		$mail = new InternalMail();
@@ -96,14 +63,8 @@ class Sender {
 			return false;
 		}
 	}
-
-
-	/**
-	 * @param int $role_id
-	 *
-	 * @return \ilObjRole
-	 */
-	protected function getRole($role_id) {
+	protected function getRole(int $role_id): \ilObjRole
+    {
 		static $cache = array();
 		if (isset($cache[$role_id])) {
 			return $cache[$role_id];
@@ -113,12 +74,8 @@ class Sender {
 
 		return $role;
 	}
-
-
-	/**
-	 * @return Notification|\ActiveRecord
-	 */
-	protected function getNotification() {
+	protected function getNotification(): Notification|\ActiveRecord
+    {
 		$notification = Notification::where(array(
 			'user_id' => $this->user->getId(),
 			'course_obj_id' => $this->course->getId()

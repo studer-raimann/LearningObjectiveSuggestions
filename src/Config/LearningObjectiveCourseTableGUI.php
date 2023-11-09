@@ -1,5 +1,6 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config;
 
+use ilUtil;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 
 /**
@@ -9,20 +10,8 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningOb
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
-
-	/**
-	 * @var \ilCtrl
-	 */
-	protected $ctrl;
-	/**
-	 * @var \ilLearningObjectiveSuggestionsPlugin
-	 */
-	protected $pl;
-
-
-	/**
-	 * @param $a_parent_obj
-	 */
+	protected \ilCtrl $ctrl;
+	protected \ilLearningObjectiveSuggestionsPlugin $pl;
 	public function __construct($a_parent_obj) {
 		global $DIC;
 		$this->pl = \ilLearningObjectiveSuggestionsPlugin::getInstance();
@@ -33,12 +22,8 @@ class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 		$this->setTitle($this->pl->txt("courses"));
 		$this->addColumns();
 	}
-
-
-	/**
-	 * @param LearningObjectiveCourse[] $courses
-	 */
-	public function setCourses(array $courses) {
+	public function setCourses(array $courses): void
+    {
 		$data = array();
 		foreach ($courses as $course) {
 			/**
@@ -53,9 +38,8 @@ class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 		}
 		$this->setData($data);
 	}
-
-
-	protected function addColumns() {
+	protected function addColumns(): void
+    {
 		foreach ($this->getSelectableColumns() as $column => $data) {
 			if ($this->isColumnSelected($column)) {
 				$this->addColumn($data['txt'], $column);
@@ -63,9 +47,8 @@ class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 		}
 		$this->addColumn($this->pl->txt("actions"));
 	}
-
-
-	protected function fillRow($a_set) {
+	protected function fillRow(array $a_set): void
+    {
 		global $DIC;
 
 		foreach (array_keys($this->getSelectableColumns()) as $column) {
@@ -77,10 +60,10 @@ class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 			switch($column) {
 				case 'is_cron_active':
 					$factory = $DIC->ui()->factory();
-					if ($a_set[$column] == 1) {
-						$value = $DIC->ui()->renderer()->render($factory->image()->standard($this->pl->getImagePath("on.svg"), ''));
+					if ($a_set[$column] === true) {
+						$value = "active";
 					} else {
-						$value = $DIC->ui()->renderer()->render($factory->image()->standard($this->pl->getImagePath("off.svg"), ''));
+						$value = "inactive";
 					}
 					break;
 				default:
@@ -117,9 +100,8 @@ class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 		$this->tpl->setVariable('VALUE', $list->getHTML());
 		$this->tpl->parseCurrentBlock();
 	}
-
-
-	function getSelectableColumns() {
+	function getSelectableColumns(): array
+    {
 		return array(
 			'ref_id' => array( 'txt' => $this->pl->txt("ref_id"), 'default' => true ),
 			'title' => array( 'txt' => $this->pl->txt("title"), 'default' => true ),

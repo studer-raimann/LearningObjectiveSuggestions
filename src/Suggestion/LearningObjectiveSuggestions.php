@@ -11,15 +11,8 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveSuggestions {
-
-	/**
-	 * @var LearningObjectiveCourse
-	 */
-	protected $course;
-	/**
-	 * @var User
-	 */
-	protected $user;
+	protected LearningObjectiveCourse $course;
+	protected User $user;
 
 
 	/**
@@ -32,48 +25,41 @@ class LearningObjectiveSuggestions {
 		$this->course = $course;
 		$this->user = $user;
 	}
-
-
 	/**
 	 * @return LearningObjectiveSuggestion[]
 	 */
-	public function getSuggestions() {
+	public function getSuggestions(): array
+    {
 		return LearningObjectiveSuggestion::where(array(
 			'user_id' => $this->user->getId(),
 			'course_obj_id' => $this->course->getId()))->get();
 	}
-
-
-	/**
-	 * @return bool
-	 */
-	public function isCronInactive() {
+	public function isCronInactive(): bool
+    {
 		return LearningObjectiveSuggestion::where(array(
 			'user_id' => $this->user->getId(),
 			'course_obj_id' => $this->course->getId(),
 			'is_cron_active' => 0))->hasSets();
 	}
-
-	public function setCronActive() {
+	public function setCronActive(): void
+    {
 		foreach($this->getSuggestions() as $suggestion) {
 			$suggestion->setIsCronActive(1);
 			$suggestion->store();
 		}
 	}
-
-	public function setCronInactive() {
+	public function setCronInactive(): void
+    {
 		foreach($this->getSuggestions() as $suggestion) {
 			$suggestion->setIsCronActive(0);
 			$suggestion->store();
 		}
 	}
-
 	/**
 	 * Checks if cron is set to inactve for the given course/user pair
-	 *
-	 * @return bool
 	 */
-	protected function isCronInactiveForUserSuggestions() {
+	protected function isCronInactiveForUserSuggestions(): bool
+    {
 		return LearningObjectiveSuggestion::where(array(
 			'user_id' => $this->user->getId(),
 			'course_obj_id' => $this->course->getILIASCourse()->getId(),

@@ -9,27 +9,14 @@
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class ConfigProvider {
-
-	/**
-	 * @param string $key
-	 *
-	 * @return string
-	 */
-	public function get($key) {
+	public function get(string $key): ?string {
 		/** @var CourseConfig $config */
 		$config = Config::where(array(
 			'cfg_key' => $key,
 		))->first();
-
 		return ($config) ? $config->getValue() : NULL;
 	}
-
-
-	/**
-	 * @param string $key
-	 * @param string $value
-	 */
-	public function set($key, $value) {
+	public function set(string $key, string $value): void {
 		$config = Config::where(array(
 			'cfg_key' => $key,
 		))->first();
@@ -40,12 +27,8 @@ class ConfigProvider {
 		$config->setValue($value);
 		$config->save();
 	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getCourseRefIds() {
+	public function getCourseRefIds(): array
+    {
 		return (array)json_decode($this->get('course_ref_ids'), true);
 	}
 }

@@ -5,7 +5,6 @@
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
 interface Parser {
-
 	/**
 	 * Parse the template and fill placeholders
 	 *
@@ -13,8 +12,7 @@ interface Parser {
 	 * @param array $placeholders
 	 * @return string
 	 */
-	public function parse($template, array $placeholders);
-
+	public function parse(string $template, array $placeholders): string;
 	/**
 	 * Check if the template can be parsed
 	 *
@@ -22,5 +20,5 @@ interface Parser {
 	 * @param array $placeholders
 	 * @return bool
 	 */
-	public function isValid($template, array $placeholders);
+	public function isValid(string $template, array $placeholders): bool;
 }

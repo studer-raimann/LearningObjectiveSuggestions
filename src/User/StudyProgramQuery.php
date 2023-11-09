@@ -1,9 +1,9 @@
 <?php
 
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
-
-require_once __DIR__ . "/../../../../../User/UDFDefinition/CascadingSelect/classes/class.ilCascadingSelectSettings.php";
-
+if(file_exists(__DIR__ . "/../../../../../User/UDFDefinition/CascadingSelect/classes/class.ilCascadingSelectSettings.php")) {
+    require_once __DIR__ . "/../../../../../User/UDFDefinition/CascadingSelect/classes/class.ilCascadingSelectSettings.php";
+}
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 
 /**
@@ -13,15 +13,8 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
  */
 class StudyProgramQuery
 {
-
-    /**
-     * @var CourseConfigProvider
-     */
-    protected $config;
-    /**
-     * @var \ilSetting
-     */
-    protected $udf_setting;
+    protected CourseConfigProvider $config;
+    protected \ilSetting $udf_setting;
 
     /**
      * @param CourseConfigProvider $config
@@ -37,7 +30,7 @@ class StudyProgramQuery
      * @param User $user
      * @return StudyProgram|null
      */
-    public function getByUser(User $user)
+    public function getByUser(User $user): ?StudyProgram
     {
         $data = new \ilUserDefinedData($user->getId());
         $title = $data->get('f_' . $this->config->get('udf_id_study_program'));
@@ -59,7 +52,7 @@ class StudyProgramQuery
      * Returns all the StudyPrograms
      * @return StudyProgram[]
      */
-    public function getAll()
+    public function getAll(): array
     {
 	    
         static $cache = array();
@@ -102,11 +95,10 @@ class StudyProgramQuery
      * Check if the the UDF field is of type cascading select
      * @return bool
      */
-    protected function isCascadingSelect()
+    protected function isCascadingSelect(): bool
     {
         $udf = \ilUserDefinedFields::_getInstance();
         $data = $udf->getDefinition($this->config->get('udf_id_study_program'));
         return ($data['field_type'] === "51");
     }
-
 }

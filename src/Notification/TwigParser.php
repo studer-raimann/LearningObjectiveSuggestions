@@ -9,22 +9,15 @@
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
 class TwigParser implements Parser {
-
-	/**
-	 * @inheritdoc
-	 */
-	public function parse($template, array $placeholders) {
+	public function parse(string $template, array $placeholders): string
+    {
 		$twig = $this->getTwig();
 		$tpl = $twig->createTemplate($template);
 
 		return $tpl->render($placeholders);
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function isValid($template, array $placeholders) {
+	public function isValid(string $template, array $placeholders): bool
+    {
 		try {
 			$this->parse($template, $placeholders);
 
@@ -33,12 +26,8 @@ class TwigParser implements Parser {
 			return false;
 		}
 	}
-
-
-	/**
-	 * @return \Twig_Environment
-	 */
-	protected function getTwig() {
+	protected function getTwig(): ?\Twig_Environment
+    {
 		static $instance = NULL;
 		if ($instance !== NULL) {
 			return $instance;

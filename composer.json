@@ -11,8 +11,8 @@
     },
     "classmap": [
       "./classes/",
-      "../../../../../../../Modules/Course/classes/class.ilCourseObjective.php",
-      "../../../../../../../Modules/Course/classes/class.ilCourseObjectiveMaterials.php",
+      "../../../../../../../Modules/Course/classes/Objectives/class.ilCourseObjective.php",
+      "../../../../../../../Modules/Course/classes/Objectives/class.ilCourseObjectiveMaterials.php",
       "../../../../../../../Modules/Course/classes/class.ilCourseParticipants.php",
       "../../../../../../../Modules/Course/classes/class.ilObjCourse.php",
       "../../../../../../../Modules/Course/classes/Objectives/class.ilLOUserResults.php",

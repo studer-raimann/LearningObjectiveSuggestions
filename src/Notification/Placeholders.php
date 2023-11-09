@@ -11,11 +11,8 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
 class Placeholders {
-
-	/**
-	 * @return array
-	 */
-	public function getAvailablePlaceholders() {
+	public function getAvailablePlaceholders(): array
+    {
 		return array(
 			'user.getLogin' => 'login',
 			'user.getFirstname' => 'firstname',
@@ -26,30 +23,19 @@ class Placeholders {
 			'objectives' => 'objectives'
 		);
 	}
-
-
-	/**
-	 * @param LearningObjectiveCourse $course
-	 * @param User                    $user
-	 * @param array                   $objectives
-	 *
-	 * @return array
-	 */
-	public function getPlaceholders(LearningObjectiveCourse $course, User $user, array $objectives) {
+	public function getPlaceholders(LearningObjectiveCourse $course, User $user, array $objectives): array
+    {
 		return array(
 			'user' => $user,
 			'course' => $course,
 			'objectives' => $this->renderObjectives($objectives),
 		);
 	}
-
-
 	/**
 	 * @param LearningObjective[] $objectives
-	 *
-	 * @return string
 	 */
-	protected function renderObjectives(array $objectives) {
+	protected function renderObjectives(array $objectives): string
+    {
 		$titles = array_map(function ($objective) {
 			/** @var LearningObjective $objective */
 			return ($objective) ? $objective->getTitle() : '';

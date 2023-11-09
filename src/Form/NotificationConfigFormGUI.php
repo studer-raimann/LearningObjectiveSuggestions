@@ -24,27 +24,12 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form
  */
 class NotificationConfigFormGUI extends ilPropertyFormGUI {
-
-	/**
-	 * @var CourseConfigProvider
-	 */
-	protected $config;
-	/**
-	 * @var Parser
-	 */
-	protected $parser;
-	/**
-	 * @var ilObjUser
-	 */
-	protected $user;
-	/**
-	 * @var ilLanguage
-	 */
-	protected $lng;
-	/**
-	 * @var ilLearningObjectiveSuggestionsPlugin
-	 */
-	protected $pl;
+	protected CourseConfigProvider $config;
+	protected Parser $parser;
+	protected ?ilObjUser $user;
+	protected ilLanguage $lng;
+	protected ilLearningObjectiveSuggestionsPlugin $pl;
+    protected \ilTemplate $tpl;
 
 
 	/**
@@ -61,14 +46,11 @@ class NotificationConfigFormGUI extends ilPropertyFormGUI {
 		$this->pl = ilLearningObjectiveSuggestionsPlugin::getInstance();
 		$this->init();
 	}
-
-
 	/**
 	 * Additionally check if the strings can be parsed
-	 *
-	 * @return bool
 	 */
-	function checkInput() {
+	function checkInput(): bool
+    {
 		$result = parent::checkInput();
 		$placeholders = new Placeholders();
 		$ph = $placeholders->getPlaceholders($this->config->getCourse(), new User($this->user), array());
@@ -85,17 +67,13 @@ class NotificationConfigFormGUI extends ilPropertyFormGUI {
 			$result = false;
 		}
 		if (!$result) {
-			ilUtil::sendFailure($this->lng->txt("form_input_not_valid"));
+            $this->tpl->setOnScreenMessage('failure',$this->lng->txt("form_input_not_valid"), true);
 		}
 
 		return $result;
 	}
-
-
-	/**
-	 *
-	 */
-	protected function init() {
+	protected function init(): void
+    {
 		$this->setTitle($this->pl->txt("configuration"));
 
 		$item = new ilTextInputGUI($this->pl->txt("sender_user_id"), 'notification_sender_user_id');
@@ -124,7 +102,9 @@ class NotificationConfigFormGUI extends ilPropertyFormGUI {
 		$item->setRequired(true);
 		$item->setInfo($this->pl->txt("body_info"));
 		$item->setRows(10);
-		$item->setValue($this->config->get($item->getPostVar()));
+        if(!is_null($this->config->get($item->getPostVar()))) {
+            $item->setValue($this->config->get($item->getPostVar()));
+        }
 		$this->addItem($item);
 
 		$info = "<br>" . $this->pl->txt("placeholders_info") . "<br><br>";

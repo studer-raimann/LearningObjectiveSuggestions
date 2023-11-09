@@ -21,7 +21,7 @@ class LosDclExportMiddleware implements RecordsOfDataCollectionViewExtendMiddlew
         return new static();
     }
 
-    public function process(array $record_data, ilDclBaseRecordModel $record)
+    public function process(array $record_data, ilDclBaseRecordModel $record): array
     {
         $crs_ref_ids = SendSuggestionsCronJob::getCrsRefIdsWithInitialTestStates($record->getOwner());
 
@@ -50,8 +50,6 @@ class LosDclExportMiddleware implements RecordsOfDataCollectionViewExtendMiddlew
         if(is_object($study_program)) {
             $record_data["StudyProgram"] =  $study_program->getTitle();
         }
-
-
         return $record_data;
     }
 }

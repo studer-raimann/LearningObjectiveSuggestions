@@ -6,41 +6,25 @@
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion
  */
 class Stack {
-
 	protected $elements = array();
-
-	/**
-	 * @param mixed $element
-	 */
-	public function push($element) {
+	public function push(mixed $element): void
+    {
 		$this->elements[] = $element;
 	}
-
-	/**
-	 * @return mixed|null
-	 */
-	public function pop() {
+	public function pop(): mixed
+    {
 		return array_pop($this->elements);
 	}
-
-	/**
-	 * @return mixed|null
-	 */
-	public function peek() {
+	public function peek(): mixed
+    {
 		return ($this->isEmpty()) ? null : $this->elements[$this->count() -1];
 	}
-
-	/**
-	 * @return int
-	 */
-	public function count() {
+	public function count(): int
+    {
 		return count($this->elements);
 	}
-
-	/**
-	 * @return int
-	 */
-	public function isEmpty() {
+	public function isEmpty(): bool
+    {
 		return ($this->count() == 0);
 	}
 }

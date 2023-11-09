@@ -12,19 +12,9 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveScoreCalculator {
-
-	/**
-	 * @var CourseConfigProvider
-	 */
-	protected $config;
-	/**
-	 * @var Log
-	 */
-	protected $log;
-	/**
-	 * @var StudyProgramQuery
-	 */
-	protected $study_program_query;
+    protected CourseConfigProvider $config;
+    protected Log $log;
+	protected StudyProgramQuery $study_program_query;
 
 
 	/**
@@ -38,14 +28,11 @@ class LearningObjectiveScoreCalculator {
 		$this->study_program_query = $study_program_query;
 	}
 
-
-	/**
-	 * @param LearningObjectiveResult $objective_result
-	 *
-	 * @return float
-	 * @throws \ilException
-	 */
-	public function calculate(LearningObjectiveResult $objective_result) {
+    /**
+     * @throws \ilException
+     */
+    public function calculate(LearningObjectiveResult $objective_result): float
+    {
 		$user = $objective_result->getUser();
 		$objective = $objective_result->getLearningObjective();
 		//		$weight_fine = $this->config->getWeightFine($objective);

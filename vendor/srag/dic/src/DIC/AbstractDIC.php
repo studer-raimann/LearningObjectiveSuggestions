@@ -9,9 +9,7 @@ use srag\DIC\LearningObjectiveSuggestions\Database\DatabaseInterface;
 /**
  * Class AbstractDIC
  *
- * @package srag\DIC\LearningObjectiveSuggestions\DIC
- *
- * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
+ * @package srag\DIC\AttendanceList\DIC
  */
 abstract class AbstractDIC implements DICInterface
 {

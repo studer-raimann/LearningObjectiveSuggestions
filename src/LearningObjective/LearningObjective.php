@@ -7,65 +7,32 @@
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjective {
-
-	/**
-	 * @var \ilCourseObjective
-	 */
-	protected $objective;
-
-
-	/**
-	 * @param \ilCourseObjective $objective
-	 */
+	protected \ilCourseObjective $objective;
 	public function __construct(\ilCourseObjective $objective) {
 		$this->objective = $objective;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getId() {
+	public function getId(): int
+    {
 		return $this->objective->getObjectiveId();
 	}
-
-
-	/**
-	 * @return \ilObjCourse
-	 */
-	public function getCourse() {
+	public function getCourse(): \ilObject
+    {
 		return $this->objective->getCourse();
 	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getTitle() {
+	public function getTitle(): string
+    {
 		return $this->objective->getTitle();
 	}
-
-
-	/**
-	 * @return bool
-	 */
-	public function isActive() {
+	public function isActive(): bool
+    {
 		return $this->objective->isActive();
 	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getDescription() {
+	public function getDescription(): string
+    {
 		return $this->objective->getDescription();
 	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getRefIdsOfAssignedObjects() {
+	public function getRefIdsOfAssignedObjects(): array
+    {
 		return \ilCourseObjectiveMaterials::_getAssignedMaterials($this->getId());
 	}
 }

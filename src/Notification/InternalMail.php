@@ -8,79 +8,34 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
 class InternalMail {
-
-	/**
-	 * @var User
-	 */
-	protected $sender;
-
-	/**
-	 * @var User
-	 */
-	protected $receiver;
-
-	/**
-	 * @var array
-	 */
-	protected $cc = array();
-
-	/**
-	 * @var array
-	 */
-	protected $bcc = array();
-
-	/**
-	 * @var string
-	 */
-	protected $subject = '';
-
-	/**
-	 * @var string
-	 */
-	protected $body = '';
-
-
-	/**
-	 * @param string $subject
-	 * @return $this
-	 */
-	public function subject($subject) {
+	protected User $sender;
+	protected User $receiver;
+	protected array $cc = array();
+	protected array $bcc = array();
+	protected string $subject = '';
+	protected string $body = '';
+	public function subject(string $subject): static
+    {
 		$this->subject = $subject;
 		return $this;
 	}
-
-	/**
-	 * @param string $body
-	 * @return $this
-	 */
-	public function body($body) {
+	public function body(string $body): static
+    {
 		$this->body = $body;
 		return $this;
 	}
-
-	/**
-	 * @param User $user
-	 * @return $this
-	 */
-	public function from(User $user) {
+	public function from(User $user): static
+    {
 		$this->sender = $user;
 		return $this;
 	}
-
-	/**
-	 * @param User $user
-	 * @return $this
-	 */
-	public function to(User $user) {
+	public function to(User $user): static
+    {
 		$this->receiver = $user;
 		return $this;
 	}
-
-	/**
-	 * @param User|\ilObjRole $user_or_role
-	 * @return $this
-	 */
-	public function cc($user_or_role) {
+	public function cc(User|\ilObjRole $user_or_role): static
+    {
 		if ($user_or_role instanceof User) {
 			$this->cc[] = $user_or_role->getLogin();
 		} else if ($user_or_role instanceof \ilObjRole) {
@@ -88,12 +43,8 @@ class InternalMail {
 		}
 		return $this;
 	}
-
-	/**
-	 * @param User|\ilObjRole $user_or_role
-	 * @return $this
-	 */
-	public function bcc($user_or_role) {
+	public function bcc(User|\ilObjRole $user_or_role): static
+    {
 		if ($user_or_role instanceof User) {
 			$this->cc[] = $user_or_role->getLogin();
 		} else if ($user_or_role instanceof \ilObjRole) {
@@ -101,12 +52,11 @@ class InternalMail {
 		}
 		return $this;
 	}
-
-	/**
-	 * @return bool
-	 * @throws \ilException
-	 */
-	public function send() {
+    /**
+     * @throws \ilException
+     */
+    public function send(): bool
+    {
 		$mailer = new \ilMail($this->sender->getId());
 		$mailer->setSaveInSentbox(true);
 		$result = $mailer->sendMail(
@@ -124,5 +74,4 @@ class InternalMail {
 		}
 		return true;
 	}
-
 }

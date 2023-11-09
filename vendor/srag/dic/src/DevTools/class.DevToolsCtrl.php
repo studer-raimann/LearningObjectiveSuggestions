@@ -30,14 +30,9 @@ class DevToolsCtrl
     const CMD_RELOAD_PLUGIN_XML = "reloadPluginXml";
     const LANG_MODULE = "dev_tools";
     const TAB_DEV_TOOLS = "dev_tools";
-    /**
-     * @var ilPluginConfigGUI
-     */
-    protected $parent;
-    /**
-     * @var PluginInterface
-     */
-    protected $plugin;
+    protected ilPluginConfigGUI $parent;
+    protected PluginInterface $plugin;
+    protected \ilTemplate $tpl;
 
 
     /**
@@ -48,8 +43,10 @@ class DevToolsCtrl
      */
     public function __construct(ilPluginConfigGUI $parent, PluginInterface $plugin)
     {
+        global $DIC;
         $this->parent = $parent;
         $this->plugin = $plugin;
+        $this->tpl = $DIC['tpl'];
     }
 
 
@@ -88,8 +85,7 @@ class DevToolsCtrl
     public function executeCommand()/*:void*/
     {
         if (!self::isDevMode()) {
-            ilUtil::sendFailure($this->plugin->translate("no_dev_mode", self::LANG_MODULE), true);
-
+            $this->tpl->setOnScreenMessage('failure',$this->plugin->translate("no_dev_mode", self::LANG_MODULE), true);
             self::dic()->ctrl()->redirectByClass([
                 ilAdministrationGUI::class,
                 ilObjComponentSettingsGUI::class
@@ -150,9 +146,7 @@ class DevToolsCtrl
     protected function reloadCtrlStructure()/*: void*/
     {
         $this->plugin->reloadCtrlStructure();
-
-        ilUtil::sendSuccess($this->plugin->translate("reloaded_ctrl_structure", self::LANG_MODULE), true);
-
+        $this->tpl->setOnScreenMessage('success',$this->plugin->translate("reloaded_ctrl_structure", self::LANG_MODULE), true);
         //self::dic()->ctrl()->redirect($this);
         self::dic()->ctrl()->redirectToURL(self::dic()->ctrl()->getTargetScript() . "?ref_id=" . (31) . "&admin_mode=settings&ctype=" . $this->plugin->getPluginObject()->getComponentType()
             . "&cname=" . $this->plugin->getPluginObject()->getComponentName()
@@ -173,7 +167,7 @@ class DevToolsCtrl
     {
         $this->plugin->reloadDatabase();
 
-        ilUtil::sendSuccess($this->plugin->translate("reloaded_database", self::LANG_MODULE) . "<br><br>" . $this->plugin->getPluginObject()->message, true);
+        $this->tpl->setOnScreenMessage('success',$this->plugin->translate("reloaded_database", self::LANG_MODULE) . "<br><br>" . $this->plugin->getPluginObject()->getMessage(), true);
 
         self::dic()->ctrl()->redirect($this);
     }
@@ -186,7 +180,7 @@ class DevToolsCtrl
     {
         $this->plugin->reloadLanguages();
 
-        ilUtil::sendSuccess($this->plugin->translate("reloaded_languages", self::LANG_MODULE), true);
+        $this->tpl->setOnScreenMessage('success',$this->plugin->translate("reloaded_languages", self::LANG_MODULE), true);
 
         self::dic()->ctrl()->redirect($this);
     }
@@ -198,9 +192,7 @@ class DevToolsCtrl
     protected function reloadPluginXml()/*: void*/
     {
         $this->plugin->reloadPluginXml();
-
-        ilUtil::sendSuccess($this->plugin->translate("reloaded_plugin_xml", self::LANG_MODULE), true);
-
+        $this->tpl->setOnScreenMessage('success',$this->plugin->translate("reloaded_plugin_xml", self::LANG_MODULE), true);
         self::dic()->ctrl()->redirect($this);
     }
 

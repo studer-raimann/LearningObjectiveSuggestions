@@ -14,21 +14,9 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion
  */
 class LearningObjectiveSuggestionGenerator {
-
-	/**
-	 * @var CourseConfigProvider
-	 */
-	protected $config;
-
-	/**
-	 * @var LearningObjectiveQuery
-	 */
-	protected $learning_objective_query;
-
-	/**
-	 * @var Log
-	 */
-	protected $log;
+	protected CourseConfigProvider $config;
+	protected LearningObjectiveQuery $learning_objective_query;
+	protected Log $log;
 
 	/**
 	 * @param CourseConfigProvider $config
@@ -51,7 +39,8 @@ class LearningObjectiveSuggestionGenerator {
 	 * @param LearningObjectiveScore[] $scores
 	 * @return LearningObjectiveScore[]
 	 */
-	public function generate(array $scores) {
+	public function generate(array $scores): array
+    {
 		$scores = $this->sortDescByScore($scores);
 		$min = $this->config->getMinSuggestions();
 		$max = $this->config->getMaxSuggestions();
@@ -132,7 +121,8 @@ class LearningObjectiveSuggestionGenerator {
 	 * @param LearningObjectiveScore[] $scores
 	 * @return LearningObjectiveScore[]
 	 */
-	protected function sortDescByScore(array $scores) {
+	protected function sortDescByScore(array $scores): array
+    {
 		if (!count($scores)) {
 			return array();
 		}
@@ -170,7 +160,8 @@ class LearningObjectiveSuggestionGenerator {
 	 * @param int $user_id
 	 * @return User
 	 */
-	protected function getUser($user_id) {
+	protected function getUser(int $user_id): User
+    {
 		static $cache = array();
 		if (isset($cache[$user_id])) {
 			return $cache[$user_id];
@@ -179,25 +170,18 @@ class LearningObjectiveSuggestionGenerator {
 		$cache[$user_id] = $user;
 		return $user;
 	}
-
-	/**
-	 * @return array
-	 */
-	protected function getMainObjectiveIds() {
+	protected function getMainObjectiveIds(): array
+    {
 		return array_map(function ($objective) {
 			/** @var $objective LearningObjective */
 			return $objective->getId();
 		}, $this->learning_objective_query->getMain());
 	}
-
-	/**
-	 * @return array
-	 */
-	protected function getExtendedObjectiveIds() {
+	protected function getExtendedObjectiveIds(): array
+    {
 		return array_map(function ($objective) {
 			/** @var $objective LearningObjective */
 			return $objective->getId();
 		}, $this->learning_objective_query->getExtended());
 	}
-
 }

@@ -1,7 +1,6 @@
 <?php
 
 namespace srag\DIC\LearningObjectiveSuggestions;
-
 use srag\DIC\LearningObjectiveSuggestions\DIC\DICInterface;
 use srag\DIC\LearningObjectiveSuggestions\Exception\DICException;
 use srag\DIC\LearningObjectiveSuggestions\Output\OutputInterface;
@@ -11,9 +10,7 @@ use srag\DIC\LearningObjectiveSuggestions\Version\VersionInterface;
 /**
  * Trait DICTrait
  *
- * @package srag\DIC\LearningObjectiveSuggestions
- *
- * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
+ * @package srag\DIC\AttendanceList
  */
 trait DICTrait
 {
@@ -80,7 +77,7 @@ trait DICTrait
     /**
      * @throws DICException Your class needs to implement the PLUGIN_CLASS_NAME constant!
      */
-    private static final function checkPluginClassNameConst()/*: void*/
+    private static function checkPluginClassNameConst() : void
     {
         if (!defined("static::PLUGIN_CLASS_NAME") || empty(static::PLUGIN_CLASS_NAME)) {
             throw new DICException("Your class needs to implement the PLUGIN_CLASS_NAME constant!", DICException::CODE_MISSING_CONST_PLUGIN_CLASS_NAME);

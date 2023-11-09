@@ -6,38 +6,18 @@
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User
  */
 class StudyProgram {
-
-	/**
-	 * @var int
-	 */
-	protected $id;
-
-	/**
-	 * @var string
-	 */
-	protected $title;
-
-	/**
-	 * @param $id
-	 * @param $title
-	 */
-	public function __construct($id, $title) {
+    protected int $id;
+    protected string $title;
+	public function __construct(int $id, string $title) {
 		$this->id = $id;
 		$this->title = $title;
 	}
-
-	/**
-	 * @return int
-	 */
-	public function getId() {
+	public function getId(): int
+    {
 		return $this->id;
 	}
-
-	/**
-	 * @return string
-	 */
-	public function getTitle() {
+	public function getTitle(): string
+    {
 		return $this->title;
 	}
-
 }

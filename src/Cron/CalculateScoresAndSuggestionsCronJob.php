@@ -1,5 +1,6 @@
 <?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron;
 
+use ilDBInterface;
 use ilObjUser;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
@@ -24,97 +25,52 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 	const CRON_JOB_ID = "alo_calc_user_scores";
-	/**
-	 * @var \ilDBInterface
-	 */
-	protected $db;
-	/**
-	 * @var ConfigProvider
-	 */
-	protected $config;
-	/**
-	 * @var Log
-	 */
-	protected $log;
-	/**
-	 * @var \ilLearningObjectiveSuggestionsPlugin
-	 */
-	protected $pl;
-
+    protected \ilDBInterface $db;
+    protected ConfigProvider $config;
+	protected Log $log;
+	protected \ilLearningObjectiveSuggestionsPlugin $pl;
 
 	/**
-	 * @param \ilDBInterface          $db
+	 * @param ilDBInterface          $db
 	 * @param ConfigProvider $config
 	 * @param Log            $log
 	 */
-	public function __construct($db, ConfigProvider $config, Log $log) {
+	public function __construct(ilDBInterface $db, ConfigProvider $config, Log $log) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->log = $log;
 		$this->pl = \ilLearningObjectiveSuggestionsPlugin::getInstance();
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getTitle() {
+	public function getTitle(): string
+    {
 		return $this->pl->txt("generate_suggestions");
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getDescription() {
+	public function getDescription(): string
+    {
 		return $this->pl->txt("generate_suggestions_description");
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getId() {
+	public function getId(): string
+    {
 		return self::CRON_JOB_ID;
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function hasAutoActivation() {
+	public function hasAutoActivation(): bool
+    {
 		return true;
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function hasFlexibleSchedule() {
+	public function hasFlexibleSchedule(): bool
+    {
 		return true;
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getDefaultScheduleType() {
+	public function getDefaultScheduleType(): int
+    {
 		return self::SCHEDULE_TYPE_IN_MINUTES;
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	function getDefaultScheduleValue() {
+	function getDefaultScheduleValue(): int
+    {
 		return 15;
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function run() {
+	public function run(): \ilCronJobResult
+    {
 		foreach ($this->config->getCourseRefIds() as $ref_id) {
 
 			if(!\ilObject::_exists($ref_id,true)) {
@@ -132,12 +88,8 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 		return $result;
 	}
-
-
-	/**
-	 * @param LearningObjectiveCourse $course
-	 */
-	protected function runFor(LearningObjectiveCourse $course) {
+	protected function runFor(LearningObjectiveCourse $course): void
+    {
 		$config = new CourseConfigProvider($course);
 		$study_program_query = new StudyProgramQuery($config);
 		$learning_objective_query = new LearningObjectiveQuery($config);
@@ -188,31 +140,23 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			$this->createSuggestions($suggested_scores);
 		}
 	}
-
-
 	/**
-	 * @param LearningObjectiveCourse $course
-	 * @param User                    $user
-	 *
 	 * @return LearningObjectiveScore[]
 	 */
-	protected function getScores(LearningObjectiveCourse $course, User $user) {
+	protected function getScores(LearningObjectiveCourse $course, User $user): array
+    {
 		return LearningObjectiveScore::where(array(
 			'user_id' => $user->getId(),
 			'course_obj_id' => $course->getId()
 		))->get();
 	}
-
-
 	/**
 	 * Checks if there already exist computed suggestions for the given course/user pair
 	 *
 	 * @param LearningObjectiveCourse $course
 	 * @param User                    $user
-	 *
-	 * @return bool
 	 */
-	protected function existSuggestions(LearningObjectiveCourse $course, User $user) {
+	protected function existSuggestions(LearningObjectiveCourse $course, User $user): bool {
 		return LearningObjectiveSuggestion::where(array(
 			'user_id' => $user->getId(),
 			'course_obj_id' => $course->getId(),
@@ -221,13 +165,9 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 	/**
 	 * Checks if cron is setz to inactve for the given course/user pair
-	 *
-	 * @param LearningObjectiveCourse $course
-	 * @param User                    $user
-	 *
-	 * @return bool
 	 */
-	protected function isCronInactiveForUserSuggestions(LearningObjectiveCourse $course, User $user) {
+	protected function isCronInactiveForUserSuggestions(LearningObjectiveCourse $course, User $user): bool
+    {
 		return LearningObjectiveSuggestion::where(array(
 			'user_id' => $user->getId(),
 			'course_obj_id' => $course->getId(),
@@ -235,12 +175,11 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		))->hasSets();
 	}
 
-
 	/**
 	 * @param LearningObjectiveScore[] $scores
 	 */
-	protected function createSuggestions(array $scores) {
-
+	protected function createSuggestions(array $scores): void
+    {
 		$arr_saved = [];
 		foreach ($scores as $sort => $score) {
 			$key = $score->getCourseObjId().".".$score->getObjectiveId().".".$score->getUserId();
@@ -270,14 +209,8 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 		}
 	}
-
-
-	/**
-	 * @param LearningObjectiveResult $objective_result
-	 *
-	 * @return LearningObjectiveScore
-	 */
-	protected function getLearningObjectiveScore(LearningObjectiveResult $objective_result) {
+	protected function getLearningObjectiveScore(LearningObjectiveResult $objective_result): LearningObjectiveScore
+    {
 
 		$scores = LearningObjectiveScore::where(array(
 			'course_obj_id' => $objective_result->getLearningObjective()->getCourse()->getId(),
@@ -294,14 +227,8 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 		return array_values($scores)[0];
 	}
-
-
-	/**
-	 * @param int $user_id
-	 *
-	 * @return User
-	 */
-	protected function getUser($user_id) {
+	protected function getUser(int $user_id): User
+    {
 		static $cache = array();
 		if (isset($cache[$user_id])) {
 			return $cache[$user_id];
@@ -311,15 +238,8 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 		return $user;
 	}
-
-
-	/**
-	 * @param LearningObjectiveCourse $course
-	 * @param int                     $objective_id
-	 *
-	 * @return LearningObjective
-	 */
-	protected function getLearningObjective(LearningObjectiveCourse $course, $objective_id) {
+	protected function getLearningObjective(LearningObjectiveCourse $course, int $objective_id): LearningObjective
+    {
 		static $cache = array();
 		$cache_key = $course->getId() . $objective_id;
 		if (isset($cache[$cache_key])) {
@@ -330,14 +250,8 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 		return $objective;
 	}
-
-
-	/**
-	 * @param LearningObjectiveCourse $course
-	 *
-	 * @return string
-	 */
-	protected function getSQL(LearningObjectiveCourse $course) {
+	protected function getSQL(LearningObjectiveCourse $course): string
+    {
 		$sql = 'SELECT DISTINCT loc_user_results.* FROM loc_user_results
 				LEFT JOIN ' . LearningObjectiveScore::TABLE_NAME . ' ON 
 					(

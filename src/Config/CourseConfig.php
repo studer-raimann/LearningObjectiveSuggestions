@@ -14,27 +14,18 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
  */
 class CourseConfig extends \ActiveRecord {
-
 	const TABLE_NAME = "alo_crs_config";
-
-
-	/**
-	 * @return string
-	 */
-	public function getConnectorContainerName() {
+	public function getConnectorContainerName(): string
+    {
 		return self::TABLE_NAME;
 	}
-
-
 	/**
-	 * @return string
 	 * @deprecated
 	 */
-	public static function returnDbTableName() {
+	public static function returnDbTableName(): string
+    {
 		return self::TABLE_NAME;
 	}
-
-
 	/**
 	 * @var int
 	 *
@@ -44,7 +35,7 @@ class CourseConfig extends \ActiveRecord {
 	 * @db_is_primary   true
 	 * @db_sequence     true
 	 */
-	protected $id;
+	protected ?int $id;
 	/**
 	 * @var int
 	 *
@@ -52,7 +43,7 @@ class CourseConfig extends \ActiveRecord {
 	 * @db_fieldtype    integer
 	 * @db_length       8
 	 */
-	protected $course_obj_id;
+	protected int $course_obj_id;
 	/**
 	 * @var string
 	 *
@@ -60,18 +51,17 @@ class CourseConfig extends \ActiveRecord {
 	 * @db_fieldtype    text
 	 * @db_length       64
 	 */
-	protected $cfg_key;
+	protected string $cfg_key;
 	/**
 	 * @var string
 	 *
 	 * @db_has_field    true
 	 * @db_fieldtype    clob
 	 */
-	protected $value;
+	protected string $value;
 
-
-	public function delete() {
-
+	public function delete(): void
+    {
 		foreach(LearningObjectiveSuggestion::where(['course_obj_id' => $this->getCourseObjId()])->get() as $learning_objective_suggestions) {
 			/**
 			 * @var LearningObjectiveSuggestion $$learning_objective_suggestions
@@ -95,60 +85,32 @@ class CourseConfig extends \ActiveRecord {
 
 		parent::delete();
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getId() {
+	public function getId(): int
+    {
 		return $this->id;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getCourseObjId() {
+	public function getCourseObjId(): int
+    {
 		return $this->course_obj_id;
 	}
-
-
-	/**
-	 * @param int $course_obj_id
-	 */
-	public function setCourseObjId($course_obj_id) {
+	public function setCourseObjId(int $course_obj_id): void
+    {
 		$this->course_obj_id = $course_obj_id;
 	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getKey() {
+	public function getKey(): string
+    {
 		return $this->cfg_key;
 	}
-
-
-	/**
-	 * @param string $key
-	 */
-	public function setKey($key) {
+	public function setKey(string $key): void
+    {
 		$this->cfg_key = $key;
 	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getValue() {
+	public function getValue(): string
+    {
 		return $this->value;
 	}
-
-
-	/**
-	 * @param string $value
-	 */
-	public function setValue($value) {
+	public function setValue(string $value): void
+    {
 		$this->value = $value;
 	}
 }

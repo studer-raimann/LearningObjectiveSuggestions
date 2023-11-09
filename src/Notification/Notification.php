@@ -9,27 +9,18 @@ namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
  */
 class Notification extends \ActiveRecord {
-
 	const TABLE_NAME = "alo_notification";
-
-
-	/**
-	 * @return string
-	 */
-	public function getConnectorContainerName() {
+	public function getConnectorContainerName(): string
+    {
 		return self::TABLE_NAME;
 	}
-
-
 	/**
-	 * @return string
 	 * @deprecated
 	 */
-	public static function returnDbTableName() {
+	public static function returnDbTableName(): string
+    {
 		return self::TABLE_NAME;
 	}
-
-
 	/**
 	 * @var int
 	 *
@@ -39,7 +30,7 @@ class Notification extends \ActiveRecord {
 	 * @db_is_primary   true
 	 * @db_sequence     true
 	 */
-	protected $id;
+	protected ?int $id;
 	/**
 	 * @var int
 	 *
@@ -48,7 +39,7 @@ class Notification extends \ActiveRecord {
 	 * @db_length       8
 	 * @db_index        true
 	 */
-	protected $user_id;
+	protected int $user_id;
 	/**
 	 * @var int
 	 *
@@ -57,14 +48,14 @@ class Notification extends \ActiveRecord {
 	 * @db_length       8
 	 * @db_index        true
 	 */
-	protected $course_obj_id;
+	protected int $course_obj_id;
 	/**
 	 * @var string
 	 *
 	 * @db_has_field    true
 	 * @db_fieldtype    timestamp
 	 */
-	protected $sent_at;
+	protected string $sent_at;
 	/**
 	 * @var int
 	 *
@@ -72,77 +63,41 @@ class Notification extends \ActiveRecord {
 	 * @db_fieldtype    integer
 	 * @db_length       8
 	 */
-	protected $sent_user_id;
-
-
-	/**
-	 * @return int
-	 */
-	public function getId() {
+	protected int $sent_user_id;
+	public function getId(): int
+    {
 		return $this->id;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getUserId() {
+	public function getUserId(): int
+    {
 		return $this->user_id;
 	}
-
-
-	/**
-	 * @param int $user_id
-	 */
-	public function setUserId($user_id) {
+	public function setUserId(int $user_id): void
+    {
 		$this->user_id = $user_id;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getCourseObjId() {
+	public function getCourseObjId(): int
+    {
 		return $this->course_obj_id;
 	}
-
-
-	/**
-	 * @param int $course_obj_id
-	 */
-	public function setCourseObjId($course_obj_id) {
+	public function setCourseObjId(int $course_obj_id): void
+    {
 		$this->course_obj_id = $course_obj_id;
 	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getSentAt() {
+	public function getSentAt(): string
+    {
 		return $this->sent_at;
 	}
-
-
-	/**
-	 * @param string $sent_at
-	 */
-	public function setSentAt($sent_at) {
+	public function setSentAt(string $sent_at): void
+    {
 		$this->sent_at = $sent_at;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getSentUserId() {
+	public function getSentUserId(): int
+    {
 		return $this->sent_user_id;
 	}
-
-
-	/**
-	 * @param int $sent_user_id
-	 */
-	public function setSentUserId($sent_user_id) {
+	public function setSentUserId(int $sent_user_id): void
+    {
 		$this->sent_user_id = $sent_user_id;
 	}
 }

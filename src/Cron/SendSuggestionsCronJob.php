@@ -4,6 +4,7 @@ namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron;
 
 use ilCrsInitialTestState;
 use ilCrsInitialTestStates;
+use ilDBInterface;
 use ilObjectTest;
 use ilObjTest;
 use ilTemplate;
@@ -30,32 +31,12 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 class SendSuggestionsCronJob extends \ilCronJob {
 
 	const CRON_JOB_ID = "alo_send_suggestions";
-	/**
-	 * @var \ilDBInterface
-	 */
-	protected $db;
-	/**
-	 * @var ConfigProvider
-	 */
-	protected $config;
-	/**
-	 * @var Log
-	 */
-	protected $log;
-	/**
-	 * @var Parser
-	 */
-	protected $parser;
-	/**
-	 * @var \ilLearningObjectiveSuggestionsPlugin
-	 */
-	protected $pl;
-
-
- /**
-     * provide $styleDefinition object
-     */
-    protected static function initStyle()
+	protected \ilDBInterface $db;
+	protected ConfigProvider $config;
+	protected Log $log;
+	protected Parser $parser;
+	protected \ilLearningObjectiveSuggestionsPlugin $pl;
+    protected static function initStyle(): void
     {
         global $DIC, $ilPluginAdmin;
 
@@ -78,15 +59,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
             $gui_class->modifyGUI("Services/Init", "init_style", array("styleDefinition" => $DIC->systemStyle()));
         }
     }
-
-	 /**
-     * Initialize global instance
-     *
-     * @param string $a_name
-     * @param string $a_class
-     * @param string $a_source_file
-     */
-    protected static function initGlobal($a_name, $a_class, $a_source_file = null)
+    protected static function initGlobal(string $a_name, string $a_class, ?string $a_source_file = null): void
     {
         global $DIC;
 
@@ -101,16 +74,7 @@ class SendSuggestionsCronJob extends \ilCronJob {
             return $GLOBALS[$a_name];
         };
     }
-
-
-
-	/**
-	 * @param \ilDBInterface $db
-	 * @param ConfigProvider $config
-	 * @param Parser         $parser
-	 * @param Log            $log
-	 */
-	public function __construct($db, ConfigProvider $config, Parser $parser, Log $log) {
+	public function __construct(ilDBInterface $db, ConfigProvider $config, Parser $parser, Log $log) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->parser = $parser;
@@ -118,68 +82,36 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		$this->pl = \ilLearningObjectiveSuggestionsPlugin::getInstance();
 		static::initStyle();
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getId() {
+	public function getId(): string
+    {
 		return self::CRON_JOB_ID;
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getTitle() {
+	public function getTitle(): string
+    {
 		return $this->pl->txt("send_suggestions");
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getDescription() {
+	public function getDescription(): string
+    {
 		return $this->pl->txt("send_suggestions_description");
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function hasAutoActivation() {
+	public function hasAutoActivation(): bool
+    {
 		return true;
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function hasFlexibleSchedule() {
+	public function hasFlexibleSchedule(): bool
+    {
 		return true;
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function getDefaultScheduleType() {
+	public function getDefaultScheduleType(): int
+    {
 		return self::SCHEDULE_TYPE_IN_MINUTES;
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	function getDefaultScheduleValue() {
+	function getDefaultScheduleValue(): int
+    {
 		return 60;
 	}
-
-
-	/**
-	 * @inheritdoc
-	 */
-	public function run() {
+	public function run(): \ilCronJobResult
+    {
 		foreach ($this->config->getCourseRefIds() as $ref_id) {
 			if(!\ilObject::_exists($ref_id,true)) {
 				continue;
@@ -191,12 +123,8 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		$result->setStatus(\ilCronJobResult::STATUS_OK);
 		return $result;
 	}
-
-
-	/**
-	 * @param LearningObjectiveCourse $course
-	 */
-	protected function runForCourse(LearningObjectiveCourse $course) {
+	protected function runForCourse(LearningObjectiveCourse $course): void
+    {
 		$set = $this->db->query($this->getSQL($course));
 		while ($row = $this->db->fetchObject($set)) {
 
@@ -206,12 +134,8 @@ class SendSuggestionsCronJob extends \ilCronJob {
             }
 		}
 	}
-
-    /**
-     * @param LearningObjectiveCourse $course
-     * @param User                    $user
-     */
-	protected function assignToRole(LearningObjectiveCourse $course, int $user_id) {
+	protected function assignToRole(LearningObjectiveCourse $course, int $user_id): void
+    {
         global $DIC;
         try {
             $test_result = self::getTestUserResult($user_id,$course->getRefId());
@@ -231,7 +155,6 @@ class SendSuggestionsCronJob extends \ilCronJob {
             $this->log->write($e->getTraceAsString());
         }
     }
-
     public static function getCrsRefIdsWithInitialTestStates(int $user_id):array {
         $arr_initial_test_states = ilCrsInitialTestStates::getData([$user_id]);
 
@@ -244,8 +167,6 @@ class SendSuggestionsCronJob extends \ilCronJob {
 
         return $arr_crs_ref_ids;
     }
-
-
     public static function getTestUserResult(int $user_id,int $crs_ref_id):float
     {
         // Fix missing tpl ui in cron context used in test question object constructor
@@ -288,13 +209,8 @@ class SendSuggestionsCronJob extends \ilCronJob {
         }
         return (-1);
     }
-
-
-	/**
-	 * @param LearningObjectiveCourse $course
-	 * @param User                    $user
-	 */
-	protected function send(LearningObjectiveCourse $course, User $user) {
+	protected function send(LearningObjectiveCourse $course, User $user): void
+    {
 		$config = new CourseConfigProvider($course);
 		$query = new LearningObjectiveQuery($config);
 		$placeholders = new Placeholders();
@@ -315,14 +231,8 @@ class SendSuggestionsCronJob extends \ilCronJob {
 			$this->log->write($e->getTraceAsString());
 		}
 	}
-
-
-	/**
-	 * @param int $user_id
-	 *
-	 * @return User
-	 */
-	protected function getUser($user_id) {
+	protected function getUser(int $user_id): User
+    {
 		static $cache = array();
 		if (isset($cache[$user_id])) {
 			return $cache[$user_id];
@@ -333,15 +243,12 @@ class SendSuggestionsCronJob extends \ilCronJob {
 		return $user;
 	}
 
-
-	/**
-	 * @param LearningObjectiveCourse $course
-	 * @param User                    $user
-	 * @param LearningObjectiveQuery  $query
-	 *
-	 * @return LearningObjective[]
-	 */
-	protected function getSuggestedLearningObjectives(LearningObjectiveCourse $course, User $user, LearningObjectiveQuery $query) {
+    /**
+     * @return LearningObjective[]
+     * @throws \arException
+     */
+	protected function getSuggestedLearningObjectives(LearningObjectiveCourse $course, User $user, LearningObjectiveQuery $query): array
+    {
 		$suggestions = LearningObjectiveSuggestion::where(array(
 			'user_id' => $user->getId(),
 			'course_obj_id' => $course->getId(),
@@ -354,14 +261,11 @@ class SendSuggestionsCronJob extends \ilCronJob {
 
 		return $objectives;
 	}
-
-
 	/**
 	 * @param LearningObjectiveCourse $course
-	 *
-	 * @return string
 	 */
-	protected function getSQL(LearningObjectiveCourse $course) {
+	protected function getSQL(LearningObjectiveCourse $course): string
+    {
 		$sql = 'SELECT 
 				' . LearningObjectiveSuggestion::TABLE_NAME . '.user_id,
 				' . Notification::TABLE_NAME . '.sent_at

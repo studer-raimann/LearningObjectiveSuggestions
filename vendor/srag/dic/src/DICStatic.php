@@ -5,8 +5,8 @@ namespace srag\DIC\LearningObjectiveSuggestions;
 use ilLogLevel;
 use ilPlugin;
 use srag\DIC\LearningObjectiveSuggestions\DIC\DICInterface;
-use srag\DIC\LearningObjectiveSuggestions\DIC\Implementation\ILIAS54DIC;
 use srag\DIC\LearningObjectiveSuggestions\DIC\Implementation\ILIAS60DIC;
+use srag\DIC\LearningObjectiveSuggestions\DIC\Implementation\ILIAS70DIC;
 use srag\DIC\LearningObjectiveSuggestions\Exception\DICException;
 use srag\DIC\LearningObjectiveSuggestions\Output\Output;
 use srag\DIC\LearningObjectiveSuggestions\Output\OutputInterface;
@@ -18,9 +18,7 @@ use srag\DIC\LearningObjectiveSuggestions\Version\VersionInterface;
 /**
  * Class DICStatic
  *
- * @package srag\DIC\LearningObjectiveSuggestions
- *
- * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
+ * @package srag\DIC\AttendanceList
  */
 final class DICStatic implements DICStaticInterface
 {
@@ -28,19 +26,19 @@ final class DICStatic implements DICStaticInterface
     /**
      * @var DICInterface|null
      */
-    private static $dic = null;
+    private static ?DICInterface $dic = null;
     /**
      * @var OutputInterface|null
      */
-    private static $output = null;
+    private static ?OutputInterface $output = null;
     /**
      * @var PluginInterface[]
      */
-    private static $plugins = [];
+    private static array $plugins = [];
     /**
      * @var VersionInterface|null
      */
-    private static $version = null;
+    private static ?VersionInterface $version = null;
 
 
     /**
@@ -54,37 +52,22 @@ final class DICStatic implements DICStaticInterface
 
     /**
      * @inheritDoc
-     *
-     * @deprecated
      */
-    public static function clearCache()/*: void*/
-    {
-        self::$dic = null;
-        self::$output = null;
-        self::$plugins = [];
-        self::$version = null;
-    }
-
-
-    /**
-     * @inheritDoc
-     */
-    public static function dic() : DICInterface
+    public static function dic() : DIC\DICInterface
     {
         if (self::$dic === null) {
             switch (true) {
-                case (self::version()->isLower(VersionInterface::ILIAS_VERSION_5_4)):
-                    throw new DICException("DIC not supports ILIAS " . self::version()->getILIASVersion() . " anymore!");
-                    break;
-
                 case (self::version()->isLower(VersionInterface::ILIAS_VERSION_6)):
+                    throw new DICException("DIC not supports ILIAS " . self::version()->getILIASVersion() . " anymore!");
+
+                case (self::version()->isLower(VersionInterface::ILIAS_VERSION_7)):
                     global $DIC;
-                    self::$dic = new ILIAS54DIC($DIC);
+                    self::$dic = new ILIAS60DIC($DIC);
                     break;
 
                 default:
                     global $DIC;
-                    self::$dic = new ILIAS60DIC($DIC);
+                    self::$dic = new ILIAS70DIC($DIC);
                     break;
             }
         }
@@ -145,5 +128,10 @@ final class DICStatic implements DICStaticInterface
         }
 
         return self::$version;
+    }
+
+    public static function clearCache()
+    {
+        // TODO: Implement clearCache() method.
     }
 }

@@ -16,7 +16,7 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestionsUI\SuggestionsTableGUI;
 
 /**
  * Class ilLearningObjectiveSuggestionsConfigGUI
- *
+ * @ilCtrl_IsCalledBy  ilLearningObjectiveSuggestionsConfigGUI: ilObjComponentSettingsGUI
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
  */
 class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
@@ -38,39 +38,14 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 	const CMD_ACTIVATE_CRON = "activateCron";
 	const TAB_CONFIGURE_COURSE = "configureCourse";
 	const TAB_CONFIGURE_NOTIFICATIONS = "configureNotifications";
-	/**
-	 * @var ilTemplate
-	 */
-	protected $tpl;
-	/**
-	 * @var ilCtrl
-	 */
-	protected $ctrl;
-	/**
-	 * @var ilTabsGUI
-	 */
-	protected $tabs;
-	/**
-	 * @var ilToolbarGUI
-	 */
-	protected $toolbar;
-	/**
-	 * @var ilRbacReview
-	 */
-	protected $rbacreview;
-	/**
-	 * @var ilLearningObjectiveSuggestionsPlugin
-	 */
-	protected $pl;
-	/**
-	 * @var ilTree
-	 */
-	protected $tree;
+	protected ilTemplate|ilGlobalTemplateInterface $tpl;
+	protected ilCtrl|ilCtrlInterface $ctrl;
+	protected ilTabsGUI $tabs;
+	protected ilToolbarGUI $toolbar;
+	protected ilRbacReview $rbacreview;
+	protected ilLearningObjectiveSuggestionsPlugin $pl;
+	protected ilTree $tree;
 
-
-	/**
-	 *
-	 */
 	public function __construct() {
 		global $DIC;
 		$this->tpl = $DIC->ui()->mainTemplate();
@@ -81,21 +56,13 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$this->pl = ilLearningObjectiveSuggestionsPlugin::getInstance();
 		$this->tree = $DIC->repositoryTree();
 	}
-
-
-	/**
-	 * @param string $cmd
-	 */
-	function performCommand($cmd) {
+	function performCommand(string $cmd): void
+    {
 		$this->ctrl->saveParameter($this, 'course_ref_id');
 		$this->$cmd();
 	}
-
-
-	/**
-	 *
-	 */
-	protected function configure() {
+	protected function configure(): void
+    {
 		$button = ilLinkButton::getInstance();
 		$button->setCaption($this->pl->txt("add_course"), false);
 		$button->setUrl($this->ctrl->getLinkTarget($this, self::CMD_ADD_COURSE));
@@ -105,12 +72,7 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$table->setCourses($query->getAll());
 		$this->tpl->setContent($table->getHTML());
 	}
-
-
-	/**
-	 *
-	 */
-	protected function configureCourse() {
+	protected function configureCourse(): void {
 		$this->addTabs(self::TAB_CONFIGURE_COURSE);
 		$this->tabs->setBackTarget($this->pl->txt("back"), $this->ctrl->getLinkTarget($this, self::CMD_CONFIGURE));
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
@@ -121,57 +83,49 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$this->tpl->setContent($form->getHTML());
 	}
 
-
-	protected function confirmDeleteCourse() {
+    /**
+     * @throws ilCtrlException
+     */
+    protected function confirmDeleteCourse(): void
+    {
 		global $DIC;
-
 		$this->ctrl->saveParameter($this, 'course_ref_id');
 		$confirmation_gui = new ilConfirmationGUI();
 		$confirmation_gui->setFormAction($this->ctrl->getFormAction($this));
-
 		$confirmation_gui->setConfirm($this->pl->txt('delete_learning_objective_course'), self::CMD_DELETE_COURSE, self::CMD_DELETE_COURSE);
-
 		$this->ctrl->setParameter($this, 'cmd', self::CMD_CANCEL);
 		$confirmation_gui->setCancel($this->pl->txt('cancel'), self::CMD_CANCEL, self::CMD_CANCEL);
-
 		$confirmation_gui->setHeaderText($this->pl->txt('confirm_delete_crs') . " " . $DIC->ui()->renderer()->render($DIC->ui()->factory()->link()
 				->standard($this->pl->txt('download_suggestions'), $this->ctrl->getLinkTarget($this, self::CMD_DOWNLOAD_SUGGESTIONS))));
-
 		$this->tpl->setContent($confirmation_gui->getHTML());
 	}
 
-
-	protected function deleteCourse() {
-
+    /**
+     * @throws ilCtrlException
+     */
+    protected function deleteCourse(): void {
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
 		$config = new ConfigProvider();
 		$course_config = new CourseConfigProvider($course);
-
 		$ref_ids = (array)json_decode($config->get('course_ref_ids'), true);
 		if (($key = array_search($_GET['course_ref_id'], $ref_ids)) !== false) {
 			unset($ref_ids[$key]);
 		}
 		$config->set('course_ref_ids', json_encode(array_unique($ref_ids)));
-
 		$course_config->delete();
-
-		ilUtil::sendSuccess($this->pl->txt("course_removed"),true);
+        $this->tpl->setOnScreenMessage('success',$this->pl->txt("course_removed"), true);
 		$this->ctrl->redirect($this, self::CMD_CONFIGURE);
 	}
 
-
-	protected function downloadSuggestions() {
-
+    /**
+     * @throws ilCtrlException
+     */
+    protected function downloadSuggestions(): void {
 		$this->ctrl->setParameterByClass("alouiCourseGUI", 'alo_xpt', 1);
 		$this->ctrl->setParameterByClass("alouiCourseGUI", 'ref_id', $_GET['course_ref_id']);
 		$this->ctrl->redirectByClass([ "ilUIPluginRouterGUI", "alouiCourseGUI" ]);
 	}
-
-
-	/**
-	 *
-	 */
-	protected function configureNotifications() {
+	protected function configureNotifications(): void {
 		$this->addTabs(self::TAB_CONFIGURE_NOTIFICATIONS);
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
 		$this->initCourseHeader($course);
@@ -180,29 +134,19 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$form->setFormAction($this->ctrl->getFormAction($this));
 		$this->tpl->setContent($form->getHTML());
 	}
-
-
-	/**
-	 *
-	 */
-	protected function configureNotificationsUsersAutocomplete() {
+	protected function configureNotificationsUsersAutocomplete(): void {
 		$term = filter_input(INPUT_GET, "term");
-
 		// Get users
 		$autocomplete = new ilUserAutoComplete();
-
 		$autocomplete->setSearchFields([ "usr_id", "login", "firstname", "lastname", "email" ]);
 		$autocomplete->setResultField("usr_id");
 		$autocomplete->enableFieldSearchableCheck(false);
-
 		$users = json_decode($autocomplete->getList($term));
-
 		// Format label to lastname, firstname, login
 		$users->items = array_map(function (stdClass $user) {
 			$labels = preg_split("/[(, )( \[)]/", $user->label, - 1, PREG_SPLIT_NO_EMPTY);
 			$labels[2] = substr($labels[2], 0, - 1);
 			$labels = [ $labels[0], $labels[1], $labels[2] ];
-
 			return [
 				"label" => $labels,
 				"value" => $user->value
@@ -222,7 +166,6 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 					return - 1;
 				}
 			}
-
 			return 0;
 		});
 
@@ -232,18 +175,11 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 
 			return $user;
 		}, $users->items);
-
 		// Output
 		echo json_encode($users);
-
 		exit();
 	}
-
-
-	/**
-	 *
-	 */
-	protected function configureNotificationsRolesAutocomplete() {
+	protected function configureNotificationsRolesAutocomplete(): void {
 		$term = filter_input(INPUT_GET, "term");
 
 		// Get roles
@@ -319,37 +255,23 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 
 		exit();
 	}
-
-
-	/**
-	 * @param LearningObjectiveCourse $course
-	 */
-	protected function initCourseHeader(LearningObjectiveCourse $course) {
+	protected function initCourseHeader(LearningObjectiveCourse $course): void
+    {
 		$this->tpl->setTitle($course->getTitle());
-		$this->tpl->setTitleIcon(ilUtil::getTypeIconPath('crs', $course->getId(), 'big'));
+		//$this->tpl->setTitleIcon(ilFileUtils::getTypeIconPath('crs', $course->getId(), 'big'));
 	}
-
-
-	/**
-	 *
-	 */
-	protected function addCourse() {
+	protected function addCourse(): void {
 		$form = $this->getAddCourseFormGUI();
 		$this->tpl->setContent($form->getHTML());
 	}
-
-
-	/**
-	 *
-	 */
-	protected function saveCourse() {
+	protected function saveCourse(): void {
 		$form = $this->getAddCourseFormGUI();
 		if ($form->checkInput() && ilObject::_lookupType($form->getInput('ref_id'), true) == 'crs') {
 			$config = new ConfigProvider();
 			$ref_ids = (array)json_decode($config->get('course_ref_ids'), true);
 			$ref_ids[] = $form->getInput('ref_id');
 			$config->set('course_ref_ids', json_encode(array_unique($ref_ids)));
-			ilUtil::sendSuccess($this->pl->txt("course_added"));
+            $this->tpl->setOnScreenMessage('success',$this->pl->txt("course_added"), true);
 			$this->ctrl->redirect($this, self::CMD_CONFIGURE);
 		}
 		if (ilObject::_lookupType($form->getInput('ref_id'), true) != 'crs') {
@@ -358,12 +280,8 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$form->setValuesByPost();
 		$this->tpl->setContent($form->getHTML());
 	}
-
-
-	/**
-	 * @return ilPropertyFormGUI
-	 */
-	protected function getAddCourseFormGUI() {
+	protected function getAddCourseFormGUI(): ilPropertyFormGUI
+    {
 		$form = new ilPropertyFormGUI();
 		$form->setTitle($this->pl->txt("create_course"));
 		$form->setFormAction($this->ctrl->getFormAction($this));
@@ -376,21 +294,12 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 
 		return $form;
 	}
-
-
-	/**
-	 *
-	 */
-	protected function cancel() {
+	protected function cancel(): void
+    {
 		$this->configure();
 	}
-
-
-	/**
-	 * @param CourseConfigProvider $config
-	 * @param ilPropertyFormGUI    $form
-	 */
-	protected function storeConfig($config, ilPropertyFormGUI $form) {
+	protected function storeConfig(CourseConfigProvider $config, ilPropertyFormGUI $form): void
+    {
 		foreach ($form->getItems() as $item) {
 			/** @var ilFormPropertyGUI $item */
 			$value = $form->getInput($item->getPostVar());
@@ -401,12 +310,7 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 			$config->set($item->getPostVar(), $value);
 		}
 	}
-
-
-	/**
-	 *
-	 */
-	protected function saveNotifications() {
+	protected function saveNotifications(): void {
 		$this->addTabs(self::TAB_CONFIGURE_NOTIFICATIONS);
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
 		$config = new CourseConfigProvider($course);
@@ -415,18 +319,14 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$form = new NotificationConfigFormGUI($config, new TwigParser());
 		if ($form->checkInput()) {
 			$this->storeConfig($config, $form);
-			ilUtil::sendSuccess($this->pl->txt("configuration_saved"), true);
+            $this->tpl->setOnScreenMessage('success',$this->pl->txt("configuration_saved"), true);
 			$this->ctrl->redirect($this, self::CMD_CONFIGURE_NOTIFICATIONS);
 		}
 		$form->setValuesByPost();
 		$this->tpl->setContent($form->getHTML());
 	}
-
-
-	/**
-	 *
-	 */
-	protected function save() {
+	protected function save(): void
+    {
 		$this->addTabs(self::TAB_CONFIGURE_COURSE);
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
 		$this->tabs->setBackTarget($this->pl->txt("back"), $this->ctrl->getLinkTarget($this, self::CMD_CONFIGURE));
@@ -435,33 +335,26 @@ class ilLearningObjectiveSuggestionsConfigGUI extends ilPluginConfigGUI {
 		$form = new CourseConfigFormGUI($config, new LearningObjectiveQuery($config), new StudyProgramQuery($config));
 		if ($form->checkInput()) {
 			$this->storeConfig($config, $form);
-			ilUtil::sendSuccess($this->pl->txt("configuration_saved"), true);
+            $this->tpl->setOnScreenMessage('success',$this->pl->txt("configuration_saved"), true);
 			$this->ctrl->redirect($this, self::CMD_CONFIGURE_COURSE);
 		}
 		$form->setValuesByPost();
 		$this->tpl->setContent($form->getHTML());
 	}
-
-	protected function activateCron() {
+	protected function activateCron(): void {
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
 		$config = new CourseConfigProvider($course);
 		$config->set('is_cron_inactive', 0);
 		$this->ctrl->redirect($this, self::CMD_CONFIGURE);
 	}
-
-	protected function deactivateCron() {
+	protected function deactivateCron(): void {
 		$course = new LearningObjectiveCourse(new ilObjCourse((int)$_GET['course_ref_id']));
 		$config = new CourseConfigProvider($course);
 		$config->set('is_cron_inactive', 1);
 		$this->ctrl->redirect($this, self::CMD_CONFIGURE);
 	}
-
-
-
-	/**
-	 * @param string $active
-	 */
-	protected function addTabs($active = '') {
+	protected function addTabs(string $active = ''): void
+    {
 		$this->tabs->addTab(self::TAB_CONFIGURE_COURSE, $this->pl->txt("basic_configuration"), $this->ctrl->getLinkTarget($this, self::CMD_CONFIGURE_COURSE));
 		$this->tabs->addTab(self::TAB_CONFIGURE_NOTIFICATIONS, $this->pl->txt("notifications"), $this->ctrl->getLinkTarget($this, self::CMD_CONFIGURE_NOTIFICATIONS));
 		if ($active) {

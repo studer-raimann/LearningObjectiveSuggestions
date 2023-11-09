@@ -9,27 +9,15 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveQuery {
-
-	/**
-	 * @var CourseConfigProvider
-	 */
-	protected $config;
-
-
-	/**
-	 * @param CourseConfigProvider $config
-	 */
+	protected CourseConfigProvider $config;
 	public function __construct(CourseConfigProvider $config) {
 		$this->config = $config;
 	}
-
-
 	/**
 	 * Get all learning objectives
-	 *
-	 * @return LearningObjective[]
 	 */
-	public function getAll() {
+	public function getAll(): array
+    {
 		static $cache = array();
 		$ref_id = $this->config->getCourse()->getRefId();
 		if (isset($cache[$ref_id])) {
@@ -46,14 +34,8 @@ class LearningObjectiveQuery {
 
 		return $objectives;
 	}
-
-
-	/**
-	 * @param int $objective_id
-	 *
-	 * @return LearningObjective
-	 */
-	public function getByObjectiveId($objective_id) {
+	public function getByObjectiveId(int $objective_id): LearningObjective
+    {
 		$filtered = array_filter($this->getAll(), function ($objective) use ($objective_id) {
 			/** @var $objective LearningObjective */
 			return ($objective->getId() == $objective_id);
@@ -61,14 +43,13 @@ class LearningObjectiveQuery {
 
 		return array_pop($filtered);
 	}
-
-
 	/**
 	 * Get the learning objectives belonging to the main section
 	 *
 	 * @return LearningObjective[]
 	 */
-	public function getMain() {
+	public function getMain(): array
+    {
 		$main = json_decode($this->config->get('learning_objectives_main'), true);
 
 		return array_filter($this->getAll(), function ($objective) use ($main) {
@@ -76,14 +57,13 @@ class LearningObjectiveQuery {
 			return (in_array($objective->getId(), $main));
 		});
 	}
-
-
 	/**
 	 * Get the learning objectives belonging to the extended section
 	 *
 	 * @return LearningObjective[]
 	 */
-	public function getExtended() {
+	public function getExtended(): array
+    {
 		$extended = json_decode($this->config->get('learning_objectives_extended'), true);
 
 		return array_filter($this->getAll(), function ($objective) use ($extended) {

@@ -23,30 +23,11 @@ use srag\Plugins\SrUserEnrolment\EnrolmentWorkflow\Member\UsersMembersAjaxAutoCo
  *
  */
 class CourseConfigFormGUI extends \ilPropertyFormGUI {
+	protected CourseConfigProvider $config;
+	protected LearningObjectiveQuery $objective_query;
+	protected StudyProgramQuery $study_program_query;
+	protected \ilLearningObjectiveSuggestionsPlugin $pl;
 
-	/**
-	 * @var CourseConfigProvider
-	 */
-	protected $config;
-	/**
-	 * @var LearningObjectiveQuery
-	 */
-	protected $objective_query;
-	/**
-	 * @var StudyProgramQuery
-	 */
-	protected $study_program_query;
-	/**
-	 * @var \ilLearningObjectiveSuggestionsPlugin
-	 */
-	protected $pl;
-
-
-	/**
-	 * @param CourseConfigProvider   $config
-	 * @param LearningObjectiveQuery $objective_query
-	 * @param StudyProgramQuery      $study_program_query
-	 */
 	public function __construct(CourseConfigProvider $config, LearningObjectiveQuery $objective_query, StudyProgramQuery $study_program_query) {
 		parent::__construct();
 		$this->config = $config;
@@ -55,9 +36,8 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 		$this->pl = \ilLearningObjectiveSuggestionsPlugin::getInstance();
 		$this->init();
 	}
-
-
-	protected function init() {
+	protected function init(): void
+    {
 		$this->setTitle($this->pl->txt("configuration"));
 
 		$options = array();
@@ -87,9 +67,8 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 		$this->addCommandButton(\ilLearningObjectiveSuggestionsConfigGUI::CMD_SAVE, $this->pl->txt("save"));
 		$this->addCommandButton(\ilLearningObjectiveSuggestionsConfigGUI::CMD_CANCEL, $this->pl->txt("cancel"));
 	}
-
-
-	protected function addGeneralConfig() {
+	protected function addGeneralConfig(): void
+    {
 		$item = new \ilFormSectionHeaderGUI();
 		$item->setTitle($this->pl->txt("general"));
 		$this->addItem($item);
@@ -143,9 +122,8 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 		$item->setRequired(true);
 		$this->addItem($item);
 	}
-
-
-	protected function addWeightFineConfig() {
+	protected function addWeightFineConfig(): void
+    {
 		$item = new \ilFormSectionHeaderGUI();
 		$item->setTitle($this->pl->txt("weight_fine"));
 		$this->addItem($item);
@@ -157,9 +135,8 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 			$this->addItem($item);
 		}
 	}
-
-
-	protected function addWeightRoughConfig() {
+	protected function addWeightRoughConfig(): void
+    {
 		foreach ($this->study_program_query->getAll() as $study_program) {
 			$item = new \ilFormSectionHeaderGUI();
 			$item->setTitle($this->pl->txt("weight_rough") . ' "' . $study_program->getTitle() . '"');
@@ -175,8 +152,8 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 			}
 		}
 	}
-
-    protected function addRoleAssignmentConfig() {
+    protected function addRoleAssignmentConfig(): void
+    {
         global $DIC;
 
             $item = new \ilFormSectionHeaderGUI();
@@ -196,8 +173,8 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
         $item->setValue(json_decode($this->config->get($item->getPostVar()),true));
         $this->addItem($item);
     }
-
-    protected function getAllRoles() {
+    protected function getAllRoles(): array
+    {
 	    global $DIC;
         $roles = $DIC->rbac()->review()->getRolesByFilter(ilRbacReview::FILTER_NOT_INTERNAL);
 
@@ -209,12 +186,9 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
 
        return $options;
     }
-
-    protected function getAllTests() {
+    protected function getAllTests(): array
+    {
         global $DIC;
-
-
-
         $roles = $DIC->rbac()->review()->getGlobalRoles();
 
         $options = [];
@@ -222,16 +196,10 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
         foreach($roles as $role_id) {
             $options[$role_id] = ilObject::_lookupTitle($role_id);
         }
-
-
         return $options;
     }
-
-
-	/**
-	 * @return LearningObjective[]
-	 */
-	protected function getObjectives() {
+	protected function getObjectives(): ?array
+    {
 		static $objectives = NULL;
 		if ($objectives !== NULL) {
 			return $objectives;

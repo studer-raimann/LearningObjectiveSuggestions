@@ -5,8 +5,7 @@
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
  */
 class ModificationLog extends \ilLog {
-
-	public function __construct() {
+    public function __construct() {
 		parent::__construct(ILIAS_DATA_DIR, 'learning-objective-modifications.log');
 	}
 

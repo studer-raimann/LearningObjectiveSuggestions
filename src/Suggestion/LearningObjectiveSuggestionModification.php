@@ -14,27 +14,11 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion
  */
 class LearningObjectiveSuggestionModification {
-
-	/**
-	 * @var LearningObjectiveCourse
-	 */
-	protected $course;
-	/**
-	 * @var User
-	 */
-	protected $user;
-	/**
-	 * @var ModificationLog
-	 */
-	protected $log;
-	/**
-	 * @var User
-	 */
-	protected $editor;
-	/**
-	 * @var LearningObjectiveQuery
-	 */
-	protected $learning_objective_query;
+	protected LearningObjectiveCourse $course;
+	protected User $user;
+	protected ModificationLog $log;
+	protected User $editor;
+	protected LearningObjectiveQuery $learning_objective_query;
 
 
 	/**
@@ -58,7 +42,8 @@ class LearningObjectiveSuggestionModification {
 	 *
 	 * @param LearningObjective[] $learning_objectives
 	 */
-	public function replaceSuggestions(array $learning_objectives) {
+	public function replaceSuggestions(array $learning_objectives): void
+    {
 		$current_suggestions = $this->getSuggestions();
 		$new_suggestions = array();
 		$added_suggestions = array();
@@ -100,14 +85,8 @@ class LearningObjectiveSuggestionModification {
 		$this->log->write("Deleted learning objective suggestions:\n" . implode("\n", $this->getLearningObjectives($delete_suggestions)));
 		$this->log->write("Current learning objective suggestions:\n" . implode("\n", $this->getLearningObjectives($new_suggestions)));
 	}
-
-
-	/**
-	 * @param array $suggestions
-	 *
-	 * @return array
-	 */
-	protected function getLearningObjectives(array $suggestions) {
+	protected function getLearningObjectives(array $suggestions): array
+    {
 		$objectives = array();
 		foreach ($suggestions as $suggestion) {
 			/** @var $suggestion LearningObjectiveSuggestion */
@@ -118,11 +97,12 @@ class LearningObjectiveSuggestionModification {
 		return $objectives;
 	}
 
-
-	/**
-	 * @return LearningObjectiveSuggestion[]
-	 */
-	protected function getSuggestions() {
+    /**
+     * @return LearningObjectiveSuggestion[]
+     * @throws \arException
+     */
+	protected function getSuggestions(): array
+    {
 		return LearningObjectiveSuggestion::where(array(
 			'user_id' => $this->user->getId(),
 			'course_obj_id' => $this->course->getId()

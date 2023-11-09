@@ -9,84 +9,46 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
  * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
  */
 class LearningObjectiveCourse {
-
-	/**
-	 * @var \ilObjCourse
-	 */
-	protected $course;
-
-
+	protected \ilObjCourse $course;
 	/**
 	 * LearningObjectiveCourse constructor.
-	 *
-	 * @param \ilObjCourse $course
 	 */
 	public function __construct(\ilObjCourse $course) {
 		$this->course = $course;
 	}
-
-
-	/**
-	 * @return \ilObjCourse
-	 */
-	public function getILIASCourse() {
+	public function getILIASCourse(): \ilObjCourse
+    {
 		return $this->course;
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getId() {
+	public function getId(): int
+    {
 		return $this->course->getId();
 	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getTitle() {
+	public function getTitle(): string
+    {
 		return $this->course->getTitle();
 	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getRefId() {
+	public function getRefId(): int
+    {
 		return $this->course->getRefId();
 	}
-
-
-	/**
-	 * @return bool
-	 */
-	public function getIsCronInactive() {
+	public function getIsCronInactive(): bool
+    {
 		$config = new CourseConfigProvider($this);
 		return $config->getIsCronInactive();
 	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getLink() {
+	public function getLink(): string
+    {
 		return \ilLink::_getStaticLink($this->getRefId(), 'crs');
 	}
-
-
 	/**
 	 * Get the user-IDs of all members of this course
-	 *
-	 * @return array
 	 */
-	public function getMemberIds() {
+	public function getMemberIds(): array
+    {
 		$participants = \ilCourseParticipants::getInstanceByObjId($this->getId());
-
 		return $participants->getMembers();
 	}
-
-
 	function __toString() {
 		return '[' . implode(', ', array(
 				$this->getRefId(),

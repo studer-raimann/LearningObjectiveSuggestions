@@ -20,136 +20,116 @@ use srag\CustomInputGUIs\LearningObjectiveSuggestions\Loader\CustomInputGUIsLoad
  *
  * @author Stefan Wanzenried <sw@studer-raimann.ch>
  */
-class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin {
+class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin
+{
 
-	const PLUGIN_ID = "dhbwautolo";
-	const PLUGIN_NAME = "LearningObjectiveSuggestions";
-	/**
-	 * @var ilLearningObjectiveSuggestionsPlugin
-	 */
-	protected static $instance;
-	/**
-	 * @var array
-	 */
-	protected static $cron_instances;
+    const PLUGIN_ID = "dhbwautolo";
+    const PLUGIN_NAME = "LearningObjectiveSuggestions";
+    protected static ?ilLearningObjectiveSuggestionsPlugin $instance = null;
+    protected static array $cron_instances;
 
+    public static function getInstance(): ilLearningObjectiveSuggestionsPlugin
+    {
+        if (static::$instance === NULL) {
+            global $DIC;
 
-	/**
-	 * @return ilLearningObjectiveSuggestionsPlugin
-	 */
-	public static function getInstance() {
-		if (static::$instance === NULL) {
-			static::$instance = new self();
-		}
+            /** @var $component_factory ilComponentFactory */
+            $component_factory = $DIC['component.factory'];
+            /** @var $plugin ilLearningObjectiveSuggestionsPlugin */
+            $plugin = $component_factory->getPlugin(ilLearningObjectiveSuggestionsPlugin::PLUGIN_ID);
 
-		return static::$instance;
-	}
+            static::$instance = $plugin;
+        }
 
+        return static::$instance;
+    }
 
-	/**
-	 * @return array
-	 */
-	public static function getCronInstances() {
-		global $DIC;
-		$ilDB = $DIC->database();
-		if (static::$cron_instances === NULL) {
-			$config = new ConfigProvider();
-			$log = new Log();
-			$cron1 = new CalculateScoresAndSuggestionsCronJob($ilDB, $config, $log);
-			$cron2 = new SendSuggestionsCronJob($ilDB, $config, new TwigParser(), $log);
-			static::$cron_instances = array(
-				$cron1->getId() => $cron1,
-				$cron2->getId() => $cron2,
-			);
-		}
+    public static function getCronInstances(): array
+    {
+        global $DIC;
+        $ilDB = $DIC->database();
+        if (static::$cron_instances === NULL) {
+            $config = new ConfigProvider();
+            $log = new Log();
+            $cron1 = new CalculateScoresAndSuggestionsCronJob($ilDB, $config, $log);
+            $cron2 = new SendSuggestionsCronJob($ilDB, $config, new TwigParser(), $log);
+            static::$cron_instances = array(
+                $cron1->getId() => $cron1,
+                $cron2->getId() => $cron2,
+            );
+        }
 
-		return static::$cron_instances;
-	}
+        return static::$cron_instances;
+    }
 
+    protected ilDBInterface $db;
 
-	/**
-	 * @var ilDB
-	 */
-	protected $db;
-
-
-	/**
-	 *
-	 */
-	public function __construct() {
-		parent::__construct();
-
-		global $DIC;
-
-		$this->db = $DIC->database();
-	}
+    public function __construct(
+        ilDBInterface              $db,
+        ilComponentRepositoryWrite $component_repository,
+        string                     $id
+    )
+    {
+        global $DIC;
+        parent::__construct($db, $component_repository, $id);
+        $this->db = $DIC->database();
+    }
 
 
-	/**
-	 * @return array
-	 */
-	public function getCronJobInstances() {
-		return self::getCronInstances();
-	}
+    /**
+     * @return array
+     */
+    public function getCronJobInstances(): array
+    {
+        return self::getCronInstances();
+    }
 
+    public function getCronJobInstance($a_job_id): ilCronJob
+    {
+        foreach (static::getCronInstances() as $id => $cron) {
+            if ($a_job_id == $id) {
+                return $cron;
+            }
+        }
+    }
 
-	/**
-	 * @param $a_job_id
-	 *
-	 * @return ilCronJob|false
-	 */
-	public function getCronJobInstance($a_job_id) {
-		foreach (static::getCronInstances() as $id => $cron) {
-			if ($a_job_id == $id) {
-				return $cron;
-			}
-		}
+    public function getPluginName(): string
+    {
+        return self::PLUGIN_NAME;
+    }
 
-		return false;
-	}
+    protected function init(): void
+    {
+        parent::init();
+        if (file_exists(__DIR__ . "/../../../../EventHandling/EventHook/UserDefaults/vendor/autoload.php")) {
+            require_once __DIR__ . "/../../../../EventHandling/EventHook/UserDefaults/vendor/autoload.php";
+        }
+        if (file_exists(__DIR__ . "/../../../../UIComponent/UserInterfaceHook/LearningObjectiveSuggestionsUI/vendor/autoload.php")) {
+            require_once __DIR__ . "/../../../../UIComponent/UserInterfaceHook/LearningObjectiveSuggestionsUI/vendor/autoload.php";
+        }
+        if (file_exists(__DIR__ . "/../../../../UIComponent/UserInterfaceHook/ParticipationCertificate/vendor/autoload.php")) {
+            require_once __DIR__ . "/../../../../UIComponent/UserInterfaceHook/ParticipationCertificate/vendor/autoload.php";
+        }
+    }
 
+    protected function beforeUninstall(): bool
+    {
+        $this->db->dropTable(LearningObjectiveScore::TABLE_NAME, false);
+        $this->db->dropTable(LearningObjectiveSuggestion::TABLE_NAME, false);
+        $this->db->dropTable(CourseConfig::TABLE_NAME, false);
+        $this->db->dropTable(Config::TABLE_NAME, false);
+        $this->db->dropTable(Notification::TABLE_NAME, false);
 
-	/**
-	 * @return string
-	 */
-	public function getPluginName() {
-		return self::PLUGIN_NAME;
-	}
+        if (file_exists(ILIAS_DATA_DIR . "/learning-objective-modifications.log")) {
+            unlink(ILIAS_DATA_DIR . "/learning-objective-modifications.log");
+        }
+        if (file_exists(ILIAS_DATA_DIR . "/learning-objective-suggestions.log")) {
+            unlink(ILIAS_DATA_DIR . "/learning-objective-suggestions.log");
+        }
+        return true;
+    }
 
-
-	/**
-	 *
-	 */
-	protected function init() {
-		parent::init();
-		require_once __DIR__ . "/../../../../EventHandling/EventHook/UserDefaults/vendor/autoload.php";
-		require_once __DIR__ . "/../../../../UIComponent/UserInterfaceHook/LearningObjectiveSuggestionsUI/vendor/autoload.php";
-		require_once __DIR__ . "/../../../../UIComponent/UserInterfaceHook/ParticipationCertificate/vendor/autoload.php";
-	}
-
-
-	/**
-	 * @return bool
-	 */
-	protected function beforeUninstall() {
-		$this->db->dropTable(LearningObjectiveScore::TABLE_NAME, false);
-		$this->db->dropTable(LearningObjectiveSuggestion::TABLE_NAME, false);
-		$this->db->dropTable(CourseConfig::TABLE_NAME, false);
-		$this->db->dropTable(Config::TABLE_NAME, false);
-		$this->db->dropTable(Notification::TABLE_NAME, false);
-
-		if (file_exists(ILIAS_DATA_DIR . "/learning-objective-modifications.log")) {
-			unlink(ILIAS_DATA_DIR . "/learning-objective-modifications.log");
-		}
-		if (file_exists(ILIAS_DATA_DIR . "/learning-objective-suggestions.log")) {
-			unlink(ILIAS_DATA_DIR . "/learning-objective-suggestions.log");
-		}
-
-		return true;
-	}
-
-
-    public function exchangeUIRendererAfterInitialization(Container $dic) : Closure
+    public function exchangeUIRendererAfterInitialization(Container $dic): Closure
     {
         return CustomInputGUIsLoaderDetector::exchangeUIRendererAfterInitialization();
     }
