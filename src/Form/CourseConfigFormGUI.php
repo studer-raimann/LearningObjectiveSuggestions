@@ -1,4 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form;
+
 
 use ilCrsInitialTestStates;
 use ilLearningObjectiveSuggestionsConfigGUI;
@@ -6,22 +8,11 @@ use ilLearningObjectiveSuggestionsConfigGUI;
 use ilObject;
 use ilRbacReview;
 use ilSelectInputGUI;
-use srag\CustomInputGUIs\LearningObjectiveSuggestions\MultiLineNewInputGUI\MultiLineNewInputGUI;
-use srag\CustomInputGUIs\LearningObjectiveSuggestions\MultiSelectSearchNewInputGUI\MultiSelectSearchNewInputGUI;
-use srag\CustomInputGUIs\LearningObjectiveSuggestions\NumberInputGUI\NumberInputGUI;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\CustomInputGUIs\MultiLineNewInputGUI\MultiLineNewInputGUI;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
-use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\CustomInputGUIs\NumberInputGUI\NumberInputGUI;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
-use srag\Plugins\SrUserEnrolment\EnrolmentWorkflow\Member\UsersMembersAjaxAutoCompleteCtrl;
-
-/**
- * Class CourseConfigFormGUI
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form
- *
- */
 class CourseConfigFormGUI extends \ilPropertyFormGUI {
 	protected CourseConfigProvider $config;
 	protected LearningObjectiveQuery $objective_query;
@@ -170,7 +161,7 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
                 $subitem->setOptions($this->getAllRoles());
                 $item->addInput($subitem);
 
-        $item->setValue(json_decode($this->config->get($item->getPostVar()),true));
+        $item->setValue((array) json_decode($this->config->get($item->getPostVar()),true));
         $this->addItem($item);
     }
     protected function getAllRoles(): array

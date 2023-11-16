@@ -1,15 +1,9 @@
 <?php
-
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion;
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-/**
- * Class LearningObjectiveSuggestions
- *
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
- */
 class LearningObjectiveSuggestions {
 	protected LearningObjectiveCourse $course;
 	protected User $user;

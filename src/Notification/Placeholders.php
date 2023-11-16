@@ -1,15 +1,10 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-/**
- * Class Placeholders
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
- */
 class Placeholders {
 	public function getAvailablePlaceholders(): array
     {

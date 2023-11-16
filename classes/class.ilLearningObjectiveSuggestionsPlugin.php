@@ -13,7 +13,7 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\TwigParser;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion;
-use srag\CustomInputGUIs\LearningObjectiveSuggestions\Loader\CustomInputGUIsLoaderDetector;
+//use srag\CustomInputGUIs\LearningObjectiveSuggestions\Loader\CustomInputGUIsLoaderDetector;
 
 /**
  * Class ilLearningObjectiveSuggestionsPlugin

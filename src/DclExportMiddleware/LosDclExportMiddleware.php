@@ -13,7 +13,7 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron\SendSuggestionsCronJob;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
-use srag\Plugins\DataCollectionSOAPServices\RecordsOfDataCollectionViewExtendMiddleware;
+//use srag\Plugins\DataCollectionSOAPServices\RecordsOfDataCollectionViewExtendMiddleware;
 
 class LosDclExportMiddleware implements RecordsOfDataCollectionViewExtendMiddleware {
 

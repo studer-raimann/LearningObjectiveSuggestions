@@ -1,13 +1,6 @@
 <?php
-
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
 
-/**
- * Class User
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User
- */
 class User {
 	protected \ilObjUser $user;
 	public function __construct(\ilObjUser $user) {

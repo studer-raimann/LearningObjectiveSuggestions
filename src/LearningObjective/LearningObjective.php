@@ -1,11 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
-/**
- * Class LearningObjective
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
- */
 class LearningObjective {
 	protected \ilCourseObjective $objective;
 	public function __construct(\ilCourseObjective $objective) {

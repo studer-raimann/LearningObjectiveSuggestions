@@ -12,7 +12,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\LearningObjectiveCour
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveQuery;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\TwigParser;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
-use SRAG\ILIAS\Plugins\LearningObjectiveSuggestionsUI\SuggestionsTableGUI;
 
 /**
  * Class ilLearningObjectiveSuggestionsConfigGUI

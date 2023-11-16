@@ -2,12 +2,6 @@
 
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score;
 
-/**
- * Class LearningObjectiveScore
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
- */
 class LearningObjectiveScore extends \ActiveRecord {
 	const TABLE_NAME = "alo_score";
 	public function getConnectorContainerName(): string

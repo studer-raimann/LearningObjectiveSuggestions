@@ -1,13 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
 
-/**
- * Class TwigNotificationParser
- *
- * Uses the twig template engine to parse notification templates
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
- */
 class TwigParser implements Parser {
 	public function parse(string $template, array $placeholders): string
     {

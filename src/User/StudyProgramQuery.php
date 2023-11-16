@@ -6,11 +6,6 @@ if(file_exists(__DIR__ . "/../../../../../User/UDFDefinition/CascadingSelect/cla
 }
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 
-/**
- * Class StudyProgramQuery
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User
- */
 class StudyProgramQuery
 {
     protected CourseConfigProvider $config;

@@ -1,13 +1,8 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 
-/**
- * Class LearningObjectiveCourse
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
- */
 class LearningObjectiveCourse {
 	protected \ilObjCourse $course;
 	/**

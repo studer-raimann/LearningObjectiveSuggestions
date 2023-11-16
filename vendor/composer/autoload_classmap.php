@@ -463,18 +463,22 @@ return array(
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\InputGUIWrapperUIInputComponent\\InputGUIWrapperUIInputComponent' => $vendorDir . '/srag/custominputguis/src/InputGUIWrapperUIInputComponent/InputGUIWrapperUIInputComponent.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\InputGUIWrapperUIInputComponent\\Renderer' => $vendorDir . '/srag/custominputguis/src/InputGUIWrapperUIInputComponent/Renderer.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\Loader\\CustomInputGUIsLoaderDetector' => $vendorDir . '/srag/custominputguis/src/Loader/CustomInputGUIsLoaderDetector.php',
-    'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiLineInputGUI\\MultiLineInputGUI' => $vendorDir . '/srag/custominputguis/src/MultiLineInputGUI/MultiLineInputGUI.php',
-    'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiLineNewInputGUI\\MultiLineNewInputGUI' => $vendorDir . '/srag/custominputguis/src/MultiLineNewInputGUI/MultiLineNewInputGUI.php',
+        //
+    'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\CustomInputGUIs\\MultiLineInputGUI\\MultiLineInputGUI' => $baseDir . '/src/CustomInputGUIs/MultiLineInputGUI/MultiLineInputGUI.php',
+    'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\CustomInputGUIs\\MultiLineNewInputGUI\\MultiLineNewInputGUI' => $baseDir . '/src/CustomInputGUIs/MultiLineNewInputGUI/MultiLineNewInputGUI.php',
+     //
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchInputGUI\\MultiSelectSearchInput2GUI' => $vendorDir . '/srag/custominputguis/src/MultiSelectSearchInputGUI/MultiSelectSearchInput2GUI.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchInputGUI\\MultiSelectSearchInputGUI' => $vendorDir . '/srag/custominputguis/src/MultiSelectSearchInputGUI/MultiSelectSearchInputGUI.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchNewInputGUI\\AbstractAjaxAutoCompleteCtrl' => $vendorDir . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/AbstractAjaxAutoCompleteCtrl.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\MultiSelectSearchNewInputGUI\\MultiSelectSearchNewInputGUI' => $vendorDir . '/srag/custominputguis/src/MultiSelectSearchNewInputGUI/MultiSelectSearchNewInputGUI.php',
-    'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\NumberInputGUI\\NumberInputGUI' => $vendorDir . '/srag/custominputguis/src/NumberInputGUI/NumberInputGUI.php',
-    'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\PropertyFormGUI\\ConfigPropertyFormGUI' => $vendorDir . '/srag/custominputguis/src/PropertyFormGUI/ConfigPropertyFormGUI.php',
-    'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\PropertyFormGUI\\Exception\\PropertyFormGUIException' => $vendorDir . '/srag/custominputguis/src/PropertyFormGUI/Exception/PropertyFormGUIException.php',
-    'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\PropertyFormGUI\\Items\\Items' => $vendorDir . '/srag/custominputguis/src/PropertyFormGUI/Items/Items.php',
-    'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\PropertyFormGUI\\ObjectPropertyFormGUI' => $vendorDir . '/srag/custominputguis/src/PropertyFormGUI/ObjectPropertyFormGUI.php',
-    'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\PropertyFormGUI\\PropertyFormGUI' => $vendorDir . '/srag/custominputguis/src/PropertyFormGUI/PropertyFormGUI.php',
+    'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\CustomInputGUIs\\NumberInputGUI\\NumberInputGUI' => $baseDir . '/src/CustomInputGUIs/NumberInputGUI/NumberInputGUI.php',
+    //
+    'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\CustomInputGUIs\\PropertyFormGUI\\ConfigPropertyFormGUI' => $baseDir . '/src/CustomInputGUIs/PropertyFormGUI/ConfigPropertyFormGUI.php',
+    'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\CustomInputGUIs\\Exception\\PropertyFormGUIException' => $baseDir . '/src/CustomInputGUIs/PropertyFormGUI/Exception/PropertyFormGUIException.php',
+    'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\CustomInputGUIs\\Items\\Items' => $baseDir . '/src/CustomInputGUIs/PropertyFormGUI/Items/Items.php',
+    'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\CustomInputGUIs\\ObjectPropertyFormGUI' => $baseDir . '/src/CustomInputGUIs/PropertyFormGUI/ObjectPropertyFormGUI.php',
+    'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\CustomInputGUIs\\PropertyFormGUI' => $baseDir . '/src/CustomInputGUIs/PropertyFormGUI/PropertyFormGUI.php',
+     //
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\ScreenshotsInputGUI\\ScreenshotsInputGUI' => $vendorDir . '/srag/custominputguis/src/ScreenshotsInputGUI/ScreenshotsInputGUI.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\StaticHTMLPresentationInputGUI\\StaticHTMLPresentationInputGUI' => $vendorDir . '/srag/custominputguis/src/StaticHTMLPresentationInputGUI/StaticHTMLPresentationInputGUI.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\TableGUI\\Exception\\TableGUIException' => $vendorDir . '/srag/custominputguis/src/TableGUI/Exception/TableGUIException.php',
@@ -482,7 +486,9 @@ return array(
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\TabsInputGUI\\MultilangualTabsInputGUI' => $vendorDir . '/srag/custominputguis/src/TabsInputGUI/MultilangualTabsInputGUI.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\TabsInputGUI\\TabsInputGUI' => $vendorDir . '/srag/custominputguis/src/TabsInputGUI/TabsInputGUI.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\TabsInputGUI\\TabsInputGUITab' => $vendorDir . '/srag/custominputguis/src/TabsInputGUI/TabsInputGUITab.php',
-    'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\Template\\Template' => $vendorDir . '/srag/custominputguis/src/Template/Template.php',
+     //
+    'SRAG\\ILIAS\\Plugins\\LearningObjectiveSuggestions\\CustomInputGUIs\\Template\\Template' => $baseDir . '/src/CustomInputGUIs/Template/Template.php',
+    //
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\TextAreaInputGUI\\TextAreaInputGUI' => $vendorDir . '/srag/custominputguis/src/TextAreaInputGUI/TextAreaInputGUI.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\TextInputGUI\\TextInputGUI' => $vendorDir . '/srag/custominputguis/src/TextInputGUI/TextInputGUI.php',
     'srag\\CustomInputGUIs\\LearningObjectiveSuggestions\\TextInputGUI\\TextInputGUIWithModernAutoComplete' => $vendorDir . '/srag/custominputguis/src/TextInputGUI/TextInputGUIWithModernAutoComplete.php',

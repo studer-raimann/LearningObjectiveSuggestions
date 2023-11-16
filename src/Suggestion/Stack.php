@@ -1,10 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion;
 
-/**
- * Class Stack
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion
- */
 class Stack {
 	protected $elements = array();
 	public function push(mixed $element): void

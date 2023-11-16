@@ -2,12 +2,6 @@
 
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
 
-/**
- * Class Notification
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
- */
 class Notification extends \ActiveRecord {
 	const TABLE_NAME = "alo_notification";
 	public function getConnectorContainerName(): string

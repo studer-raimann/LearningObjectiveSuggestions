@@ -7,12 +7,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score\LearningObjectiveScore
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Notification;
 
 
-/**
- * Class CourseConfig
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
- */
 class CourseConfig extends \ActiveRecord {
 	const TABLE_NAME = "alo_crs_config";
 	public function getConnectorContainerName(): string

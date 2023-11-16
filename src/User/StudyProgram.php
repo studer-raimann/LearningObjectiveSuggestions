@@ -1,10 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
 
-/**
- * Class StudyProgram
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User
- */
 class StudyProgram {
     protected int $id;
     protected string $title;

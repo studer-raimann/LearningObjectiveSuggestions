@@ -1,14 +1,9 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
 use ilObject;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\ConfigProvider;
 
-/**
- * Class LearningObjectiveCourseQuery
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
- */
 class LearningObjectiveCourseQuery {
     protected ConfigProvider $config;
 	public function __construct(ConfigProvider $config) {

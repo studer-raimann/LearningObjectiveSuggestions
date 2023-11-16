@@ -1,22 +1,15 @@
 <?php
 
-namespace srag\CustomInputGUIs\LearningObjectiveSuggestions\TabsInputGUI;
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\CustomInputGUIs\TabsInputGUI;
 
 use ilFormPropertyGUI;
-use srag\CustomInputGUIs\LearningObjectiveSuggestions\PropertyFormGUI\Items\Items;
-use srag\DIC\LearningObjectiveSuggestions\DICTrait;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\CustomInputGUIs\PropertyFormGUI\Items\Items;
+//use srag\DIC\LearningObjectiveSuggestions\DICTrait;
 
-/**
- * Class TabsInputGUITab
- *
- * @package srag\CustomInputGUIs\LearningObjectiveSuggestions\TabsInputGUI
- *
- * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
- */
 class TabsInputGUITab
 {
 
-    use DICTrait;
+   // use DICTrait;
 
     /**
      * @var bool

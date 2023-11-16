@@ -1,9 +1,6 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
 
-/**
- * Interface NotificationParser
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
- */
 interface Parser {
 	/**
 	 * Parse the template and fill placeholders

@@ -1,13 +1,8 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective;
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-/**
- * Class LearningObjectiveResult
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
- */
 class LearningObjectiveResult {
 
 	/**

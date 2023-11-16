@@ -3,12 +3,6 @@
 use ilUtil;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 
-/**
- * Class LearningObjectiveCourseTableGUI
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
- */
 class LearningObjectiveCourseTableGUI extends \ilTable2GUI {
 	protected \ilCtrl $ctrl;
 	protected \ilLearningObjectiveSuggestionsPlugin $pl;

@@ -2,12 +2,6 @@
 
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config;
 
-/**
- * Class Config
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
- */
 class Config extends \ActiveRecord {
 
 	const TABLE_NAME = "alo_config";

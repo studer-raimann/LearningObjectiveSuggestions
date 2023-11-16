@@ -5,12 +5,6 @@ namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-/**
- * Class LearningObjectiveSuggestion
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
- */
 class LearningObjectiveSuggestion extends \ActiveRecord {
 
 	const TABLE_NAME = "alo_suggestion";

@@ -1,26 +1,18 @@
 <?php
 
-namespace srag\CustomInputGUIs\LearningObjectiveSuggestions\TabsInputGUI;
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\CustomInputGUIs\TabsInputGUI;
 
 use ilFormPropertyGUI;
 use ilTableFilterItem;
 use ilTemplate;
 use ilToolbarItem;
-use srag\CustomInputGUIs\LearningObjectiveSuggestions\PropertyFormGUI\Items\Items;
-use srag\CustomInputGUIs\LearningObjectiveSuggestions\Template\Template;
-use srag\DIC\LearningObjectiveSuggestions\DICTrait;
+use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\CustomInputGUIs\PropertyFormGUI\Items\Items;
+//use srag\DIC\LearningObjectiveSuggestions\DICTrait;
 
-/**
- * Class TabsInputGUI
- *
- * @package srag\CustomInputGUIs\LearningObjectiveSuggestions\TabsInputGUI
- *
- * @author  studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
- */
 class TabsInputGUI extends ilFormPropertyGUI implements ilTableFilterItem, ilToolbarItem
 {
 
-    use DICTrait;
+    //use DICTrait;
 
     const SHOW_INPUT_LABEL_ALWAYS = 3;
     const SHOW_INPUT_LABEL_AUTO = 2;
@@ -222,7 +214,7 @@ class TabsInputGUI extends ilFormPropertyGUI implements ilTableFilterItem, ilToo
      */
     public function render() : string
     {
-        $tpl = new Template(__DIR__ . "/templates/tabs_input_gui.html");
+        $tpl = new ilTemplate(__DIR__ . "/templates/tabs_input_gui.html", true, true);
 
         foreach ($this->getTabs() as $tab) {
             $inputs = $tab->getInputs($this->getPostVar(), $this->getValue());
@@ -260,7 +252,7 @@ class TabsInputGUI extends ilFormPropertyGUI implements ilTableFilterItem, ilToo
             $tpl->setVariableEscaped("TAB_CONTENT_ID", $tab_content_id);
 
             if (!empty($tab->getInfo())) {
-                $info_tpl = new Template(__DIR__ . "/../PropertyFormGUI/Items/templates/input_gui_input_info.html");
+                $info_tpl = new ilTemplate(__DIR__ . "/../PropertyFormGUI/Items/templates/input_gui_input_info.html", true, true);
 
                 $info_tpl->setVariableEscaped("INFO", $tab->getInfo());
 

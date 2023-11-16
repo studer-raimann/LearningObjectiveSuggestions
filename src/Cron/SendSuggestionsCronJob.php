@@ -22,12 +22,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Sender;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjectiveSuggestion;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-/**
- * Class SendSuggestionsCronJob
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron
- */
 class SendSuggestionsCronJob extends \ilCronJob {
 
 	const CRON_JOB_ID = "alo_send_suggestions";

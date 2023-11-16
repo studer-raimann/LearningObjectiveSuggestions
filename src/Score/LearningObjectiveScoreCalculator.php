@@ -1,16 +1,11 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Score;
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveResult;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\Log;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
 
-/**
- * Class UserScoreCalculation
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective
- */
 class LearningObjectiveScoreCalculator {
     protected CourseConfigProvider $config;
     protected Log $log;

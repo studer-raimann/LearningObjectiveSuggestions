@@ -1,12 +1,8 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification;
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-/**
- * Class InternalMailSender
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification
- */
 class InternalMail {
 	protected User $sender;
 	protected User $receiver;

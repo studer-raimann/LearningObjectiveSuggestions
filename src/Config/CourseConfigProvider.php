@@ -4,14 +4,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningOb
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjectiveCourse;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgram;
 
-/**
- * Class CourseConfigProvider
- *
- * Provides access to config data depending on the injected course
- *
- * @author Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config
- */
 class CourseConfigProvider {
 	protected LearningObjectiveCourse $course;
 	public function __construct(LearningObjectiveCourse $course) {

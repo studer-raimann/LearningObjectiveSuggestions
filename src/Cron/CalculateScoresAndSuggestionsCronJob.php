@@ -16,12 +16,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion\LearningObjective
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\StudyProgramQuery;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-/**
- * Class CalculateScoresAndSuggestionsCronJob
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Cron
- */
 class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 
 	const CRON_JOB_ID = "alo_calc_user_scores";

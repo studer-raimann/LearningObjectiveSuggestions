@@ -1,4 +1,5 @@
-<?php namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion;
+<?php
+namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion;
 
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningObjective;
@@ -7,12 +8,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\LearningObjective\LearningOb
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Log\ModificationLog;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-/**
- * Class LearningObjectiveSuggestionModification
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Suggestion
- */
 class LearningObjectiveSuggestionModification {
 	protected LearningObjectiveCourse $course;
 	protected User $user;

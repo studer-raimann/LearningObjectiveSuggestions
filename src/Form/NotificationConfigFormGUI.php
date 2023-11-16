@@ -17,12 +17,6 @@ use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Parser;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Notification\Placeholders;
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User\User;
 
-/**
- * Class NotificationConfigFormGUI
- *
- * @author  Stefan Wanzenried <sw@studer-raimann.ch>
- * @package SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Form
- */
 class NotificationConfigFormGUI extends ilPropertyFormGUI {
 	protected CourseConfigProvider $config;
 	protected Parser $parser;
