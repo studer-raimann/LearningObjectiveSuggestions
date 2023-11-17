@@ -129,8 +129,5 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin
         return true;
     }
 
-    public function exchangeUIRendererAfterInitialization(Container $dic): Closure
-    {
-        return CustomInputGUIsLoaderDetector::exchangeUIRendererAfterInitialization();
-    }
+
 }
