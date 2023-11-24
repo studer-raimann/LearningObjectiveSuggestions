@@ -1,0 +1,66 @@
+add_course#:#Add Course
+actions#:#Actions
+back#:#Back
+basic_configuration#:#Basic Configuration
+bias#:#Bias
+body#:#Content
+body_blub#:#Blub
+cancel#:#Cancel
+cc_role_id#:#CC Role ID Supervisor
+cc_role_id_info#:#Members of this role include a CC as mail when recommendations are sent to a user. To search for course administrator roles, please enter il_crs_admin in the field, and you will be listed with possible courses to choose from.
+change_udf_study_program#:#Change UDF Study Program
+change_udf_study_program_info#:#Warning: Changing UDF will affect the entire following configuration.
+configuration_saved#:#Configuration saved
+configurate#:#Configure
+configuration#:#Configuration
+course_added#:#Course with learning objectives has been added and can now be configured
+course_link#:#Course Link
+course_title#:#Course Title
+courses#:#Learning Objective Courses
+create_course#:#Create Learning Objective Course
+email#:#Email
+firstname#:#First Name
+general#:#General
+generate_suggestions#:#Generate Learning Recommendations
+generate_suggestions_description#:#Calculates the scores of all learning objectives for users who have passed the entrance test. In addition, the recommended learning objectives are defined.
+invalid_placeholders#:#Syntax error, please check the placeholders used.
+lastname#:#Last Name
+login#:#Login
+max_amount_suggestions#:#Max Recommended Learning Objectives
+max_amount_suggestions_info#:#Maximum number of learning objectives recommended to the user
+min_amount_suggestions#:#Min Recommended Learning Objectives
+min_amount_suggestions_info#:#Minimum number of learning objectives recommended to the user
+no_course_object#:#The entered Ref-ID does not reference a course object
+notifications#:#Notifications
+objectives#:#List of recommended learning objectives
+objectives_extended#:#Extended Area
+objectives_extended_info#:#Learning objectives assigned to the extended area
+objectives_main#:#Core Area
+objectives_main_info#:#Learning objectives assigned to the core area
+offset#:#Offset
+placeholders_info#:#The following placeholders are available for subject and content:
+ref_id#:#Ref ID
+ref_id_info#:#Ref ID of a learning objective course
+save#:#Save
+send_suggestions#:#Send Learning Recommendations
+send_suggestions_description#:#Sends the calculated learning recommendations to users and supervisors
+sender_user_id#:#Sender User ID
+sender_user_id_info#:#User ID of an ILIAS user who sends the emails.
+subject#:#Subject
+steps#:#Steps
+templates#:#Templates
+title#:#Title
+udf_study_program#:#UDF Study Program
+udf_study_program_info#:#UDF Dropdown field containing study programs
+weight_fine#:#Fine Weights
+weight_rough#:#Rough Weights
+cron#:#Cron Active
+delete_learning_objective_course#:#Delete
+confirm_delete_crs#:#Do you really want to delete the learning objective course? All data will be deleted! Please download the recommendations before.
+download_suggestions#:#Download Recommendations
+cancel#:#Cancel
+course_removed#:#Learning objective course has been removed.
+deactivate_cron#:#Deactivate Cron
+activate_cron#:#Activate Cron
+role_assignment#:#Role Assignment
+role_assignment_config#:#Role Assignment configuration

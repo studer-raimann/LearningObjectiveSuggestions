@@ -62,3 +62,5 @@ cancel#:#Abbrechen
 course_removed#:#Lernzielorientierter Kurs wurde entfernt.
 deactivate_cron#:#Cron deaktivieren
 activate_cron#:#Cron aktivieren
+role_assignment#:#Rollenzuweisung
+role_assignment_config#:#Rollenzuweisung Konfiguration

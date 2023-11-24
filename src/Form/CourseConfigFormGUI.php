@@ -151,7 +151,7 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
             $item->setTitle($this->pl->txt("role_assignment"));
             $this->addItem($item);
 
-            $item = new MultiLineNewInputGUI('role_assignment_config', 'role_assignment_config');
+            $item = new MultiLineNewInputGUI($this->pl->txt('role_assignment_config'), 'role_assignment_config');
 
                 $subitem = new NumberInputGUI('min_points','min_points');
                 $item->addInput($subitem);
