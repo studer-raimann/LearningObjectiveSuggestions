@@ -26,7 +26,7 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin
     const PLUGIN_ID = "dhbwautolo";
     const PLUGIN_NAME = "LearningObjectiveSuggestions";
     protected static ?ilLearningObjectiveSuggestionsPlugin $instance = null;
-    protected static array $cron_instances;
+    protected static ?array $cron_instances = null;
 
     public static function getInstance(): ilLearningObjectiveSuggestionsPlugin
     {
@@ -84,7 +84,7 @@ class ilLearningObjectiveSuggestionsPlugin extends ilCronHookPlugin
         return self::getCronInstances();
     }
 
-    public function getCronJobInstance($a_job_id): ilCronJob
+    public function getCronJobInstance(string $a_job_id): ilCronJob
     {
         foreach (static::getCronInstances() as $id => $cron) {
             if ($a_job_id == $id) {
