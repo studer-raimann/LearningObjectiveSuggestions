@@ -61,12 +61,12 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 */
 	protected float $score;
 	/**
-	 * @var string
+	 * @var ?string
 	 *
 	 * @db_has_field    true
 	 * @db_fieldtype    timestamp
 	 */
-	protected string $created_at;
+	protected ?string $created_at = null;
 	/**
 	 * @var string
 	 *
@@ -142,7 +142,7 @@ class LearningObjectiveScore extends \ActiveRecord {
     {
 		$this->score = $score;
 	}
-	public function getCreatedAt(): string
+	public function getCreatedAt(): ?string
     {
 		return $this->created_at;
 	}
