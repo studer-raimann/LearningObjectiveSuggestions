@@ -1,9 +1,7 @@
 <?php
 
 namespace SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\User;
-if(file_exists(__DIR__ . "/../../../../../User/UDFDefinition/CascadingSelect/classes/class.ilCascadingSelectSettings.php")) {
-    require_once __DIR__ . "/../../../../../User/UDFDefinition/CascadingSelect/classes/class.ilCascadingSelectSettings.php";
-}
+
 use SRAG\ILIAS\Plugins\LearningObjectiveSuggestions\Config\CourseConfigProvider;
 
 class StudyProgramQuery
@@ -49,6 +47,7 @@ class StudyProgramQuery
      */
     public function getAll(): array
     {
+	global $DIC;
 	    
         static $cache = array();
         if (isset($cache[$this->config->getCourse()->getId()])) {
@@ -64,17 +63,21 @@ class StudyProgramQuery
                 $programs[] = new StudyProgram($id, $title);
             }
         } else {
-            $settings = \ilCascadingSelectSettings::getInstance();
-            $options = $settings->get('json_' . $this->config->get('udf_id_study_program'));
-
-	        $data = json_decode($options, true);
+	    $CSplugin = \ilCustomUserFieldsHelper::getInstance()->getPluginForType(\ilCascadingSelectPlugin::CASCADING_TYPE_ID);
+            $settings = new \Leifos\CascadingSelect\Settings($DIC->database(),$CSplugin->getFactory());
+            $data = $settings->getJSON($this->config->get('udf_id_study_program'))->raw();
 
             $program_titles = array();
             // The study programs are options on the second level of all data available on the first level
-            foreach ($data['options'] as $level1) {
-                foreach ($level1['options'] as $level2) {
-                    $program_titles[] = $level2['name'];
-                }
+            foreach ($data->options as $level1) {
+		// avoid error if level2 is empty. Use level1->name as fallback (functionality still to be tested)    
+		if (property_exists($level1,'options')) {    
+                    foreach ($level1->options as $level2) {
+                        $program_titles[] = $level2->name;
+                    }
+		} else {
+		    $program_titles[] = $level1->name;
+		}
             }
             foreach (array_unique($program_titles) as $id => $title) {
                 $programs[] = new StudyProgram($id, $title);
@@ -94,6 +97,7 @@ class StudyProgramQuery
     {
         $udf = \ilUserDefinedFields::_getInstance();
         $data = $udf->getDefinition($this->config->get('udf_id_study_program'));
+	    // type is hardcoded here, since CascadingSelect may be not installed
         return ($data['field_type'] === "51");
     }
 }
