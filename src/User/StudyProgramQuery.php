@@ -31,7 +31,10 @@ class StudyProgramQuery
         // The data is separated with an arrow, wtf...
         //13.04.2021 Modification DHBW from old master 
           if ($this->isCascadingSelect()) {
-        list($_, $title, $_) = array_map('trim', explode("→", $title));
+        list($level1, $title, $_) = array_map('trim', explode("→", $title));
+		  if ($title=='') {
+			  $title=$level1;
+		  }
           }
         $filtered = array_filter($this->getAll(), function ($study_program) use ($title) {
             /** @var $study_program StudyProgram */
