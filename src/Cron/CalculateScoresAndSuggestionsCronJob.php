@@ -92,7 +92,9 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 		while ($row = $this->db->fetchObject($set)) {
 			$objective = $this->getLearningObjective($course, $row->objective_id);
 			$user = $this->getUser($row->user_id);
-			$objective_results[] = new LearningObjectiveResult($objective, $user);
+			if ($study_program_query->getByUser($user) != null) {
+				$objective_results[] = new LearningObjectiveResult($objective, $user);
+			}
 		}
 		$users = array(); // Stores all the users where we might need to create the suggestions
 		foreach ($objective_results as $objective_result) {
@@ -101,7 +103,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 			if ($this->isCronInactiveForUserSuggestions($course, $objective_result->getUser())) {
 				continue;
 			}
-
+			
 			$calculator = new LearningObjectiveScoreCalculator($config, $study_program_query, $this->log);
 			$score = $this->getLearningObjectiveScore($objective_result);
 
@@ -118,7 +120,7 @@ class CalculateScoresAndSuggestionsCronJob extends \ilCronJob {
 				$score->save();
 				$users[$objective_result->getUser()->getId()] = $objective_result->getUser();
 			} catch (\Exception $e) {
-				$this->log->write("Exception when trying to calculate the score for {$score}");
+				$this->log->write("Exception when trying to calculate the score");
 				$this->log->write($e->getMessage());
 				$this->log->write($e->getTraceAsString());
 			}
