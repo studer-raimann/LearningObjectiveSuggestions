@@ -28,6 +28,9 @@ class StudyProgramQuery
         $data = new \ilUserDefinedData($user->getId());
         $title = $data->get('f_' . $this->config->get('udf_id_study_program'));
 
+	if ($title == null) {
+		return null;
+	}
         // The data is separated with an arrow, wtf...
         //13.04.2021 Modification DHBW from old master 
           if ($this->isCascadingSelect()) {
