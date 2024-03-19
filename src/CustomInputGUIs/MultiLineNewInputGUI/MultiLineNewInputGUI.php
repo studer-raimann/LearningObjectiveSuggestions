@@ -80,6 +80,7 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
                     if (($org_post_var == 'role') && ($org_post == 0 )) {
                         $ok = false;
                     }
+                }
                 // still needed (see above)?
                 $_POST[$input->getPostVar()] = $b_value;
             }
