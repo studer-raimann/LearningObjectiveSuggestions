@@ -73,7 +73,7 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_has_field    true
 	 * @db_fieldtype    timestamp
 	 */
-	protected string $updated_at;
+	protected ?string $updated_at = null;
 	/**
 	 * @var int
 	 *
@@ -81,7 +81,7 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_fieldtype    integer
 	 * @db_length       8
 	 */
-	protected int $created_user_id;
+	protected ?int $created_user_id = null;
 	/**
 	 * @var int
 	 *
@@ -89,7 +89,7 @@ class LearningObjectiveScore extends \ActiveRecord {
 	 * @db_fieldtype    integer
 	 * @db_length       8
 	 */
-	protected int $updated_user_id;
+	protected ?int $updated_user_id = null;
 	public function create(): void
     {
 		global $DIC;

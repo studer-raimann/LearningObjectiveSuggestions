@@ -63,22 +63,25 @@ class MultiLineNewInputGUI extends ilFormPropertyGUI implements ilTableFilterIte
 
     public function checkInput() : bool
     {
+        //ToDo: consider to eliminate $ok, immediately return false if some var is empty
         $ok = true;
 
-        foreach ($this->getInputs($this->getRequired()) as $i => $inputs) {
+        foreach ($this->getInputs() as $i => $inputs) {
             foreach ($inputs as $org_post_var => $input) {
+                // still needed?
                 $b_value = $_POST[$input->getPostVar()];
-
-                $_POST[$input->getPostVar()] = $_POST[$this->getPostVar()][$i][$org_post_var];
-
-                /*if ($this->getRequired()) {
-                   $input->setRequired(true);
-               }*/
-
-                if (!$input->checkInput()) {
-                    $ok = false;
+                if (($_POST[$this->getPostVar()] !== null ) && (key_exists($i,$_POST[$this->getPostVar()]))) {
+                    $org_post = $_POST[$this->getPostVar()][$i][$org_post_var];
+                    //null not alowed for min, max (and role though never seen)
+                    if ($org_post == NULL) {
+                        $ok = false;
+                    }
+                    //empty role ist posted as 0 (not null), not allowed, too
+                    if (($org_post_var == 'role') && ($org_post == 0 )) {
+                        $ok = false;
+                    }
                 }
-
+                // still needed (see above)?
                 $_POST[$input->getPostVar()] = $b_value;
             }
         }

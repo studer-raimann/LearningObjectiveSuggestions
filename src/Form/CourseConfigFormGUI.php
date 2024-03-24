@@ -160,9 +160,11 @@ class CourseConfigFormGUI extends \ilPropertyFormGUI {
                 $subitem = new ilSelectInputGUI('role','role');
                 $subitem->setOptions($this->getAllRoles());
                 $item->addInput($subitem);
+	        $item->setRequired(true);
 
         $item->setValue((array) json_decode($this->config->get($item->getPostVar()),true));
         $this->addItem($item);
+	$item->setRequired(false);    
     }
     protected function getAllRoles(): array
     {
