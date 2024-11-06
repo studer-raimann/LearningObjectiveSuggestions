@@ -1,7 +1,7 @@
 {
   "require": {
     "php": ">=7.2",
-    "twig/twig": "1.*",
+    "twig/twig": "3.*",
     "srag/custominputguis": ">=0.1.0",
     "srag/librariesnamespacechanger": ">=0.1.0"
   },
